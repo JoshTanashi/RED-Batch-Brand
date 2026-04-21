@@ -1,0 +1,106 @@
+/* RED-BATCH · Web Storefront Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #0D0D0D; overflow-x: hidden; }
+
+/* Custom cursor only on pointer (mouse) devices */
+@media (pointer: fine) {
+  body { cursor: none; }
+}
+@media (pointer: coarse) {
+  body { cursor: auto; }
+  #cursor-dot, #cursor-ring { display: none !important; }
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #0D0D0D; }
+::-webkit-scrollbar-thumb { background: #2A2A2A; }
+
+/* ── Film grain canvas ── */
+#grain {
+  position: fixed; inset: 0; pointer-events: none;
+  z-index: 9999; opacity: 0.055; mix-blend-mode: screen;
+}
+
+/* ── Scanline overlay ── */
+#scanlines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px
+  );
+}
+
+/* ── Custom cursor ── */
+#cursor-dot {
+  position: fixed; width: 6px; height: 6px; background: #B22222;
+  border-radius: 50%; pointer-events: none; z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s, opacity 0.2s;
+}
+#cursor-ring {
+  position: fixed; width: 28px; height: 28px;
+  border: 1px solid rgba(178,34,34,0.5);
+  pointer-events: none; z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, border-color 0.2s;
+}
+#cursor-ring::before, #cursor-ring::after {
+  content: ''; position: absolute; background: rgba(178,34,34,0.5);
+}
+#cursor-ring::before { top: 50%; left: -8px; right: -8px; height: 1px; transform: translateY(-50%); }
+#cursor-ring::after  { left: 50%; top: -8px; bottom: -8px; width: 1px; transform: translateX(-50%); }
+
+/* ── Ticker ── */
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-inner {
+  display: flex; gap: 0;
+  animation: ticker 18s linear infinite;
+  white-space: nowrap;
+}
+.ticker-inner span {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #888;
+  padding: 0 24px; border-right: 1px solid #1A1A1A;
+}
+
+/* ── Hover fill button ── */
+.btn-fill { position: relative; overflow: hidden; }
+.btn-fill::before {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0.08);
+  transform: translateX(-101%);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.btn-fill:hover::before { transform: translateX(0); }
+
+/* ── Screen entry animation ── */
+.screen-enter { animation: screenIn 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Staggered child animations ── */
+.stagger > * { opacity: 0; animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1) forwards; }
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.stagger > *:nth-child(5) { animation-delay: 0.33s; }
+.stagger > *:nth-child(6) { animation-delay: 0.40s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Status pulse dot ── */
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+/* ── Archive row hover ── */
+.batch-row { transition: background 0.12s; }
+.batch-row:hover { background: #111 !important; }
+.batch-row:hover .row-id { color: #B22222 !important; }
