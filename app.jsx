@@ -1,35 +1,23 @@
 /* RED-BATCH · React App */
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
-// ── STORE CONFIG — REPLACE WITH YOUR OWN VALUES ──────────────────
-// PayFast credentials (from PayFast → Settings → Developer Settings)
-const PAYFAST_MERCHANT_ID  = 'PASTE_YOUR_MERCHANT_ID_HERE';
-const PAYFAST_MERCHANT_KEY = 'PASTE_YOUR_MERCHANT_KEY_HERE';
-const PAYFAST_PASSPHRASE   = 'PASTE_YOUR_PASSPHRASE_HERE';
-
-// EmailJS credentials (from emailjs.com → Account → General)
-const EMAILJS_PUBLIC_KEY        = 'PASTE_YOUR_PUBLIC_KEY_HERE';
-const EMAILJS_SERVICE_ID        = 'PASTE_YOUR_SERVICE_ID_HERE';
-// Template that sends order details to YOU (the store owner)
-const EMAILJS_OWNER_TEMPLATE    = 'PASTE_YOUR_ORDER_NOTIFICATION_TEMPLATE_ID_HERE';
-// Template that sends confirmation to THE CUSTOMER
-const EMAILJS_CUSTOMER_TEMPLATE = 'PASTE_YOUR_ORDER_CONFIRMATION_TEMPLATE_ID_HERE';
-
-// Your store email — receives all order notifications
-const STORE_OWNER_EMAIL = 'PASTE_YOUR_EMAIL_HERE';
-
-// Delivery fee added to every order
-const DELIVERY_FEE = 100;
+// ── STORE CONFIG ─────────────────────────────────────────────────
+// Credentials are loaded from config.js
+// config.js is gitignored — never committed to GitHub
+// Fill in your real values in config.js locally
+// On Netlify: set values in Site Settings → Environment Variables
+const PAYFAST_MERCHANT_ID       = STORE_CONFIG.PAYFAST_MERCHANT_ID;
+const PAYFAST_MERCHANT_KEY      = STORE_CONFIG.PAYFAST_MERCHANT_KEY;
+const PAYFAST_PASSPHRASE        = STORE_CONFIG.PAYFAST_PASSPHRASE;
+const EMAILJS_PUBLIC_KEY        = STORE_CONFIG.EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID        = STORE_CONFIG.EMAILJS_SERVICE_ID;
+const EMAILJS_OWNER_TEMPLATE    = STORE_CONFIG.EMAILJS_OWNER_TEMPLATE;
+const EMAILJS_CUSTOMER_TEMPLATE = STORE_CONFIG.EMAILJS_CUSTOMER_TEMPLATE;
+const STORE_OWNER_EMAIL         = STORE_CONFIG.STORE_OWNER_EMAIL;
+const DELIVERY_FEE              = STORE_CONFIG.DELIVERY_FEE;
+const PAYFAST_URL               = STORE_CONFIG.PAYFAST_URL;
 // ─────────────────────────────────────────────────────────────────
-
-// ── TESTING vs LIVE ──────────────────────────────────────────────
-// To test payments without real money:
-// Change PayFast URL to: https://sandbox.payfast.co.za/eng/process
-// Use PayFast sandbox credentials from sandbox.payfast.co.za
-// Change back to https://www.payfast.co.za/eng/process before going live
-// ─────────────────────────────────────────────────────────────────
-const PAYFAST_URL = 'https://sandbox.payfast.co.za/eng/process';
 
 /* ── TOKENS ── */
 const C = {
@@ -57,20 +45,70 @@ const useIsMobile = () => {
 const parsePrice = (priceStr) => parseInt(priceStr.replace(/[R\s]/g, ''), 10);
 
 /* ── DATA ── */
+const SETS = [
+  {
+    id: 'SET-001',
+    cycle: 'CYCLE-01',
+    name: 'The CYCLE-01 Record',
+    items: ['RB-001', 'RB-002'],
+    price: 'R 1 299',
+    units: 20,
+    status: 'ACTIVE',
+    date: '2026.04.23',
+    desc: 'The complete CYCLE-01 record. One Heavyweight Tee and one Oversized Hoodie. Matching colourway. Issued together as a single verified unit. Once this set closes it exists permanently in the archive — a purchasable memory of the cycle. 20 sets. No restock. Ever.',
+    includes: ['Heavyweight Tee (RB-001)', 'Oversized Hoodie (RB-002)', 'Matching colourway', 'Shared batch stamp', 'Collector packaging'],
+    images: ['./images/set-001-a.jpg', './images/set-001-b.jpg'],
+  },
+];
+
 const BATCHES = [
   {
     id: 'RB-001', season: 'CYCLE-01', name: 'Heavyweight Tee',
-    units: 70, status: 'ACTIVE', date: '2026.04.23', price: 'R 899',
+    units: 70, status: 'ACTIVE', date: '2026.04.23', price: 'R 599',
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
-    desc: 'Heavyweight 380gsm cotton. Oversized boxy cut, dropped shoulder. Each unit is issued a permanent batch identifier. Washed black and off-white colourways. 70 units. No restock.'
+    desc: 'Heavyweight 380gsm cotton. Oversized boxy cut, dropped shoulder. Each unit is issued a permanent batch identifier. Washed black and off-white colourways. 70 units. No restock.',
+    images: ['./images/rb-001-a.jpg','./images/rb-001-b.jpg','./images/rb-001-c.jpg'],
   },
   {
     id: 'RB-002', season: 'CYCLE-01', name: 'Oversized Hoodie',
-    units: 50, status: 'ACTIVE', date: '2026.04.23', price: 'R 1 399',
+    units: 50, status: 'ACTIVE', date: '2026.04.23', price: 'R 799',
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
-    desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, single kangaroo pocket, ribbed cuffs and hem. Batch identifier woven into back neck label. 50 units. No restock.'
+    desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, single kangaroo pocket, ribbed cuffs and hem. Batch identifier woven into back neck label. 50 units. No restock.',
+    images: ['./images/rb-002-a.jpg','./images/rb-002-b.jpg','./images/rb-002-c.jpg'],
+  },
+  {
+    id: 'RB-003', season: 'CYCLE-01', name: 'Heavyweight Tee Vol.2',
+    units: 60, status: 'COMING_SOON', date: '2026.TBC', price: 'R 599',
+    sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
+    weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
+    desc: 'Second colourway drop. Heavyweight 380gsm cotton. Same oversized boxy cut as RB-001. New graphic treatment. 60 units. No restock.',
+    images: ['./images/rb-003-a.jpg','./images/rb-003-b.jpg'],
+  },
+  {
+    id: 'RB-004', season: 'CYCLE-01', name: 'Oversized Hoodie Vol.2',
+    units: 40, status: 'COMING_SOON', date: '2026.TBC', price: 'R 799',
+    sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
+    weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
+    desc: 'Second colourway drop. 500gsm fleece. Same silhouette as RB-002. New CYCLE-01 graphic on back. 40 units. No restock.',
+    images: ['./images/rb-004-a.jpg','./images/rb-004-b.jpg'],
+  },
+  {
+    id: 'RB-005', season: 'CYCLE-01', name: 'Heavyweight Tee Vol.3',
+    units: 50, status: 'COMING_SOON', date: '2026.TBC', price: 'R 599',
+    sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
+    weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
+    desc: 'Third graphic. Heavyweight 380gsm cotton. Oversized boxy construction. Limited colourway. 50 units. No restock.',
+    images: ['./images/rb-005-a.jpg','./images/rb-005-b.jpg'],
+  },
+  {
+    id: 'RB-006', season: 'CYCLE-01', name: 'Pullover Hoodie Vol.3',
+    units: 30, status: 'COMING_SOON', date: '2026.TBC', price: 'R 799',
+    sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
+    weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
+    desc: 'Third colourway. 500gsm fleece. Double-layered hood, kangaroo pocket. Batch label at neck. 30 units. No restock.',
+    images: ['./images/rb-006-a.jpg','./images/rb-006-b.jpg'],
   },
 ];
 
@@ -130,6 +168,65 @@ const Ticker = () => {
   );
 };
 
+/* ── FOOTER ── */
+const Footer = ({ onNav }) => {
+  const isMobile = useIsMobile();
+  const navLinks = [
+    { id: 'drop',      label: 'DROP' },
+    { id: 'archive',   label: 'ARCHIVE' },
+    { id: 'origin',    label: 'ORIGIN' },
+    { id: 'contact',   label: 'CONTACT' },
+    { id: 'manifesto', label: 'MANIFESTO' },
+    { id: 'queue',     label: 'QUEUE' },
+    { id: 'sets',      label: 'THE RECORD' },
+    { id: 'merch',     label: 'MERCH' },
+  ];
+  return (
+    <footer style={{ borderTop: `1px solid ${C.grey}`, background: C.black, padding: isMobile ? '24px' : '32px 48px' }}>
+      <div style={{
+        display: isMobile ? 'flex' : 'grid',
+        flexDirection: isMobile ? 'column' : undefined,
+        gridTemplateColumns: isMobile ? undefined : '1fr 1fr 1fr',
+        gap: 32,
+      }}>
+        <div>
+          <div style={{ ...grotesk(13, 700), letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 12 }}>
+            RED<span style={{ color: C.red }}>-</span>BATCH
+          </div>
+          <div style={{ ...mono(9, C.dim), lineHeight: 1.8 }}>
+            Controlled release apparel.<br />
+            South Africa.<br />
+            CYCLE-01 · RB-001 · 2026
+          </div>
+        </div>
+        <div>
+          <div style={{ ...mono(9, C.red), marginBottom: 8 }}>NAVIGATE</div>
+          {navLinks.map(({ id, label }) => (
+            <button key={id} onClick={() => { onNav(id); window.scrollTo(0,0); }} style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', display: 'block', lineHeight: 2, padding: 0, transition: 'color 0.15s' }}
+              onMouseEnter={e => e.currentTarget.style.color = C.white}
+              onMouseLeave={e => e.currentTarget.style.color = C.dim}>
+              {label}
+            </button>
+          ))}
+        </div>
+        <div>
+          <div style={{ ...mono(9, C.red), marginBottom: 8 }}>SYSTEM</div>
+          <div style={{ ...mono(9, C.dim), lineHeight: 2 }}>
+            DOC-001 · SYSTEM-ROOT<br />
+            redbatch.store<br />
+            South Africa<br />
+            All rights reserved.
+          </div>
+        </div>
+      </div>
+      <div style={{ borderTop: `1px solid #1A1A1A`, marginTop: 32, paddingTop: 20, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <span style={{ ...mono(8, C.dim) }}>RED-BATCH · CYCLE-01 · 2026.04.23</span>
+        <span style={{ ...mono(8, C.dim) }}>CONFIDENTIAL · DOC-001</span>
+      </div>
+    </footer>
+  );
+};
+
 /* ── HEADER ── */
 const Header = ({ screen, onNav, cart }) => {
   const isMobile = useIsMobile();
@@ -137,27 +234,18 @@ const Header = ({ screen, onNav, cart }) => {
   const cartCount = cart.reduce((n, i) => n + i.quantity, 0);
 
   const navItems = [
-    { id: 'drop',      label: 'DROP' },
-    { id: 'product',   label: 'PRODUCT' },
-    { id: 'archive',   label: 'ARCHIVE' },
-    { id: 'manifesto', label: 'MANIFESTO' },
-    { id: 'queue',     label: 'QUEUE' },
+    { id: 'drop',    label: 'DROP' },
+    { id: 'product', label: 'PRODUCT' },
+    { id: 'archive', label: 'ARCHIVE' },
+    { id: 'origin',  label: 'ORIGIN' },
+    { id: 'queue',   label: 'QUEUE' },
+    { id: 'sets',    label: 'THE RECORD' },
   ];
 
-  const handleNav = (id) => { onNav(id); setMenuOpen(false); };
+  const handleNav = (id) => { onNav(id); setMenuOpen(false); window.scrollTo(0,0); };
 
   const CartBtn = () => (
-    <button
-      onClick={() => handleNav('cart')}
-      style={{
-        background: 'transparent',
-        border: `1px solid ${cartCount > 0 ? C.red : C.grey}`,
-        ...mono(9, cartCount > 0 ? C.red : C.dim),
-        padding: '6px 12px',
-        cursor: 'pointer',
-        transition: 'all 0.15s',
-        marginLeft: 16,
-      }}>
+    <button onClick={() => handleNav('cart')} style={{ background: 'transparent', border: `1px solid ${cartCount > 0 ? C.red : C.grey}`, ...mono(9, cartCount > 0 ? C.red : C.dim), padding: '6px 12px', cursor: 'pointer', transition: 'all 0.15s', marginLeft: 16 }}>
       {cartCount > 0 ? `CART · ${cartCount}` : 'CART'}
     </button>
   );
@@ -182,15 +270,24 @@ const Header = ({ screen, onNav, cart }) => {
               {navItems.map(({ id, label }) => {
                 const active = screen === id;
                 return (
-                  <button key={id} onClick={() => onNav(id)} style={{ background: 'transparent', border: 'none', borderBottom: `2px solid ${active ? C.red : 'transparent'}`, color: active ? C.white : C.dim, ...mono(9), padding: '0 20px', height: '58px', cursor: 'pointer', transition: 'color 0.15s, border-color 0.15s' }}>
+                  <button key={id} onClick={() => { onNav(id); window.scrollTo(0,0); }} style={{ background: 'transparent', border: 'none', borderBottom: `2px solid ${active ? C.red : 'transparent'}`, color: active ? C.white : C.dim, ...mono(9), padding: '0 20px', height: '58px', cursor: 'pointer', transition: 'color 0.15s, border-color 0.15s' }}>
                     {label}
                   </button>
                 );
               })}
+              <button onClick={() => { onNav('merch'); window.scrollTo(0,0); }} style={{ background: 'transparent', border: 'none', color: '#888', fontFamily: "'Space Mono', monospace", fontSize: '9px', letterSpacing: '0.16em', textTransform: 'uppercase', padding: '0 20px', height: '58px', cursor: 'pointer', animation: 'glitch 4s ease infinite, glitch-color 4s ease infinite' }}>
+                MERCH
+              </button>
             </nav>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite' }} />
               <span style={{ ...mono(9, C.red) }}>ACTIVE</span>
+              <button onClick={() => { onNav('contact'); window.scrollTo(0,0); }}
+                style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', padding: '0 12px', transition: 'color 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.color = C.white}
+                onMouseLeave={e => e.currentTarget.style.color = C.dim}>
+                CONTACT
+              </button>
               <CartBtn />
             </div>
           </>
@@ -207,6 +304,12 @@ const Header = ({ screen, onNav, cart }) => {
               </button>
             );
           })}
+          <button onClick={() => handleNav('merch')} style={{ background: 'transparent', border: 'none', borderBottom: `1px solid ${C.g2}`, color: '#888', fontFamily: "'Space Mono', monospace", fontSize: '13px', letterSpacing: '0.16em', textTransform: 'uppercase', padding: '20px 0', cursor: 'pointer', textAlign: 'left', animation: 'glitch 4s ease infinite, glitch-color 4s ease infinite' }}>
+            MERCH
+          </button>
+          <button onClick={() => handleNav('contact')} style={{ background: 'transparent', border: 'none', borderBottom: `1px solid ${C.g2}`, ...mono(13, C.dim), padding: '20px 0', cursor: 'pointer', textAlign: 'left', transition: 'color 0.15s' }}>
+            CONTACT
+          </button>
           <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 10, paddingTop: 32 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite' }} />
             <span style={{ ...mono(9, C.red) }}>RELEASE ACTIVE · CYCLE-01</span>
@@ -221,13 +324,40 @@ const Header = ({ screen, onNav, cart }) => {
 const ProductCardInline = ({ batch, onClick }) => {
   const [hov, setHov] = useState(false);
   const isClosed = batch.units === 0;
+  const isComingSoon = batch.status === 'COMING_SOON';
+
+  if (isComingSoon) {
+    return (
+      <div style={{ background: C.black, position: 'relative', border: `1px solid ${C.grey}`, cursor: 'default' }}>
+        <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ ...mono(9, '#222') }}>INCOMING.</span>
+        </div>
+        <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ ...mono(9, C.dim) }}>{batch.id} · {batch.season}</div>
+          <div style={{ ...grotesk(14, 600, C.dim), letterSpacing: '0.06em', textTransform: 'uppercase' }}>{batch.name}</div>
+          <div style={{ ...mono(9, C.dim), marginTop: 2 }}>Available soon.</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+            <span style={{ fontFamily: F.m, fontSize: 13, color: '#888' }}>{batch.price}</span>
+            <Badge v="neutral">INCOMING</Badge>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       data-hover
       style={{ background: C.black, cursor: 'pointer', position: 'relative', border: `1px solid ${hov ? (isClosed ? C.grey : C.red) : C.grey}`, transition: 'border-color 0.2s' }}>
       <div style={{ position: 'absolute', top: -1, right: -1, width: 10, height: 10, background: isClosed ? 'transparent' : (batch.status === 'ACTIVE' ? C.red : 'transparent'), transition: 'background 0.2s', zIndex: 1 }} />
       <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-        <span style={{ ...mono(9, '#222') }}>IMAGE SLOT</span>
+        {batch.images && batch.images[0] ? (
+          <img src={batch.images[0]} alt={batch.name}
+            onError={e => { e.target.style.display = 'none'; }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }} />
+        ) : (
+          <span style={{ ...mono(9, '#222') }}>IMAGE SLOT</span>
+        )}
         <div style={{ position: 'absolute', inset: 0, background: `rgba(178,34,34,${hov && !isClosed ? 0.04 : 0})`, transition: 'background 0.3s' }} />
       </div>
       <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -246,33 +376,73 @@ const ProductCardInline = ({ batch, onClick }) => {
 /* ── SCREEN: DROP ── */
 const DropScreen = ({ onNav, onSelectBatch }) => {
   const isMobile = useIsMobile();
+  const [heroHov, setHeroHov] = useState(false);
+  const featuredBatch = BATCHES.find(b => b.status === 'ACTIVE');
 
   const handleCardClick = (batch) => {
     onSelectBatch(batch.id);
     onNav('product');
+    window.scrollTo(0,0);
   };
 
   return (
     <div className="screen-enter">
       <Ticker />
 
-      <div style={{ padding: isMobile ? '48px 24px 40px' : '80px 48px 64px', borderBottom: `1px solid ${C.grey}`, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 40 : 64, padding: isMobile ? '40px 24px' : '64px 48px', borderBottom: `1px solid ${C.grey}`, position: 'relative', overflow: 'hidden' }}>
         <div className="stagger">
-          <div style={{ ...mono(10, C.red), marginBottom: 16 }}>CYCLE-01 · 2026.04.23 · SOUTH AFRICA</div>
-          <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px,8vw,96px)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 0.95, color: C.white }}>
-            RELEASE<br /><span style={{ color: C.red }}>ACTIVE.</span>
+          <div style={{ ...mono(10, C.red), letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20 }}>SS26-A · 2026.04.23 · BATCH RB-001</div>
+          <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(52px,8vw,96px)', letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 24 }}>
+            <div style={{ color: C.white }}>RELEASE</div>
+            <div style={{ color: C.red }}>ACTIVE.</div>
           </div>
-          <div style={{ marginTop: 32, ...grotesk(14, 300, '#999'), maxWidth: 520, lineHeight: 1.8 }}>
-            Batch CYCLE-01 is live. Two items available. Each piece is logged, catalogued, and assigned a permanent identifier at point of manufacture. Access is not guaranteed. No restock.
+          <div style={{ ...grotesk(14, 300, '#999'), maxWidth: 480, lineHeight: 1.9, marginBottom: 32 }}>
+            Each release is logged, catalogued, and issued a permanent batch identifier. CYCLE-01 is live. 120 units across two garments. No restock. No exceptions.
           </div>
-          <div style={{ display: 'flex', gap: 12, marginTop: 36, flexWrap: 'wrap' }}>
-            <Btn onClick={() => onNav('archive')}>Browse Archive</Btn>
-            <Btn v="secondary" onClick={() => onNav('queue')}>Join Queue</Btn>
+          <div style={{ display: 'flex', gap: 32, marginBottom: 40, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, padding: '20px 0' }}>
+            {[['Units', ACTIVE_UNITS.toString()], ['Products', BATCHES.length.toString()], ['Delivery', 'R 60 via Pudo']].map(([label, value]) => (
+              <div key={label}>
+                <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>{label}</div>
+                <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 14, letterSpacing: '0.1em', color: C.white }}>{value}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <Btn onClick={() => document.getElementById('product-grid')?.scrollIntoView({ behavior: 'smooth' })}>View Drop →</Btn>
+            <Btn v="ghost" onClick={() => { onNav('archive'); window.scrollTo(0,0); }}>Browse Archive →</Btn>
           </div>
         </div>
-        {!isMobile && (
-          <div style={{ position: 'absolute', right: 48, bottom: -20, fontFamily: F.m, fontWeight: 700, fontSize: '180px', letterSpacing: '0.04em', color: 'rgba(178,34,34,0.04)', pointerEvents: 'none', userSelect: 'none', lineHeight: 1 }}>CYCLE-01</div>
+
+        {!isMobile && featuredBatch && (
+          <div
+            onClick={() => { onSelectBatch(featuredBatch.id); onNav('product'); window.scrollTo(0,0); }}
+            onMouseEnter={() => setHeroHov(true)}
+            onMouseLeave={() => setHeroHov(false)}
+            style={{ border: `1px solid ${heroHov ? C.red : C.grey}`, background: C.black, position: 'relative', cursor: 'pointer', transition: 'border-color 0.2s' }}
+          >
+            <div style={{ aspectRatio: '3/4', background: '#111', position: 'relative', overflow: 'hidden' }}>
+              {featuredBatch.images && featuredBatch.images[0] ? (
+                <img src={featuredBatch.images[0]} alt={featuredBatch.name} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  <span style={{ ...mono(9, '#1A1A1A') }}>RB-001</span>
+                </div>
+              )}
+              <div style={{ position: 'absolute', top: 0, right: 0, width: 10, height: 10, background: C.red }} />
+              <div style={{ position: 'absolute', bottom: 12, left: 12, border: `1px solid ${C.grey}`, background: C.black, padding: '4px 10px', ...mono(9) }}>{featuredBatch.id}</div>
+            </div>
+            <div style={{ padding: 16 }}>
+              <div style={{ ...mono(9, C.dim), marginBottom: 4 }}>{featuredBatch.id} · {featuredBatch.season}</div>
+              <div style={{ ...grotesk(13, 600), letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>{featuredBatch.name}</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: F.m, fontSize: 14, color: C.white }}>{featuredBatch.price}</span>
+                <Badge v="active">{featuredBatch.status}</Badge>
+              </div>
+            </div>
+          </div>
         )}
+
+        <div style={{ position: 'absolute', right: -20, bottom: -30, fontFamily: F.m, fontWeight: 700, fontSize: '200px', color: 'rgba(178,34,34,0.035)', pointerEvents: 'none', userSelect: 'none', lineHeight: 1 }}>RB-001</div>
       </div>
 
       <div style={{ borderBottom: `1px solid ${C.grey}`, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr 1fr' }}>
@@ -280,11 +450,7 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
           const isLast = i === 3;
           const isSecondOnMobile = i === 1;
           return (
-            <div key={k} style={{
-              padding: isMobile ? '16px 20px' : '20px 32px',
-              borderRight: isMobile ? (isSecondOnMobile ? 'none' : `1px solid ${C.grey}`) : (isLast ? 'none' : `1px solid ${C.grey}`),
-              borderBottom: isMobile && i < 2 ? `1px solid ${C.grey}` : 'none',
-            }}>
+            <div key={k} style={{ padding: isMobile ? '16px 20px' : '20px 32px', borderRight: isMobile ? (isSecondOnMobile ? 'none' : `1px solid ${C.grey}`) : (isLast ? 'none' : `1px solid ${C.grey}`), borderBottom: isMobile && i < 2 ? `1px solid ${C.grey}` : 'none' }}>
               <div style={{ ...mono(9), marginBottom: 6 }}>{k}</div>
               <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: isMobile ? 15 : 18, letterSpacing: '0.1em', textTransform: 'uppercase', color: k === 'Status' ? C.red : C.white }}>{v}</div>
             </div>
@@ -292,15 +458,45 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
         })}
       </div>
 
-      <div style={{ padding: isMobile ? '32px 24px' : '48px' }}>
+      <div style={{ padding: isMobile ? '20px 24px' : '24px 48px', borderBottom: `1px solid ${C.grey}`, background: C.black, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite', flexShrink: 0 }} />
+          <span style={{ ...mono(9, C.red), letterSpacing: '0.16em' }}>CYCLE-01 · NOW ACTIVE</span>
+          <div style={{ width: 1, height: 16, background: C.grey, flexShrink: 0 }} />
+          <span style={{ ...mono(9, C.dim) }}>{BATCHES.length} items · {ACTIVE_UNITS} units available</span>
+        </div>
+        <span style={{ ...mono(9, C.dim) }}>Delivery: R 60 · Pudo · South Africa</span>
+      </div>
+
+      <div style={{ borderBottom: `1px solid ${C.grey}`, background: '#0D0D0D', padding: isMobile ? '16px 24px' : '20px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+        <div>
+          <div style={{ ...mono(9, C.dim), letterSpacing: '0.18em' }}>DOC-000 · BRAND ORIGIN</div>
+          <div style={{ ...grotesk(14, 400, '#888'), marginTop: 4, maxWidth: 480, lineHeight: 1.6 }}>New here? Read the record — what RED-BATCH is, why it exists, and how the system works.</div>
+        </div>
+        <Btn v="ghost" onClick={() => { onNav('origin'); window.scrollTo(0,0); }}>Read Origin →</Btn>
+      </div>
+
+      <div id="product-grid" style={{ padding: isMobile ? '32px 24px' : '48px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
-          <div style={{ ...mono(9), marginBottom: 0 }}>Current drop — {ACTIVE_BATCHES.length} units</div>
+          <div style={{ ...mono(9), marginBottom: 0 }}>CYCLE-01 · {BATCHES.length} drops · {ACTIVE_BATCHES.length} active now</div>
           <span style={{ ...mono(8, C.red) }}>CYCLE-01</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill,minmax(160px,1fr))' : 'repeat(auto-fill,minmax(240px,1fr))', gap: 1, background: C.grey }}>
-          {ACTIVE_BATCHES.map(b => (
-            <ProductCardInline key={b.id} batch={b} onClick={() => handleCardClick(b)} />
+          {BATCHES.map(b => (
+            <ProductCardInline key={b.id} batch={b} onClick={b.status === 'COMING_SOON' ? undefined : () => handleCardClick(b)} />
           ))}
+        </div>
+      </div>
+
+      <div style={{ padding: isMobile ? '0 24px 32px' : '0 48px 40px' }}>
+        <div style={{ border: `1px solid ${C.grey}`, background: C.g2, padding: isMobile ? '16px 20px' : '20px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
+          <div>
+            <div style={{ ...mono(9, C.red) }}>THE RECORD · CYCLE-01</div>
+            <div style={{ ...grotesk(16, 600), letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 6 }}>Complete CYCLE-01 Set.</div>
+            <div style={{ ...mono(9, C.dim), marginTop: 4 }}>20 sets. Tee + Hoodie. One colourway. Permanent.</div>
+          </div>
+          <Btn v="ghost" onClick={() => { onNav('sets'); window.scrollTo(0,0); }}>View Set →</Btn>
         </div>
       </div>
 
@@ -308,10 +504,10 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
         <div style={{ borderTop: `1px solid ${C.grey}`, paddingTop: 40 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
             <div style={{ ...grotesk(isMobile ? 16 : 20, 600), letterSpacing: '0.1em', textTransform: 'uppercase' }}>Recent Archive</div>
-            <button onClick={() => onNav('archive')} style={{ ...mono(9, C.red), background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>View all →</button>
+            <button onClick={() => { onNav('archive'); window.scrollTo(0,0); }} style={{ ...mono(9, C.red), background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>View all →</button>
           </div>
           {BATCHES.filter(b => b.status === 'ARCHIVED').slice(0, 4).map(b => (
-            <div key={b.id} className="batch-row" onClick={() => onNav('archive')}
+            <div key={b.id} className="batch-row" onClick={() => { onNav('archive'); window.scrollTo(0,0); }}
               style={{ display: 'grid', gridTemplateColumns: isMobile ? '90px 1fr 80px' : '120px 1fr 80px 120px', alignItems: 'center', padding: '12px 0', borderBottom: `1px solid ${C.g2}`, cursor: 'pointer' }}>
               <span className="row-id" style={{ fontFamily: F.m, fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.dim, transition: 'color 0.15s' }}>{b.id}</span>
               <span style={{ ...grotesk(13, 400, C.white) }}>{b.name}</span>
@@ -326,7 +522,7 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
 };
 
 /* ── SCREEN: PRODUCT ── */
-const ProductScreen = ({ onNav, batchId, cart, addToCart }) => {
+const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
   const isMobile = useIsMobile();
   const batch = BATCHES.find(b => b.id === batchId) || BATCHES[0];
   const [size, setSize] = useState(null);
@@ -334,29 +530,44 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart }) => {
   const [added, setAdded] = useState(false);
   const [hovSize, setHovSize] = useState(null);
   const [hovColour, setHovColour] = useState(null);
+  const [activeImg, setActiveImg] = useState(0);
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  const topRef = useRef(null);
   const isClosed = batch.units === 0;
+
+  useEffect(() => { setActiveImg(0); setSize(null); setColour(null); }, [batchId]);
+
+  useEffect(() => {
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [batchId]);
 
   const handleAddToCart = () => {
     if (!size || !colour || isClosed) return;
-    addToCart({
-      id: batch.id,
-      name: batch.name,
-      price: parsePrice(batch.price),
-      size,
-      colour,
-    });
+    addToCart({ id: batch.id, name: batch.name, price: parsePrice(batch.price), size, colour });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
+  const teeRows    = [['S','56cm','72cm','50cm'],['M','60cm','74cm','53cm'],['L','64cm','76cm','56cm'],['XL','68cm','78cm','59cm'],['2XL','72cm','80cm','62cm']];
+  const hoodieRows = [['S','58cm','74cm','52cm'],['M','62cm','76cm','55cm'],['L','66cm','78cm','58cm'],['XL','70cm','80cm','61cm'],['2XL','74cm','82cm','64cm']];
+  const sizeRows = batch.type === 'Tee' ? teeRows : hoodieRows;
+
   return (
-    <div className="screen-enter">
+    <div className="screen-enter" ref={topRef}>
       <Ticker />
       <div style={{ padding: isMobile ? '24px' : '48px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '32px' : '64px', maxWidth: 1100 }}>
 
         <div>
-          <div style={{ border: `1px solid ${C.grey}`, aspectRatio: '3/4', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', background: C.g2 }}>
-            <span style={{ ...mono(9, '#222') }}>PRODUCT IMAGE</span>
+          <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', border: `1px solid ${C.grey}` }}>
+            {batch.images && batch.images[activeImg] ? (
+              <img src={batch.images[activeImg]} alt={`${batch.name} ${activeImg + 1}`}
+                onError={e => { e.target.style.display = 'none'; }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            ) : (
+              <span style={{ ...mono(9, '#222') }}>IMG</span>
+            )}
             <div style={{ position: 'absolute', top: 12, left: 12 }}>
               <div style={{ border: `1px solid ${C.grey}`, padding: '4px 10px', ...mono(9), background: C.black }}>{batch.id}</div>
             </div>
@@ -364,8 +575,19 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart }) => {
               <Badge v={isClosed ? 'neutral' : (batch.status === 'ACTIVE' ? 'active' : 'neutral')}>{isClosed ? 'BATCH CLOSED' : batch.status}</Badge>
             </div>
           </div>
+
+          {batch.images && batch.images.length > 1 && (
+            <div style={{ display: 'flex', gap: 8, marginTop: 8, overflowX: isMobile ? 'auto' : 'visible' }}>
+              {batch.images.map((img, idx) => (
+                <div key={idx} onClick={() => setActiveImg(idx)} style={{ width: 60, height: 75, background: C.g2, flexShrink: 0, border: `1px solid ${activeImg === idx ? C.red : C.grey}`, cursor: 'pointer', overflow: 'hidden' }}>
+                  <img src={img} alt={`thumb ${idx + 1}`} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                </div>
+              ))}
+            </div>
+          )}
+
           <div style={{ marginTop: 16, border: `1px solid ${C.grey}`, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-            <div style={{ position: 'absolute', top: -1, left: -1,   width: 8, height: 8, background: C.red }} />
+            <div style={{ position: 'absolute', top: -1, left: -1, width: 8, height: 8, background: C.red }} />
             <div style={{ position: 'absolute', bottom: -1, right: -1, width: 8, height: 8, background: C.red }} />
             <div>
               <div style={{ ...mono(8) }}>Batch identifier</div>
@@ -410,8 +632,14 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart }) => {
           </div>
 
           <div>
-            <div style={{ ...mono(9), marginBottom: 12 }}>
-              Select size {size && <span style={{ color: C.red }}>— {size}</span>}
+            <div style={{ ...mono(9), marginBottom: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span>Select size {size && <span style={{ color: C.red }}>— {size}</span>}</span>
+              <button onClick={() => setSizeGuideOpen(true)}
+                style={{ fontFamily: F.m, fontSize: 9, color: '#888', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', letterSpacing: '0.16em', textTransform: 'uppercase', padding: 0 }}
+                onMouseEnter={e => e.currentTarget.style.color = C.white}
+                onMouseLeave={e => e.currentTarget.style.color = '#888'}>
+                [size guide]
+              </button>
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {batch.sizes.map(s => {
@@ -452,18 +680,57 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart }) => {
             ))}
           </div>
 
-          <button onClick={() => onNav('drop')} style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>← Back to drop</button>
+          <button onClick={() => { onNav('drop'); window.scrollTo(0,0); }} style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>← Back to drop</button>
         </div>
       </div>
 
       <div style={{ padding: isMobile ? '0 24px 48px' : '0 48px 64px', borderTop: `1px solid ${C.grey}`, marginTop: 16, paddingTop: 40 }}>
-        <div style={{ ...mono(9), marginBottom: 24 }}>Also in archive</div>
+        <div style={{ ...mono(9), marginBottom: 24 }}>Also in CYCLE-01</div>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill,minmax(160px,1fr))' : 'repeat(auto-fill,minmax(200px,1fr))', gap: 1, background: C.grey }}>
           {BATCHES.filter(b => b.id !== batch.id).slice(0, isMobile ? 2 : 4).map(b => (
-            <ProductCardInline key={b.id} batch={b} onClick={() => onNav('archive')} />
+            <ProductCardInline key={b.id} batch={b} onClick={b.status === 'COMING_SOON' ? undefined : () => { onSelectBatch(b.id); onNav('product'); }} />
           ))}
         </div>
       </div>
+
+      {sizeGuideOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          onClick={e => { if (e.target === e.currentTarget) setSizeGuideOpen(false); }}>
+          <div style={{ background: C.black, border: `1px solid ${C.grey}`, padding: 32, maxWidth: 480, width: '90%', position: 'relative' }}>
+            <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
+            <button onClick={() => setSizeGuideOpen(false)}
+              style={{ position: 'absolute', top: 16, right: 16, ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer' }}
+              onMouseEnter={e => e.currentTarget.style.color = C.white}
+              onMouseLeave={e => e.currentTarget.style.color = C.dim}>
+              × CLOSE
+            </button>
+            <div style={{ ...mono(9, C.red), marginBottom: 8 }}>SIZE GUIDE · CYCLE-01</div>
+            <div style={{ ...grotesk(13, 400, C.dim), marginBottom: 20 }}>Measurements in centimetres. Garments run oversized.</div>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.grey}` }}>
+                  {['SIZE', 'CHEST', 'LENGTH', 'SHOULDER'].map(h => (
+                    <th key={h} style={{ ...mono(9, C.dim), padding: '8px 12px', textAlign: 'left', fontWeight: 400 }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sizeRows.map(([sz, chest, len, shldr]) => (
+                  <tr key={sz} style={{ borderBottom: `1px solid ${C.g2}` }}>
+                    <td style={{ fontFamily: F.m, fontWeight: 700, fontSize: 13, color: C.white, padding: '10px 12px' }}>{sz}</td>
+                    <td style={{ ...grotesk(13, 400), padding: '10px 12px' }}>{chest}</td>
+                    <td style={{ ...grotesk(13, 400), padding: '10px 12px' }}>{len}</td>
+                    <td style={{ ...grotesk(13, 400), padding: '10px 12px' }}>{shldr}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div style={{ ...mono(8, C.dim), marginTop: 16, lineHeight: 1.8 }}>
+              Measurements are approximate.<br />If between sizes, size up.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -473,12 +740,25 @@ const ArchiveScreen = ({ onSelectBatch, onNav }) => {
   const isMobile = useIsMobile();
   const [selected, setSelected] = useState(null);
   const [filter, setFilter] = useState('ALL');
-  const filters = ['ALL', 'ACTIVE', 'ARCHIVED'];
-  const shown = filter === 'ALL' ? BATCHES : BATCHES.filter(b => b.status === filter);
+  const [votes, setVotes] = useState({});
+  const filters = ['ALL', 'ACTIVE', 'ARCHIVED', 'INCOMING'];
 
-  const handleRowClick = (b) => {
-    setSelected(selected?.id === b.id ? null : b);
+  const shown = filter === 'ALL' ? BATCHES
+    : filter === 'INCOMING' ? BATCHES.filter(b => b.status === 'COMING_SOON')
+    : BATCHES.filter(b => b.status === filter);
+
+  useEffect(() => {
+    const v = {};
+    BATCHES.forEach(b => { if (localStorage.getItem(`rb-vote-${b.id}`)) v[b.id] = true; });
+    setVotes(v);
+  }, []);
+
+  const handleVote = (id) => {
+    localStorage.setItem(`rb-vote-${id}`, '1');
+    setVotes(prev => ({ ...prev, [id]: true }));
   };
+
+  const handleRowClick = (b) => { setSelected(selected?.id === b.id ? null : b); };
 
   return (
     <div className="screen-enter">
@@ -490,7 +770,7 @@ const ArchiveScreen = ({ onSelectBatch, onNav }) => {
             <div style={{ ...mono(9, C.red), marginBottom: 8 }}>DOC-ARC · BATCH RECORD · SOUTH AFRICA</div>
             <div style={{ ...grotesk(isMobile ? 22 : 28, 600), letterSpacing: '0.1em', textTransform: 'uppercase' }}>Batch Archive</div>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {filters.map(f => (
               <button key={f} onClick={() => setFilter(f)} data-hover
                 style={{ ...mono(9, filter === f ? C.white : C.dim), background: 'transparent', border: `1px solid ${filter === f ? C.red : C.grey}`, padding: '6px 14px', cursor: 'pointer', transition: 'all 0.15s' }}>
@@ -510,43 +790,76 @@ const ArchiveScreen = ({ onSelectBatch, onNav }) => {
               </tr>
             </thead>
             <tbody>
-              {shown.map(b => (
-                <tr key={b.id} className="batch-row"
-                  onClick={() => handleRowClick(b)}
-                  style={{ borderBottom: `1px solid ${C.g2}`, cursor: 'pointer', background: selected?.id === b.id ? '#0F0F0F' : 'transparent' }}>
-                  <td className="row-id" style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.dim, padding: '12px', transition: 'color 0.15s', whiteSpace: 'nowrap' }}>{b.id}</td>
-                  <td style={{ ...grotesk(13), padding: '12px', whiteSpace: 'nowrap' }}>{b.name}</td>
-                  <td style={{ ...mono(10, C.dim), padding: '12px', whiteSpace: 'nowrap' }}>{b.season}</td>
-                  <td style={{ ...mono(11, C.white), padding: '12px' }}>{b.units}</td>
-                  <td style={{ fontFamily: F.m, fontSize: 12, color: C.white, padding: '12px', whiteSpace: 'nowrap' }}>{b.price}</td>
-                  <td style={{ padding: '12px' }}><Badge v={b.status === 'ACTIVE' ? 'active' : 'neutral'}>{b.status}</Badge></td>
-                  <td style={{ ...mono(10), padding: '12px', whiteSpace: 'nowrap' }}>{b.date}</td>
-                </tr>
-              ))}
+              {shown.map(b => {
+                const isCS = b.status === 'COMING_SOON';
+                return (
+                  <tr key={b.id} className="batch-row" onClick={() => handleRowClick(b)}
+                    style={{ borderBottom: `1px solid ${C.g2}`, cursor: 'pointer', background: selected?.id === b.id ? '#0F0F0F' : 'transparent' }}>
+                    <td className="row-id" style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.dim, padding: '12px', transition: 'color 0.15s', whiteSpace: 'nowrap' }}>{b.id}</td>
+                    <td style={{ ...grotesk(13), padding: '12px', whiteSpace: 'nowrap' }}>{b.name}</td>
+                    <td style={{ ...mono(10, C.dim), padding: '12px', whiteSpace: 'nowrap' }}>{b.season}</td>
+                    <td style={{ ...mono(11, C.white), padding: '12px' }}>{b.units}</td>
+                    <td style={{ fontFamily: F.m, fontSize: 12, color: C.white, padding: '12px', whiteSpace: 'nowrap' }}>{b.price}</td>
+                    <td style={{ padding: '12px' }}><Badge v={b.status === 'ACTIVE' ? 'active' : 'neutral'}>{isCS ? 'INCOMING' : b.status}</Badge></td>
+                    <td style={{ ...mono(10), padding: '12px', whiteSpace: 'nowrap' }}>{isCS ? 'TBC' : b.date}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
 
         {selected && (
-          <div style={{ marginTop: 1, background: C.g2, border: `1px solid ${C.grey}`, padding: isMobile ? 20 : 28, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr 1fr', gap: isMobile ? 16 : 20, position: 'relative', animation: 'fadeUp 0.2s ease forwards' }}>
+          <div style={{ marginTop: 1, background: C.g2, border: `1px solid ${C.grey}`, padding: isMobile ? 20 : 28, position: 'relative', animation: 'fadeUp 0.2s ease forwards' }}>
             <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
-            {[['Batch ID', selected.id], ['Season', selected.season], ['Origin', selected.origin], ['Issued', selected.date]].map(([k, v]) => (
-              <div key={k}>
-                <div style={{ ...mono(8), marginBottom: 4 }}>{k}</div>
-                <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.08em', color: C.white }}>{v}</div>
+
+            <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', marginBottom: 16 }}>
+              {!isMobile && (
+                <div style={{ width: 100, height: 125, background: C.black, border: `1px solid ${C.grey}`, flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red, zIndex: 1 }} />
+                  {selected.images && selected.images[0] ? (
+                    <img src={selected.images[0]} alt={selected.name} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ ...mono(9, '#222') }}>IMG</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr 1fr', gap: isMobile ? 16 : 20, flex: 1 }}>
+                {[['Batch ID', selected.id], ['Season', selected.season], ['Origin', selected.origin], ['Issued', selected.date]].map(([k, v]) => (
+                  <div key={k}>
+                    <div style={{ ...mono(8), marginBottom: 4 }}>{k}</div>
+                    <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.08em', color: C.white }}>{v}</div>
+                  </div>
+                ))}
               </div>
-            ))}
-            <div style={{ gridColumn: '1/-1', borderTop: `1px solid ${C.grey}`, paddingTop: 16, marginTop: 4 }}>
+            </div>
+
+            <div style={{ borderTop: `1px solid ${C.grey}`, paddingTop: 16 }}>
               <div style={{ ...mono(8), marginBottom: 6 }}>Description</div>
               <div style={{ ...grotesk(13, 300, '#999'), lineHeight: 1.7 }}>{selected.desc}</div>
             </div>
-            <div style={{ gridColumn: '1/-1', display: 'flex', gap: 12, borderTop: `1px solid ${C.grey}`, paddingTop: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-              <Badge v={selected.status === 'ACTIVE' ? 'active' : 'archived'}>{selected.status}</Badge>
+            <div style={{ display: 'flex', gap: 12, borderTop: `1px solid ${C.grey}`, paddingTop: 16, marginTop: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+              <Badge v={selected.status === 'ACTIVE' ? 'active' : selected.status === 'COMING_SOON' ? 'neutral' : 'archived'}>{selected.status === 'COMING_SOON' ? 'INCOMING' : selected.status}</Badge>
               <span style={{ ...mono(9), alignSelf: 'center' }}>{selected.units} units · {selected.type} · {selected.fit} fit</span>
               {selected.status === 'ACTIVE' && (
-                <button onClick={() => { onSelectBatch(selected.id); onNav('product'); }} style={{ ...mono(9, C.red), background: 'none', border: `1px solid ${C.red}`, padding: '4px 12px', cursor: 'pointer', marginLeft: 'auto' }}>VIEW UNIT →</button>
+                <button onClick={() => { onSelectBatch(selected.id); onNav('product'); window.scrollTo(0,0); }} style={{ ...mono(9, C.red), background: 'none', border: `1px solid ${C.red}`, padding: '4px 12px', cursor: 'pointer', marginLeft: 'auto' }}>VIEW UNIT →</button>
               )}
             </div>
+
+            {selected.status === 'ARCHIVED' && (
+              <div style={{ borderTop: `1px solid ${C.grey}`, paddingTop: 16, marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                <div>
+                  <div style={{ ...mono(9, C.red), marginBottom: 4 }}>REISSUE VOTE · {selected.id}</div>
+                  <div style={{ ...grotesk(13, 300, '#999'), lineHeight: 1.8 }}>Cast your record. Votes are logged. No guarantees.</div>
+                </div>
+                <button onClick={() => !votes[selected.id] && handleVote(selected.id)} disabled={votes[selected.id]}
+                  style={{ border: `1px solid ${votes[selected.id] ? C.red : C.grey}`, color: votes[selected.id] ? C.red : C.dim, background: 'transparent', ...mono(9, votes[selected.id] ? C.red : C.dim), padding: '6px 16px', cursor: votes[selected.id] ? 'default' : 'pointer', transition: 'all 0.15s' }}>
+                  {votes[selected.id] ? 'Vote Recorded.' : 'Cast Vote →'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -586,7 +899,6 @@ const ManifestoScreen = () => {
           </div>
         ))}
       </div>
-
       <div style={{ borderTop: `1px solid ${C.grey}`, margin: isMobile ? '0 24px' : '0 48px', paddingTop: 48, paddingBottom: 80, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '32px' : '40px 64px', maxWidth: 720 }}>
         <div>
           <div style={{ ...mono(9, C.red), marginBottom: 20 }}>Always</div>
@@ -642,7 +954,6 @@ const QueueScreen = () => {
             <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               <div style={{ ...grotesk(20, 600), letterSpacing: '0.08em', textTransform: 'uppercase' }}>Register Record</div>
               <Divider />
-
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <div style={{ ...mono(9), marginBottom: 4 }}>Email address</div>
                 <input value={email} onChange={e => setEmail(e.target.value)}
@@ -650,7 +961,6 @@ const QueueScreen = () => {
                   placeholder="archive@domain.com"
                   style={{ background: C.g2, border: `1px solid ${focused ? C.red : C.grey}`, color: C.white, fontFamily: F.g, fontSize: 14, padding: '13px 16px', outline: 'none', borderRadius: 0, transition: 'border-color 0.15s' }} />
               </div>
-
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <div style={{ ...mono(9), marginBottom: 4 }}>Preferred size</div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -664,7 +974,6 @@ const QueueScreen = () => {
                   ))}
                 </div>
               </div>
-
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <div style={{ ...mono(9), marginBottom: 4 }}>Notify via</div>
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -678,7 +987,6 @@ const QueueScreen = () => {
                   ))}
                 </div>
               </div>
-
               <Divider />
               <Btn onClick={() => { if (email) setSubmitted(true); }} disabled={!email}>Submit Record</Btn>
               <div style={{ ...mono(8), lineHeight: 1.8 }}>Registration does not guarantee allocation. Records are permanent. No confirmation email is sent.</div>
@@ -721,22 +1029,23 @@ const CartScreen = ({ cart, removeFromCart, onNav }) => {
         {cart.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 400 }}>
             <div style={{ ...mono(10, C.dim) }}>No units selected.</div>
-            <Btn v="ghost" onClick={() => onNav('drop')}>Browse Drop</Btn>
+            <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>Browse Drop</Btn>
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? 40 : 48, alignItems: 'start' }}>
-
             <div>
               {cart.map((item, idx) => (
                 <div key={`${item.id}-${item.size}-${item.colour}`}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '20px 0' }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.white, marginBottom: 6 }}>{item.id} — {item.name}</div>
-                      <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>{item.size} · {item.colour}{item.quantity > 1 ? ` · QTY ${item.quantity}` : ''}</div>
+                      {item.isSet && (
+                        <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>Set includes: {item.setItems.join(' · ')}</div>
+                      )}
+                      <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}{item.quantity > 1 ? ` · QTY ${item.quantity}` : ''}</div>
                       <div style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{fmt(item.price * item.quantity)}</div>
                     </div>
-                    <button
-                      onClick={() => removeFromCart(item.id, item.size, item.colour)}
+                    <button onClick={() => removeFromCart(item.id, item.size, item.colour)}
                       style={{ ...mono(14, C.dim), background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 16px', lineHeight: 1, transition: 'color 0.15s' }}
                       onMouseEnter={e => e.currentTarget.style.color = C.red}
                       onMouseLeave={e => e.currentTarget.style.color = C.dim}>
@@ -747,11 +1056,10 @@ const CartScreen = ({ cart, removeFromCart, onNav }) => {
                 </div>
               ))}
             </div>
-
             <div style={{ border: `1px solid ${C.grey}`, padding: 28, position: 'relative' }}>
               <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
               <div style={{ ...mono(9, C.red), marginBottom: 20 }}>ORDER SUMMARY</div>
-              {[['Subtotal', fmt(subtotal)], ['Delivery', fmt(DELIVERY_FEE)]].map(([k, v]) => (
+              {[['Subtotal', fmt(subtotal)], ['Delivery (Pudo)', fmt(DELIVERY_FEE)]].map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.g2}` }}>
                   <span style={{ ...grotesk(13, 400, C.dim) }}>{k}</span>
                   <span style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{v}</span>
@@ -762,7 +1070,7 @@ const CartScreen = ({ cart, removeFromCart, onNav }) => {
                 <span style={{ ...grotesk(14, 600) }}>Total</span>
                 <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.white }}>{fmt(total)}</span>
               </div>
-              <Btn onClick={() => onNav('checkout')} style={{ width: '100%' }}>Proceed to Checkout →</Btn>
+              <Btn onClick={() => { onNav('checkout'); window.scrollTo(0,0); }} style={{ width: '100%' }}>Proceed to Checkout →</Btn>
             </div>
           </div>
         )}
@@ -786,16 +1094,12 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
 
   const provinces = ['Gauteng', 'Western Cape', 'KwaZulu-Natal', 'Eastern Cape', 'Free State', 'Limpopo', 'Mpumalanga', 'North West', 'Northern Cape'];
 
-  const setField = (k, v) => {
-    setForm(f => ({ ...f, [k]: v }));
-    if (errors[k]) setErrors(e => ({ ...e, [k]: false }));
-  };
+  const setField = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: false })); };
 
   const iStyle = (k) => ({
     background: C.g2, border: `1px solid ${errors[k] ? C.red : focused === k ? C.red : C.grey}`,
     color: C.white, fontFamily: F.g, fontSize: 14, padding: '13px 16px',
-    outline: 'none', borderRadius: 0, transition: 'border-color 0.15s',
-    width: '100%', boxSizing: 'border-box',
+    outline: 'none', borderRadius: 0, transition: 'border-color 0.15s', width: '100%', boxSizing: 'border-box',
   });
 
   const validate = () => {
@@ -808,7 +1112,6 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
-
     const parts = form.fullName.trim().split(' ');
     const firstName = parts[0];
     const lastName  = parts.slice(1).join(' ') || '-';
@@ -822,6 +1125,7 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
       price: fmt(total), customer_name: form.fullName, customer_phone: form.phone,
       customer_email: form.email, address_line1: form.address, suburb: form.suburb,
       city: form.city, province: form.province, postal_code: form.postalCode,
+      courier: 'Pudo',
     };
 
     try {
@@ -829,39 +1133,29 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_OWNER_TEMPLATE, { ...emailParams, to_email: STORE_OWNER_EMAIL });
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE, emailParams);
       }
-    } catch (err) {
-      console.error('EmailJS error:', err);
-    }
+    } catch (err) { console.error('EmailJS error:', err); }
 
     onOrderComplete(orderRef);
 
     const pfParams = {
-      merchant_id:      PAYFAST_MERCHANT_ID,
-      merchant_key:     PAYFAST_MERCHANT_KEY,
-      return_url:       'https://redbatch.store/success',
-      cancel_url:       'https://redbatch.store/cancel',
-      notify_url:       'https://redbatch.store/.netlify/functions/payfast-notify',
-      name_first:       firstName,
-      name_last:        lastName,
-      email_address:    form.email,
-      m_payment_id:     orderRef,
-      amount:           total.toFixed(2),
-      item_name:        `RED-BATCH ${orderRef}`,
-      item_description: productDesc,
-      passphrase:       PAYFAST_PASSPHRASE,
+      merchant_id: PAYFAST_MERCHANT_ID, merchant_key: PAYFAST_MERCHANT_KEY,
+      return_url: 'https://redbatch.store/success', cancel_url: 'https://redbatch.store/cancel',
+      notify_url: 'https://redbatch.store/.netlify/functions/payfast-notify',
+      name_first: firstName, name_last: lastName, email_address: form.email,
+      m_payment_id: orderRef, amount: total.toFixed(2),
+      item_name: `RED-BATCH ${orderRef}`, item_description: productDesc,
+      passphrase: PAYFAST_PASSPHRASE,
     };
 
     const sigString = Object.keys(pfParams).sort()
       .map(k => `${k}=${encodeURIComponent(pfParams[k]).replace(/%20/g, '+')}`)
       .join('&');
     const signature = (window.md5 ? md5 : () => '')(sigString);
-
     const submitParams = { ...pfParams, signature };
     delete submitParams.passphrase;
 
     const pf = document.createElement('form');
-    pf.method = 'POST';
-    pf.action = PAYFAST_URL;
+    pf.method = 'POST'; pf.action = PAYFAST_URL;
     Object.entries(submitParams).forEach(([k, v]) => {
       const inp = document.createElement('input');
       inp.type = 'hidden'; inp.name = k; inp.value = v;
@@ -872,12 +1166,12 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   };
 
   const textFields = [
-    { key: 'fullName',   label: 'Full Name',     type: 'text'  },
-    { key: 'email',      label: 'Email Address',  type: 'email' },
-    { key: 'phone',      label: 'Phone Number',   type: 'tel'   },
-    { key: 'address',    label: 'Street Address', type: 'text'  },
-    { key: 'suburb',     label: 'Suburb',         type: 'text'  },
-    { key: 'city',       label: 'City',           type: 'text'  },
+    { key: 'fullName', label: 'Full Name',     type: 'text'  },
+    { key: 'email',    label: 'Email Address',  type: 'email' },
+    { key: 'phone',    label: 'Phone Number',   type: 'tel'   },
+    { key: 'address',  label: 'Street Address', type: 'text'  },
+    { key: 'suburb',   label: 'Suburb',         type: 'text'  },
+    { key: 'city',     label: 'City',           type: 'text'  },
   ];
 
   return (
@@ -888,7 +1182,6 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
         <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: isMobile ? 36 : 52, letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1, marginBottom: 40 }}>CHECKOUT.</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? 40 : 48, alignItems: 'start' }}>
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {textFields.map(({ key, label, type }) => (
               <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -899,7 +1192,6 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
                 {errors[key] && <div style={{ ...mono(9, C.red) }}>Field required.</div>}
               </div>
             ))}
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ ...mono(9), marginBottom: 2 }}>Province *</div>
               <select value={form.province} onChange={e => setField('province', e.target.value)}
@@ -910,7 +1202,6 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
               </select>
               {errors.province && <div style={{ ...mono(9, C.red) }}>Field required.</div>}
             </div>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <div style={{ ...mono(9), marginBottom: 2 }}>Postal Code *</div>
               <input type="text" value={form.postalCode} onChange={e => setField('postalCode', e.target.value)}
@@ -927,12 +1218,12 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
               <div key={`${item.id}-${item.size}-${item.colour}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${C.g2}` }}>
                 <div>
                   <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 11, letterSpacing: '0.08em', color: C.white }}>{item.name}</div>
-                  <div style={{ ...mono(8, C.dim), marginTop: 3 }}>{item.size} · {item.colour}</div>
+                  <div style={{ ...mono(8, C.dim), marginTop: 3 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}</div>
                 </div>
                 <span style={{ fontFamily: F.m, fontSize: 12, color: C.white }}>{fmt(item.price * item.quantity)}</span>
               </div>
             ))}
-            {[['Subtotal', fmt(subtotal)], ['Delivery', fmt(DELIVERY_FEE)]].map(([k, v]) => (
+            {[['Subtotal', fmt(subtotal)], ['Delivery (Pudo)', fmt(DELIVERY_FEE)]].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.g2}` }}>
                 <span style={{ ...grotesk(13, 400, C.dim) }}>{k}</span>
                 <span style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{v}</span>
@@ -959,7 +1250,6 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
 /* ── SCREEN: SUCCESS ── */
 const SuccessScreen = ({ orderRef, clearCart, onNav }) => {
   const isMobile = useIsMobile();
-
   useEffect(() => { clearCart(); }, []);
 
   return (
@@ -978,7 +1268,436 @@ const SuccessScreen = ({ orderRef, clearCart, onNav }) => {
               Your unit is being prepared. You will be contacted once your order has been dispatched.
             </div>
           </div>
-          <Btn v="ghost" onClick={() => onNav('drop')}>Return to Drop</Btn>
+          <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>Return to Drop</Btn>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── SCREEN: CANCEL ── */
+const CancelScreen = ({ onNav }) => {
+  const isMobile = useIsMobile();
+  return (
+    <div className="screen-enter" style={{ minHeight: '100vh' }}>
+      <Ticker />
+      <div style={{ padding: isMobile ? '64px 24px' : '120px 48px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
+          <div style={{ border: `1px solid ${C.grey}`, padding: isMobile ? 40 : 56, position: 'relative', marginBottom: 32 }}>
+            {[{ t: true, l: true }, { t: true, l: false }, { t: false, l: true }, { t: false, l: false }].map(({ t, l }, i) => (
+              <div key={i} style={{ position: 'absolute', width: 8, height: 8, background: C.red, top: t ? -1 : 'auto', bottom: !t ? -1 : 'auto', left: l ? -1 : 'auto', right: !l ? -1 : 'auto' }} />
+            ))}
+            <div style={{ ...mono(9, C.dim), marginBottom: 16 }}>PAYMENT CANCELLED.</div>
+            <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: isMobile ? 28 : 40, letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1, marginBottom: 12 }}>Order not placed.</div>
+            <div style={{ ...mono(10, C.dim), marginBottom: 16 }}>Your cart has been saved. No payment was taken.</div>
+            <div style={{ ...grotesk(14, 300, '#888'), lineHeight: 1.8, marginBottom: 32 }}>
+              Return to checkout to complete your order, or browse the current drop.
+            </div>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Btn onClick={() => { onNav('checkout'); window.scrollTo(0,0); }}>Return to Checkout →</Btn>
+              <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>Browse Drop</Btn>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── SCREEN: MERCH ── */
+const MerchScreen = ({ onNav }) => {
+  const isMobile = useIsMobile();
+  const [noted, setNoted] = useState(() => !!localStorage.getItem('rb-merch-notify'));
+
+  const handleNotify = () => { localStorage.setItem('rb-merch-notify', '1'); setNoted(true); };
+
+  return (
+    <div className="screen-enter" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Ticker />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 600, margin: '0 auto', padding: isMobile ? '64px 24px' : '80px 48px', textAlign: 'center', width: '100%' }}>
+
+        <div style={{ fontFamily: F.m, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.red, marginBottom: 24, animation: 'glitch 4s ease infinite, glitch-color 4s ease infinite' }}>
+          MERCH · OBJECTS · COLLECTIBLES
+        </div>
+
+        <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px,8vw,96px)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 40 }}>
+          <div style={{ color: C.white }}>COMING</div>
+          <div style={{ color: C.red }}>SOON.</div>
+        </div>
+
+        <div style={{ borderBottom: `1px solid ${C.grey}`, marginBottom: 40 }} />
+
+        <div style={{ fontFamily: F.g, fontWeight: 300, fontSize: 14, color: '#888', lineHeight: 1.8, marginBottom: 32 }}>
+          Mugs. Metal prints. Canvas prints. Objects from the RED-BATCH system. Not clothing. Everything else. Dropping alongside CYCLE-02.
+        </div>
+
+        <div style={{ ...mono(9, C.dim), marginBottom: 32 }}>RECORD WILL EXIST.</div>
+
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Btn v="ghost" onClick={noted ? undefined : handleNotify} disabled={noted}>
+            {noted ? 'Noted. Record created.' : 'Notify Me →'}
+          </Btn>
+        </div>
+
+        <div style={{ border: `1px solid ${C.grey}`, padding: 24, maxWidth: 320, margin: '48px auto 0', position: 'relative' }}>
+          {[{ t: true, l: true }, { t: true, l: false }, { t: false, l: true }, { t: false, l: false }].map(({ t, l }, i) => (
+            <div key={i} style={{ position: 'absolute', width: 6, height: 6, background: C.red, top: t ? -1 : 'auto', bottom: !t ? -1 : 'auto', left: l ? -1 : 'auto', right: !l ? -1 : 'auto' }} />
+          ))}
+          <div style={{ ...mono(8, C.dim), marginBottom: 8 }}>SECTION</div>
+          <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 14, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.white, marginBottom: 12 }}>MERCH · OBJECTS</div>
+          <div style={{ borderBottom: `1px solid ${C.grey}`, marginBottom: 12 }} />
+          <div style={{ ...mono(9, C.dim), marginBottom: 4 }}>STATUS</div>
+          <div style={{ fontFamily: F.m, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red }}>UNANNOUNCED</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── SET CARD ── */
+const SetCard = ({ set, addToCart, onNav, isMobile }) => {
+  const [setColour, setSetColour] = useState(null);
+  const [added, setAdded] = useState(false);
+  const isArchived = set.status !== 'ACTIVE';
+
+  const handleAddSet = () => {
+    if (!setColour) return;
+    addToCart({
+      id: set.id,
+      name: set.name,
+      price: parsePrice(set.price),
+      size: 'SET',
+      colour: setColour,
+      isSet: true,
+      setItems: set.items,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
+  return (
+    <div style={{ background: C.black, position: 'relative' }}>
+      {!isArchived && <div style={{ position: 'absolute', top: -1, right: -1, width: 10, height: 10, background: C.red, zIndex: 1 }} />}
+
+      <div style={{ aspectRatio: '3/2', background: C.g2, position: 'relative', overflow: 'hidden' }}>
+        {set.images && set.images[0] ? (
+          <img src={set.images[0]} alt={set.name}
+            onError={e => { e.target.style.display = 'none'; }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        ) : (
+          <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: `1px solid ${C.grey}` }}>
+              <span style={{ ...mono(9, '#333') }}>TEE</span>
+            </div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ ...mono(9, '#333') }}>HOOD</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: 20 }}>
+        <div style={{ ...mono(9, C.dim) }}>{set.id} · {set.cycle}</div>
+        <div style={{ ...grotesk(14, 600), letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 4 }}>{set.name}</div>
+        <div style={{ ...mono(9, C.dim), marginTop: 4 }}>Includes {set.items.length} items</div>
+
+        <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '14px 0' }} />
+
+        <div style={{ marginBottom: 14 }}>
+          {set.includes.map((inc, i) => (
+            <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
+              <div style={{ width: 4, height: 4, background: C.red, flexShrink: 0 }} />
+              <span style={{ ...mono(9, C.dim) }}>{inc}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '14px 0' }} />
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 16, color: C.white }}>{set.price}</span>
+          <span style={{ ...mono(9, C.dim) }}>{set.units} sets remaining.</span>
+        </div>
+
+        {isArchived ? (
+          <>
+            <Badge v="archived">ARCHIVED</Badge>
+            <div style={{ ...mono(9, C.dim), marginTop: 8 }}>This set is permanently archived.</div>
+            <div style={{ marginTop: 12 }}>
+              <Btn v="ghost" onClick={() => { onNav('archive'); window.scrollTo(0,0); }}>View in Archive →</Btn>
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>
+                Select colourway{setColour && <span style={{ color: C.red }}> — {setColour}</span>}
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {['Washed Black', 'Off-White'].map(cw => {
+                  const sel = setColour === cw;
+                  return (
+                    <button key={cw} onClick={() => setSetColour(cw)}
+                      style={{ padding: '10px 16px', background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.grey}`, color: sel ? C.white : C.dim, ...mono(10), cursor: 'pointer', transition: 'all 0.15s' }}>
+                      {cw}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <Btn onClick={handleAddSet} disabled={!setColour} style={{ width: '100%' }}>
+              {added ? 'Set Added.' : 'Add Set to Cart'}
+            </Btn>
+
+            <div style={{ ...mono(8, C.dim), lineHeight: 1.8, marginTop: 10 }}>
+              Sets ship together. Delivery: R 60 via Pudo.<br />
+              This set exists in the archive permanently after closing.
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ── SCREEN: SETS ── */
+const SetsScreen = ({ onNav, cart, addToCart }) => {
+  const isMobile = useIsMobile();
+
+  return (
+    <div className="screen-enter">
+      <Ticker />
+
+      <div style={{ padding: isMobile ? '32px 24px 40px' : '48px 48px 64px', borderBottom: `1px solid ${C.grey}` }}>
+        <div className="stagger">
+          <div style={{ ...mono(9, C.red), marginBottom: 16 }}>THE RECORD · CYCLE SETS · PERMANENT</div>
+          <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(40px,6vw,72px)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1 }}>THE RECORD.</div>
+          <div style={{ ...grotesk(14, 300, '#999'), maxWidth: 560, lineHeight: 1.8, marginTop: 24 }}>
+            Every cycle produces one set. A tee and a hoodie — the complete look, issued together as a single verified unit. Once a cycle closes, the set is permanent. It never restocks. It never disappears. It exists in the archive forever — a purchasable memory you can still own.
+          </div>
+          <div style={{ ...mono(9, C.dim), marginTop: 16 }}>Sets are separate from individual batch drops. Limited to 20 units per cycle.</div>
+        </div>
+      </div>
+
+      <Divider />
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 1, background: C.grey }}>
+        {SETS.map(set => (
+          <SetCard key={set.id} set={set} addToCart={addToCart} onNav={onNav} isMobile={isMobile} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* ── SCREEN: ORIGIN ── */
+const OriginScreen = ({ onNav }) => {
+  const isMobile = useIsMobile();
+
+  const sections = [
+    { label: 'RECORD', body: 'RED-BATCH started as a question: what if clothing worked like a limited document. Not a trend. Not a drop culture flex. A record. Something issued, numbered, and permanent.' },
+    { label: 'THE SYSTEM', body: 'Every batch has an ID. Every unit has a number. When a batch closes, it is archived — not deleted. The archive is not a graveyard. It is proof. Proof that something real existed, was made, and was claimed.' },
+    { label: 'SOUTH AFRICA', body: 'This brand is South African. Built here, shipped from here, for here first. The manufacturing, the printing, the delivery — all local. That is not a selling point. That is just the record.' },
+    { label: 'THE CYCLE', body: 'A cycle is not a season. It ends when it sells out, not when the calendar says so. CYCLE-01 is the first. When it is gone, it is gone. CYCLE-02 will be different. Every cycle will be different. That is the only promise.' },
+    { label: 'THE GOAL', body: 'To build something that lasts without being loud about it. No hype. No countdown timers. No collab drops for attention. Just the work. Just the record.' },
+  ];
+
+  return (
+    <div className="screen-enter">
+      <div style={{ maxWidth: 720, margin: '0 auto', padding: isMobile ? '48px 24px' : '80px 48px' }}>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: `1px solid ${C.grey}`, paddingBottom: 24, marginBottom: 48 }}>
+          <div>
+            <div style={{ ...mono(9, C.red) }}>DOC-000</div>
+            <div style={{ ...grotesk(13, 700), letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 4 }}>RED-BATCH</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ ...mono(9, C.dim), lineHeight: 1.8 }}>
+              ORIGIN DOCUMENT<br />
+              2026<br />
+              SOUTH AFRICA
+            </div>
+          </div>
+        </div>
+
+        <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px,8vw,80px)', letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 48, opacity: 0, animation: 'fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) 0.05s forwards' }}>
+          ORIGIN.
+        </div>
+
+        {sections.map((s, i) => (
+          <div key={s.label} style={{ marginBottom: 40, opacity: 0, animation: `fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) ${0.12 + i * 0.08}s forwards` }}>
+            <div style={{ ...mono(9, C.red), marginBottom: 12 }}>{s.label}</div>
+            <div style={{ ...grotesk(15, 300, '#999'), lineHeight: 2.0 }}>{s.body}</div>
+          </div>
+        ))}
+
+        <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '48px 0' }} />
+
+        <div style={{ border: `1px solid ${C.grey}`, padding: 32, maxWidth: 320, position: 'relative' }}>
+          {[{ t: true, l: true }, { t: true, l: false }, { t: false, l: true }, { t: false, l: false }].map(({ t, l }, i) => (
+            <div key={i} style={{ position: 'absolute', width: 6, height: 6, background: C.red, top: t ? -1 : 'auto', bottom: !t ? -1 : 'auto', left: l ? -1 : 'auto', right: !l ? -1 : 'auto' }} />
+          ))}
+          <div style={{ ...mono(8, C.dim) }}>DOCUMENT</div>
+          <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 14, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.white, marginTop: 8 }}>DOC-000 · ORIGIN</div>
+          <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '16px 0' }} />
+          <div style={{ ...mono(9, C.dim) }}>FILED</div>
+          <div style={{ ...mono(11, C.white), marginTop: 4 }}>2026 · SOUTH AFRICA</div>
+          <div style={{ marginTop: 8 }}>
+            <div style={{ ...mono(9, C.dim) }}>STATUS</div>
+            <div style={{ ...mono(11, C.red), marginTop: 4 }}>ACTIVE</div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 32 }}>
+          <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>View Current Drop →</Btn>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+/* ── SCREEN: CONTACT ── */
+const ContactScreen = ({ onNav }) => {
+  const isMobile = useIsMobile();
+  const [cForm, setCForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [cErrors, setCErrors] = useState({});
+  const [cFocused, setCFocused] = useState(null);
+  const [cSent, setCSent] = useState(false);
+  const [cSending, setCSending] = useState(false);
+  const [contactRef, setContactRef] = useState('');
+
+  const cStyle = (k) => ({
+    background: '#1A1A1A',
+    border: `1px solid ${cErrors[k] ? C.red : cFocused === k ? C.red : '#2A2A2A'}`,
+    color: C.white, fontFamily: F.g, fontSize: 14, padding: '13px 16px',
+    outline: 'none', borderRadius: 0, transition: 'border-color 0.15s', width: '100%', boxSizing: 'border-box',
+  });
+
+  const setField = (k, v) => {
+    setCForm(f => ({ ...f, [k]: v }));
+    if (cErrors[k]) setCErrors(e => ({ ...e, [k]: false }));
+  };
+
+  const handleSubmit = async () => {
+    const e = {};
+    Object.entries(cForm).forEach(([k, v]) => { if (!v.trim()) e[k] = true; });
+    setCErrors(e);
+    if (Object.keys(e).length > 0) return;
+    setCSending(true);
+    const ref = `RBC-${Math.floor(1000 + Math.random() * 9000)}`;
+    setContactRef(ref);
+    try {
+      if (window.emailjs) {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_OWNER_TEMPLATE, {
+          contact_ref: ref, customer_name: cForm.name, customer_email: cForm.email,
+          subject: cForm.subject, message: cForm.message, type: 'CONTACT', to_email: STORE_OWNER_EMAIL,
+        });
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE, {
+          contact_ref: ref, customer_name: cForm.name, customer_email: cForm.email,
+          subject: cForm.subject, message: cForm.message, type: 'CONTACT_REPLY',
+        });
+      }
+    } catch (err) { console.error('EmailJS error:', err); }
+    setCSent(true);
+    setCSending(false);
+  };
+
+  const infoCards = [
+    { label: 'ORDER SUPPORT',    desc: 'Order issues, tracking, returns.' },
+    { label: 'SIZING & PRODUCT', desc: 'Fit questions before you buy.' },
+    { label: 'GENERAL',          desc: 'Everything else. Collaborations. Press.' },
+  ];
+
+  return (
+    <div className="screen-enter">
+      <Ticker />
+      <div style={{ padding: isMobile ? '40px 24px' : '64px 48px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 40 : 64, maxWidth: 1100 }}>
+
+        <div>
+          <div style={{ ...mono(9, C.red), marginBottom: 16 }}>CONTACT · SUPPORT · RED-BATCH</div>
+          <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(32px,5vw,56px)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 0.95, marginBottom: 32 }}>
+            <div style={{ color: C.white }}>GET IN</div>
+            <div style={{ color: C.red }}>TOUCH.</div>
+          </div>
+          <div style={{ ...grotesk(14, 300, '#888'), maxWidth: 400, lineHeight: 1.9, marginBottom: 40 }}>
+            Questions about an order, sizing, or the system. Fill in the form and a record will be created. Response time is typically within 24 hours.
+          </div>
+          <div>
+            {infoCards.map(({ label, desc }) => (
+              <div key={label} style={{ border: `1px solid ${C.grey}`, padding: '16px 20px', marginBottom: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ width: 8, height: 8, background: C.red, flexShrink: 0 }} />
+                <div>
+                  <div style={{ ...mono(8, C.dim) }}>{label}</div>
+                  <div style={{ ...grotesk(13, 400, C.white), marginTop: 2 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ ...mono(9, C.dim), lineHeight: 1.8, marginTop: 24 }}>
+            Response time: within 24 hours.<br />
+            South Africa only at this time.
+          </div>
+        </div>
+
+        <div>
+          <div style={{ ...grotesk(20, 600), letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 24 }}>Send a Record</div>
+          <Divider />
+          {cSent ? (
+            <div style={{ border: `1px solid ${C.grey}`, padding: 40, textAlign: 'center', position: 'relative', marginTop: 24 }}>
+              {[{ t: true, l: true }, { t: true, l: false }, { t: false, l: true }, { t: false, l: false }].map(({ t, l }, i) => (
+                <div key={i} style={{ position: 'absolute', width: 6, height: 6, background: C.red, top: t ? -1 : 'auto', bottom: !t ? -1 : 'auto', left: l ? -1 : 'auto', right: !l ? -1 : 'auto' }} />
+              ))}
+              <div style={{ ...mono(9, C.red) }}>RECORD CREATED.</div>
+              <div style={{ ...grotesk(28, 700), letterSpacing: '0.08em', textTransform: 'uppercase', margin: '16px 0' }}>Message received.</div>
+              <div style={{ ...mono(10, C.dim) }}>Ref: {contactRef}</div>
+              <div style={{ ...grotesk(14, 300, '#888'), lineHeight: 1.8, marginTop: 16 }}>
+                A record of your message has been created.<br />
+                We will respond to {cForm.email} within 24 hours.
+              </div>
+              <div style={{ marginTop: 32 }}>
+                <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>Return to Drop</Btn>
+              </div>
+            </div>
+          ) : (
+            <div style={{ marginTop: 24 }}>
+              {[
+                { key: 'name',  label: 'FULL NAME',      type: 'text'  },
+                { key: 'email', label: 'EMAIL ADDRESS',   type: 'email' },
+              ].map(({ key, label, type }) => (
+                <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+                  <label style={{ ...mono(9, C.dim) }}>{label}</label>
+                  <input type={type} value={cForm[key]} onChange={e => setField(key, e.target.value)}
+                    onFocus={() => setCFocused(key)} onBlur={() => setCFocused(null)}
+                    style={cStyle(key)} />
+                  {cErrors[key] && <span style={{ ...mono(8, C.red) }}>Required.</span>}
+                </div>
+              ))}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+                <label style={{ ...mono(9, C.dim) }}>SUBJECT</label>
+                <select value={cForm.subject} onChange={e => setField('subject', e.target.value)}
+                  onFocus={() => setCFocused('subject')} onBlur={() => setCFocused(null)}
+                  style={{ ...cStyle('subject'), cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
+                  <option value="">Select subject</option>
+                  {['Order Support', 'Sizing & Product Question', 'Collaboration / Press', 'General Enquiry'].map(opt => (
+                    <option key={opt} value={opt} style={{ background: C.g2, color: C.white }}>{opt}</option>
+                  ))}
+                </select>
+                {cErrors.subject && <span style={{ ...mono(8, C.red) }}>Required.</span>}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 24 }}>
+                <label style={{ ...mono(9, C.dim) }}>MESSAGE</label>
+                <textarea value={cForm.message} onChange={e => setField('message', e.target.value)}
+                  onFocus={() => setCFocused('message')} onBlur={() => setCFocused(null)}
+                  style={{ ...cStyle('message'), minHeight: 140, resize: 'vertical' }} />
+                {cErrors.message && <span style={{ ...mono(8, C.red) }}>Required.</span>}
+              </div>
+              <Btn onClick={handleSubmit} disabled={cSending}>
+                {cSending ? 'Sending...' : 'Send Record →'}
+              </Btn>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -987,51 +1706,48 @@ const SuccessScreen = ({ orderRef, clearCart, onNav }) => {
 
 /* ── APP ── */
 const App = () => {
-  const [screen, setScreen] = useState(() => localStorage.getItem('rb-screen') || 'drop');
+  const [screen, setScreen] = useState('drop');
   const [selectedBatchId, setSelectedBatchId] = useState('RB-001');
   const [cart, setCart] = useState([]);
   const [orderRef, setOrderRef] = useState('');
 
-  useEffect(() => {
-    if (window.emailjs) emailjs.init(EMAILJS_PUBLIC_KEY);
-  }, []);
+  useEffect(() => { if (window.emailjs) emailjs.init(EMAILJS_PUBLIC_KEY); }, []);
 
-  const nav = s => { setScreen(s); localStorage.setItem('rb-screen', s); window.scrollTo(0, 0); };
+  const nav = s => { setScreen(s); };
 
   const addToCart = (item) => {
     setCart(prev => {
       const existing = prev.find(c => c.id === item.id && c.size === item.size && c.colour === item.colour);
-      if (existing) {
-        return prev.map(c => c.id === item.id && c.size === item.size && c.colour === item.colour
-          ? { ...c, quantity: c.quantity + 1 } : c);
-      }
+      if (existing) return prev.map(c => c.id === item.id && c.size === item.size && c.colour === item.colour ? { ...c, quantity: c.quantity + 1 } : c);
       return [...prev, { ...item, quantity: 1 }];
     });
   };
 
-  const removeFromCart = (id, size, colour) => {
-    setCart(prev => prev.filter(c => !(c.id === id && c.size === size && c.colour === colour)));
-  };
-
+  const removeFromCart = (id, size, colour) => setCart(prev => prev.filter(c => !(c.id === id && c.size === size && c.colour === colour)));
   const clearCart = () => setCart([]);
-
   const onOrderComplete = (ref) => setOrderRef(ref);
 
   const screens = {
     drop:      <DropScreen onNav={nav} onSelectBatch={setSelectedBatchId} />,
-    product:   <ProductScreen onNav={nav} batchId={selectedBatchId} cart={cart} addToCart={addToCart} />,
+    product:   <ProductScreen onNav={nav} batchId={selectedBatchId} cart={cart} addToCart={addToCart} onSelectBatch={setSelectedBatchId} />,
     archive:   <ArchiveScreen onNav={nav} onSelectBatch={setSelectedBatchId} />,
     manifesto: <ManifestoScreen />,
     queue:     <QueueScreen />,
+    sets:      <SetsScreen onNav={nav} cart={cart} addToCart={addToCart} />,
+    origin:    <OriginScreen onNav={nav} />,
     cart:      <CartScreen cart={cart} removeFromCart={removeFromCart} clearCart={clearCart} onNav={nav} />,
     checkout:  <CheckoutScreen cart={cart} onNav={nav} onOrderComplete={onOrderComplete} />,
     success:   <SuccessScreen orderRef={orderRef} clearCart={clearCart} onNav={nav} />,
+    cancel:    <CancelScreen onNav={nav} />,
+    merch:     <MerchScreen onNav={nav} />,
+    contact:   <ContactScreen onNav={nav} />,
   };
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: F.g, color: C.white }}>
+    <div style={{ minHeight: '100vh', fontFamily: F.g, color: C.white, display: 'flex', flexDirection: 'column' }}>
       <Header screen={screen} onNav={nav} cart={cart} />
-      <div key={screen}>{screens[screen]}</div>
+      <div key={screen} style={{ flex: 1 }}>{screens[screen]}</div>
+      <Footer onNav={nav} />
     </div>
   );
 };

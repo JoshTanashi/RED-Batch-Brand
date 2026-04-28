@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build config.js from secrets
+        run: |
+          cat > config.js << 'ENDOFCONFIG'
+          const STORE_CONFIG = {
+            PAYFAST_MERCHANT_ID:       '${{ secrets.PAYFAST_MERCHANT_ID }}',
+            PAYFAST_MERCHANT_KEY:      '${{ secrets.PAYFAST_MERCHANT_KEY }}',
+            PAYFAST_PASSPHRASE:        '${{ secrets.PAYFAST_PASSPHRASE }}',
+            EMAILJS_PUBLIC_KEY:        '${{ secrets.EMAILJS_PUBLIC_KEY }}',
+            EMAILJS_SERVICE_ID:        '${{ secrets.EMAILJS_SERVICE_ID }}',
+            EMAILJS_OWNER_TEMPLATE:    '${{ secrets.EMAILJS_OWNER_TEMPLATE }}',
+            EMAILJS_CUSTOMER_TEMPLATE: '${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}',
+            STORE_OWNER_EMAIL:         '${{ secrets.STORE_OWNER_EMAIL }}',
+            DELIVERY_FEE:              60,
+            PAYFAST_URL:               'https://sandbox.payfast.co.za/eng/process',
+          };
+          ENDOFCONFIG
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          exclude_assets: '.github,.git,.gitignore,.env,.env.local,*.env.*'

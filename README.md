@@ -4,6 +4,8 @@ Web storefront for RED-Batch — a controlled release apparel brand from South A
 
 Live product categories: **T-shirts** and **Hoodies** only.
 
+**Live site:** [joshtanashi.github.io/RED-Batch-Brand](https://joshtanashi.github.io/RED-Batch-Brand/)
+
 ---
 
 ## Stack
@@ -23,10 +25,12 @@ No bundler. No framework. No dependencies to install. Open `index.html` via a lo
 ## Structure
 
 ```
-index.html    — Shell. Loads fonts, React, Babel, and the three source files.
-styles.css    — Global styles: cursor, ticker, animations, scrollbar.
-effects.js    — Film grain canvas + custom crosshair cursor (vanilla JS).
-app.jsx       — Full React app: data, components, screens, routing.
+index.html       — Shell. Loads fonts, React, Babel, and the three source files.
+styles.css       — Global styles: cursor, ticker, animations, scrollbar.
+effects.js       — Film grain canvas + custom crosshair cursor (vanilla JS).
+app.jsx          — Full React app: data, components, screens, routing.
+config.js        — Store credentials (gitignored — never committed).
+config.example.js — Template for config.js. Safe to commit.
 ```
 
 ---
@@ -53,9 +57,31 @@ All units manufactured in **South Africa**.
 
 ---
 
+## Deployment
+
+The site deploys automatically to GitHub Pages on every push to `main`.
+
+**How it works:**
+1. GitHub Actions runs `.github/workflows/deploy.yml` on push to `main`
+2. The workflow builds `config.js` from GitHub Secrets and copies all site files to the `gh-pages` branch
+3. GitHub Pages serves the `gh-pages` branch at the live URL above
+
+**Setting up credentials for production:**
+1. Go to the repo on GitHub → Settings → Secrets and variables → Actions
+2. Add each secret key from `config.example.js` with your real values
+3. Push any change to `main` to trigger a redeploy with the new secrets
+
+---
+
 ## Running Locally
 
 Babel Standalone requires HTTP — it won't load `.jsx` files over `file://`.
+
+**Step 1 — Copy config:**
+```bash
+cp config.example.js config.js
+# Fill in your real credentials in config.js
+```
 
 **Option 1 — VS Code Live Server**
 Install the Live Server extension, right-click `index.html` → *Open with Live Server*.

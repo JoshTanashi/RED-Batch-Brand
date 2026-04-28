@@ -104,3 +104,20 @@ html, body { height: 100%; background: #0D0D0D; overflow-x: hidden; }
 .batch-row { transition: background 0.12s; }
 .batch-row:hover { background: #111 !important; }
 .batch-row:hover .row-id { color: #B22222 !important; }
+
+/* ── Glitch animation (MERCH button) ── */
+@keyframes glitch {
+  0%,90%,100% { transform: translate(0); opacity: 1; }
+  91%  { transform: translate(-2px, 1px); opacity: 0.8; }
+  93%  { transform: translate(2px, -1px); }
+  95%  { transform: translate(-1px, 0); opacity: 0.9; }
+  97%  { transform: translate(0); opacity: 1; }
+}
+
+@keyframes glitch-color {
+  0%,90%,100% { color: #888; text-shadow: none; }
+  91% { color: #B22222; text-shadow: -1px 0 #F0F0F0; }
+  93% { color: #F0F0F0; text-shadow: 1px 0 #B22222; }
+  95% { color: #B22222; text-shadow: none; }
+  97% { color: #888; text-shadow: none; }
+}
