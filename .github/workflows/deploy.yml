@@ -37,4 +37,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+          force_orphan: true
           exclude_assets: '.github,.git,.gitignore,.env,.env.local,*.env.*'
