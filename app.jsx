@@ -64,7 +64,7 @@ const SETS = [
 const BATCHES = [
   {
     id: 'RB-001', season: 'CYCLE-01', name: 'Heavyweight Tee',
-    units: 70, status: 'ACTIVE', date: '2026.04.23', price: 'R 599',
+    units: 70, status: 'ACTIVE', date: '2026.04.23', price: 'R 1',
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
     desc: 'Heavyweight 380gsm cotton. Oversized boxy cut, dropped shoulder. Each unit is issued a permanent batch identifier. Washed black and off-white colourways. 70 units. No restock.',
