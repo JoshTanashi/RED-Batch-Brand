@@ -25,34 +25,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build config.js from secrets
-        env:
-          PAYFAST_MERCHANT_ID: ${{ secrets.PAYFAST_MERCHANT_ID }}
-          PAYFAST_MERCHANT_KEY: ${{ secrets.PAYFAST_MERCHANT_KEY }}
-          PAYFAST_PASSPHRASE: ${{ secrets.PAYFAST_PASSPHRASE }}
-          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
-          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
-          EMAILJS_OWNER_TEMPLATE: ${{ secrets.EMAILJS_OWNER_TEMPLATE }}
-          EMAILJS_CUSTOMER_TEMPLATE: ${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}
-          STORE_OWNER_EMAIL: ${{ secrets.STORE_OWNER_EMAIL }}
         run: |
-          python3 - <<'PYEOF'
-          import os
-          config = f"""const STORE_CONFIG = {{
-            PAYFAST_MERCHANT_ID:       '{os.environ["PAYFAST_MERCHANT_ID"]}',
-            PAYFAST_MERCHANT_KEY:      '{os.environ["PAYFAST_MERCHANT_KEY"]}',
-            PAYFAST_PASSPHRASE:        '{os.environ["PAYFAST_PASSPHRASE"]}',
-            EMAILJS_PUBLIC_KEY:        '{os.environ["EMAILJS_PUBLIC_KEY"]}',
-            EMAILJS_SERVICE_ID:        '{os.environ["EMAILJS_SERVICE_ID"]}',
-            EMAILJS_OWNER_TEMPLATE:    '{os.environ["EMAILJS_OWNER_TEMPLATE"]}',
-            EMAILJS_CUSTOMER_TEMPLATE: '{os.environ["EMAILJS_CUSTOMER_TEMPLATE"]}',
-            STORE_OWNER_EMAIL:         '{os.environ["STORE_OWNER_EMAIL"]}',
-            DELIVERY_FEE:              60,
-            PAYFAST_URL:               'https://sandbox.payfast.co.za/eng/process',
-          }};"""
-          with open('config.js', 'w') as f:
-              f.write(config)
-          print("config.js built successfully")
-          PYEOF
+          echo "const STORE_CONFIG = {" > config.js
+          echo "  PAYFAST_MERCHANT_ID:       '${{ secrets.PAYFAST_MERCHANT_ID }}'," >> config.js
+          echo "  PAYFAST_MERCHANT_KEY:      '${{ secrets.PAYFAST_MERCHANT_KEY }}'," >> config.js
+          echo "  PAYFAST_PASSPHRASE:        '${{ secrets.PAYFAST_PASSPHRASE }}'," >> config.js
+          echo "  EMAILJS_PUBLIC_KEY:        '${{ secrets.EMAILJS_PUBLIC_KEY }}'," >> config.js
+          echo "  EMAILJS_SERVICE_ID:        '${{ secrets.EMAILJS_SERVICE_ID }}'," >> config.js
+          echo "  EMAILJS_OWNER_TEMPLATE:    '${{ secrets.EMAILJS_OWNER_TEMPLATE }}'," >> config.js
+          echo "  EMAILJS_CUSTOMER_TEMPLATE: '${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}'," >> config.js
+          echo "  STORE_OWNER_EMAIL:         '${{ secrets.STORE_OWNER_EMAIL }}'," >> config.js
+          echo "  DELIVERY_FEE:              60," >> config.js
+          echo "  PAYFAST_URL:               'https://sandbox.payfast.co.za/eng/process'," >> config.js
+          echo "};" >> config.js
+          echo "config.js contents:"
+          cat config.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
