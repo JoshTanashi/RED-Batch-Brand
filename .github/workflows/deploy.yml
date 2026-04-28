@@ -36,7 +36,7 @@ jobs:
           echo "  EMAILJS_CUSTOMER_TEMPLATE: '${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}'," >> config.js
           echo "  STORE_OWNER_EMAIL:         '${{ secrets.STORE_OWNER_EMAIL }}'," >> config.js
           echo "  DELIVERY_FEE:              60," >> config.js
-          echo "  PAYFAST_URL:               'https://www.payfast.co.za/eng/process'," >> config.js
+          echo "  PAYFAST_URL:               'https://sandbox.payfast.co.za/eng/process'," >> config.js
           echo "};" >> config.js
           echo "config.js contents:"
           cat config.js
