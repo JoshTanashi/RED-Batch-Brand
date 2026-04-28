@@ -6,36 +6,58 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Build config.js from secrets
         run: |
-          cat > config.js << 'ENDOFCONFIG'
+          cat > config.js << ENDOFCONFIG
           const STORE_CONFIG = {
-            PAYFAST_MERCHANT_ID:       '${{ secrets.PAYFAST_MERCHANT_ID }}',
-            PAYFAST_MERCHANT_KEY:      '${{ secrets.PAYFAST_MERCHANT_KEY }}',
-            PAYFAST_PASSPHRASE:        '${{ secrets.PAYFAST_PASSPHRASE }}',
-            EMAILJS_PUBLIC_KEY:        '${{ secrets.EMAILJS_PUBLIC_KEY }}',
-            EMAILJS_SERVICE_ID:        '${{ secrets.EMAILJS_SERVICE_ID }}',
-            EMAILJS_OWNER_TEMPLATE:    '${{ secrets.EMAILJS_OWNER_TEMPLATE }}',
-            EMAILJS_CUSTOMER_TEMPLATE: '${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}',
-            STORE_OWNER_EMAIL:         '${{ secrets.STORE_OWNER_EMAIL }}',
+            PAYFAST_MERCHANT_ID:       '${PAYFAST_MERCHANT_ID}',
+            PAYFAST_MERCHANT_KEY:      '${PAYFAST_MERCHANT_KEY}',
+            PAYFAST_PASSPHRASE:        '${PAYFAST_PASSPHRASE}',
+            EMAILJS_PUBLIC_KEY:        '${EMAILJS_PUBLIC_KEY}',
+            EMAILJS_SERVICE_ID:        '${EMAILJS_SERVICE_ID}',
+            EMAILJS_OWNER_TEMPLATE:    '${EMAILJS_OWNER_TEMPLATE}',
+            EMAILJS_CUSTOMER_TEMPLATE: '${EMAILJS_CUSTOMER_TEMPLATE}',
+            STORE_OWNER_EMAIL:         '${STORE_OWNER_EMAIL}',
             DELIVERY_FEE:              60,
             PAYFAST_URL:               'https://sandbox.payfast.co.za/eng/process',
           };
           ENDOFCONFIG
+        env:
+          PAYFAST_MERCHANT_ID: ${{ secrets.PAYFAST_MERCHANT_ID }}
+          PAYFAST_MERCHANT_KEY: ${{ secrets.PAYFAST_MERCHANT_KEY }}
+          PAYFAST_PASSPHRASE: ${{ secrets.PAYFAST_PASSPHRASE }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_OWNER_TEMPLATE: ${{ secrets.EMAILJS_OWNER_TEMPLATE }}
+          EMAILJS_CUSTOMER_TEMPLATE: ${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}
+          STORE_OWNER_EMAIL: ${{ secrets.STORE_OWNER_EMAIL }}
 
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          force_orphan: true
-          exclude_assets: '.github,.git,.gitignore,.env,.env.local,*.env.*'
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
