@@ -50,13 +50,21 @@ const SETS = [
     id: 'SET-001',
     cycle: 'CYCLE-01',
     name: 'The CYCLE-01 Record',
-    items: ['RB-001', 'RB-002'],
-    price: 'R 1 299',
-    units: 20,
+    items: ['RB-001', 'RB-002', 'RB-003', 'RB-004', 'RB-005'],
+    price: 'R 3 299',
+    units: 10,
     status: 'ACTIVE',
     date: '2026.04.23',
-    desc: 'The complete CYCLE-01 record. One Heavyweight Tee and one Oversized Hoodie. Matching colourway. Issued together as a single verified unit. Once this set closes it exists permanently in the archive — a purchasable memory of the cycle. 20 sets. No restock. Ever.',
-    includes: ['Heavyweight Tee (RB-001)', 'Oversized Hoodie (RB-002)', 'Matching colourway', 'Shared batch stamp', 'Collector packaging'],
+    desc: 'The complete CYCLE-01 record. Every tee from the cycle plus the best-seller hoodie. One colourway. Issued together as a single verified unit. This is the full collection in one record — once it closes it exists permanently in the archive. 10 sets only. No restock. Ever.',
+    includes: [
+      'Heavyweight Tee Vol.1 (RB-001)',
+      'Heavyweight Tee Vol.2 (RB-003)',
+      'Heavyweight Tee Vol.3 (RB-005)',
+      'Oversized Hoodie — Best Seller (RB-002)',
+      'Matching colourway across all pieces',
+      'Shared batch stamp',
+      'Collector packaging',
+    ],
     images: ['./images/set-001-a.jpg', './images/set-001-b.jpg'],
   },
 ];
@@ -157,6 +165,75 @@ const Divider = ({ color = C.grey }) => (
   <div style={{ borderBottom: `1px solid ${color}`, width: '100%' }} />
 );
 
+/* ── ANIMATED BACKGROUND ── */
+const AnimatedBg = () => {
+  const canvasRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let animId;
+    let particles = [];
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 1.2 + 0.3,
+        dx: (Math.random() - 0.5) * 0.15,
+        dy: (Math.random() - 0.5) * 0.15,
+        opacity: Math.random() * 0.25 + 0.05,
+        red: Math.random() < 0.08,
+      });
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.red
+          ? `rgba(178,34,34,${p.opacity})`
+          : `rgba(240,240,240,${p.opacity})`;
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+      });
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        opacity: 1,
+      }}
+    />
+  );
+};
+
 /* ── TICKER ── */
 const Ticker = () => {
   const items = ['CYCLE-01', 'RELEASE ACTIVE', '120 UNITS', '2026.04.23', 'SOUTH AFRICA', 'VERIFIED DROP', 'RED-BATCH SYSTEM', 'DOC-001'];
@@ -219,7 +296,13 @@ const Footer = ({ onNav }) => {
           </div>
         </div>
       </div>
-      <div style={{ borderTop: `1px solid #1A1A1A`, marginTop: 32, paddingTop: 20, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+      <div style={{ borderTop: `1px solid #1A1A1A`, marginTop: 32, paddingTop: 20 }}>
+        <div style={{ ...mono(9, C.red), marginBottom: 10 }}>POLICY</div>
+        <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.8, maxWidth: 560 }}>
+          All sales are final. No returns, no refunds, no exchanges. Every RED-BATCH unit is made-to-order — production begins when payment is confirmed. We cannot cancel or reverse an order once placed. Please review your size and colourway selection carefully before completing your purchase.
+        </div>
+      </div>
+      <div style={{ borderTop: `1px solid #1A1A1A`, marginTop: 24, paddingTop: 20, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <span style={{ ...mono(8, C.dim) }}>RED-BATCH · CYCLE-01 · 2026.04.23</span>
         <span style={{ ...mono(8, C.dim) }}>CONFIDENTIAL · DOC-001</span>
       </div>
@@ -527,6 +610,7 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
   const batch = BATCHES.find(b => b.id === batchId) || BATCHES[0];
   const [size, setSize] = useState(null);
   const [colour, setColour] = useState(null);
+  const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [hovSize, setHovSize] = useState(null);
   const [hovColour, setHovColour] = useState(null);
@@ -535,7 +619,7 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
   const topRef = useRef(null);
   const isClosed = batch.units === 0;
 
-  useEffect(() => { setActiveImg(0); setSize(null); setColour(null); }, [batchId]);
+  useEffect(() => { setActiveImg(0); setSize(null); setColour(null); setQty(1); }, [batchId]);
 
   useEffect(() => {
     if (topRef.current) {
@@ -545,8 +629,9 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
 
   const handleAddToCart = () => {
     if (!size || !colour || isClosed) return;
-    addToCart({ id: batch.id, name: batch.name, price: parsePrice(batch.price), size, colour });
+    addToCart({ id: batch.id, name: batch.name, price: parsePrice(batch.price), size, colour, quantity: qty });
     setAdded(true);
+    setQty(1);
     setTimeout(() => setAdded(false), 2000);
   };
 
@@ -656,10 +741,51 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
             </div>
           </div>
 
+          <div>
+            <div style={{ ...mono(9), marginBottom: 8 }}>QUANTITY</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginTop: 16, marginBottom: 20 }}>
+              <button
+                onClick={() => setQty(q => Math.max(1, q - 1))}
+                disabled={qty === 1}
+                style={{ width: 32, height: 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 1 ? 'not-allowed' : 'pointer', opacity: qty === 1 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
+                −
+              </button>
+              <div style={{ width: 48, height: 32, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 13, color: C.white }}>
+                {qty}
+              </div>
+              <button
+                onClick={() => setQty(q => Math.min(10, q + 1))}
+                disabled={qty === 10}
+                style={{ width: 32, height: 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 10 ? 'not-allowed' : 'pointer', opacity: qty === 10 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
+                +
+              </button>
+            </div>
+          </div>
+
           <Btn onClick={handleAddToCart} disabled={!size || !colour || isClosed}>
             {isClosed ? 'Batch closed.' : added ? 'Unit Added.' : 'Add to Cart'}
           </Btn>
           {added && <div style={{ ...mono(10, C.red) }}>Unit added to cart.</div>}
+
+          <div style={{ border: `1px solid ${C.grey}`, background: C.g2, padding: '14px 16px', marginTop: 16, position: 'relative' }}>
+            <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red }} />
+            <div style={{ ...mono(9, C.red), letterSpacing: '0.16em' }}>MADE TO ORDER</div>
+            <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.7, marginTop: 6 }}>
+              This product is made-to-order. Allow 5–8 business days for production and order fulfilment before dispatch.
+            </div>
+            <div style={{ ...mono(8, C.dim), marginTop: 8 }}>
+              Manufactured in South Africa  ·  Delivered via Pudo
+            </div>
+          </div>
+
+          <div style={{ padding: '12px 16px', borderTop: `1px solid ${C.g2}` }}>
+            <div style={{ ...mono(8, C.dim), lineHeight: 1.8 }}>
+              No returns. No refunds. All sales are final.<br />
+              Each unit is made-to-order specifically for you.<br />
+              Please check sizing carefully before ordering.<br />
+              Size guide available above.
+            </div>
+          </div>
 
           <Divider />
 
@@ -1013,7 +1139,7 @@ const QueueScreen = () => {
 };
 
 /* ── SCREEN: CART ── */
-const CartScreen = ({ cart, removeFromCart, onNav }) => {
+const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
   const isMobile = useIsMobile();
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const total = subtotal + DELIVERY_FEE;
@@ -1042,7 +1168,28 @@ const CartScreen = ({ cart, removeFromCart, onNav }) => {
                       {item.isSet && (
                         <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>Set includes: {item.setItems.join(' · ')}</div>
                       )}
-                      <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}{item.quantity > 1 ? ` · QTY ${item.quantity}` : ''}</div>
+                      <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}</div>
+                      {!item.isSet && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 8 }}>
+                          <button
+                            onClick={() => updateCartQuantity(item.id, item.size, item.colour, item.quantity - 1)}
+                            style={{ width: 26, height: 26, border: `1px solid ${C.grey}`, background: 'transparent', color: C.dim, fontSize: 14, cursor: 'pointer', transition: 'color 0.15s' }}
+                            onMouseEnter={e => e.currentTarget.style.color = C.white}
+                            onMouseLeave={e => e.currentTarget.style.color = C.dim}>
+                            −
+                          </button>
+                          <div style={{ width: 36, height: 26, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 11, color: C.white }}>
+                            {item.quantity}
+                          </div>
+                          <button
+                            onClick={() => updateCartQuantity(item.id, item.size, item.colour, Math.min(10, item.quantity + 1))}
+                            style={{ width: 26, height: 26, border: `1px solid ${C.grey}`, background: 'transparent', color: C.dim, fontSize: 14, cursor: 'pointer', transition: 'color 0.15s' }}
+                            onMouseEnter={e => e.currentTarget.style.color = C.white}
+                            onMouseLeave={e => e.currentTarget.style.color = C.dim}>
+                            +
+                          </button>
+                        </div>
+                      )}
                       <div style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{fmt(item.price * item.quantity)}</div>
                     </div>
                     <button onClick={() => removeFromCart(item.id, item.size, item.colour)}
@@ -1091,6 +1238,8 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   const [errors, setErrors] = useState({});
   const [focused, setFocused] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [policyAccepted, setPolicyAccepted] = useState(false);
+  const [policyError, setPolicyError] = useState(false);
 
   const provinces = ['Gauteng', 'Western Cape', 'KwaZulu-Natal', 'Eastern Cape', 'Free State', 'Limpopo', 'Mpumalanga', 'North West', 'Northern Cape'];
 
@@ -1110,6 +1259,7 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   };
 
   const handleSubmit = async () => {
+    if (!policyAccepted) { setPolicyError(true); return; }
     if (!validate()) return;
     setSubmitting(true);
     const parts = form.fullName.trim().split(' ');
@@ -1238,9 +1388,20 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
         </div>
 
         <div style={{ marginTop: 40, borderTop: `1px solid ${C.grey}`, paddingTop: 32 }}>
-          <Btn onClick={handleSubmit} disabled={submitting}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 16 }}>
+            <div
+              onClick={() => { setPolicyAccepted(a => !a); setPolicyError(false); }}
+              style={{ width: 14, height: 14, border: `1px solid ${policyAccepted ? C.red : C.grey}`, background: policyAccepted ? C.red : 'transparent', cursor: 'pointer', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+              {policyAccepted && <span style={{ color: C.white, fontSize: 10, lineHeight: 1 }}>✓</span>}
+            </div>
+            <div style={{ ...mono(9, '#888'), lineHeight: 1.6 }}>
+              I understand that all sales are final. No returns or refunds are accepted. Each item is made-to-order for me specifically.
+            </div>
+          </div>
+          <Btn onClick={handleSubmit} disabled={submitting || !policyAccepted} style={{ opacity: !policyAccepted ? 0.4 : 1, cursor: !policyAccepted ? 'not-allowed' : 'pointer' }}>
             {submitting ? 'Processing...' : 'Confirm Order — Pay Now →'}
           </Btn>
+          {policyError && <div style={{ ...mono(9, C.red), marginTop: 8 }}>Please accept the policy to continue.</div>}
         </div>
       </div>
     </div>
@@ -1414,8 +1575,11 @@ const SetCard = ({ set, addToCart, onNav, isMobile }) => {
 
         <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '14px 0' }} />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 16, color: C.white }}>{set.price}</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+          <div>
+            <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 16, color: C.white }}>{set.price}</span>
+            <div style={{ ...mono(8, C.dim), marginTop: 4 }}>Includes {set.items.length} items  ·  Saving vs individual purchase</div>
+          </div>
           <span style={{ ...mono(9, C.dim) }}>{set.units} sets remaining.</span>
         </div>
 
@@ -1451,6 +1615,7 @@ const SetCard = ({ set, addToCart, onNav, isMobile }) => {
             </Btn>
 
             <div style={{ ...mono(8, C.dim), lineHeight: 1.8, marginTop: 10 }}>
+              Sets are made-to-order. Allow 7–10 business days for full set production and fulfilment.<br />
               Sets ship together. Delivery: R 60 via Pudo.<br />
               This set exists in the archive permanently after closing.
             </div>
@@ -1716,14 +1881,24 @@ const App = () => {
   const nav = s => { setScreen(s); };
 
   const addToCart = (item) => {
+    const qty = item.quantity || 1;
     setCart(prev => {
       const existing = prev.find(c => c.id === item.id && c.size === item.size && c.colour === item.colour);
-      if (existing) return prev.map(c => c.id === item.id && c.size === item.size && c.colour === item.colour ? { ...c, quantity: c.quantity + 1 } : c);
-      return [...prev, { ...item, quantity: 1 }];
+      if (existing) return prev.map(c => c.id === item.id && c.size === item.size && c.colour === item.colour ? { ...c, quantity: Math.min(10, c.quantity + qty) } : c);
+      return [...prev, { ...item, quantity: qty }];
     });
   };
 
   const removeFromCart = (id, size, colour) => setCart(prev => prev.filter(c => !(c.id === id && c.size === size && c.colour === colour)));
+
+  const updateCartQuantity = (id, size, colour, newQty) => {
+    if (newQty <= 0) {
+      removeFromCart(id, size, colour);
+    } else {
+      setCart(prev => prev.map(c => c.id === id && c.size === size && c.colour === colour ? { ...c, quantity: Math.min(10, newQty) } : c));
+    }
+  };
+
   const clearCart = () => setCart([]);
   const onOrderComplete = (ref) => setOrderRef(ref);
 
@@ -1735,7 +1910,7 @@ const App = () => {
     queue:     <QueueScreen />,
     sets:      <SetsScreen onNav={nav} cart={cart} addToCart={addToCart} />,
     origin:    <OriginScreen onNav={nav} />,
-    cart:      <CartScreen cart={cart} removeFromCart={removeFromCart} clearCart={clearCart} onNav={nav} />,
+    cart:      <CartScreen cart={cart} removeFromCart={removeFromCart} updateCartQuantity={updateCartQuantity} clearCart={clearCart} onNav={nav} />,
     checkout:  <CheckoutScreen cart={cart} onNav={nav} onOrderComplete={onOrderComplete} />,
     success:   <SuccessScreen orderRef={orderRef} clearCart={clearCart} onNav={nav} />,
     cancel:    <CancelScreen onNav={nav} />,
@@ -1744,10 +1919,13 @@ const App = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: F.g, color: C.white, display: 'flex', flexDirection: 'column' }}>
-      <Header screen={screen} onNav={nav} cart={cart} />
-      <div key={screen} style={{ flex: 1 }}>{screens[screen]}</div>
-      <Footer onNav={nav} />
+    <div style={{ minHeight: '100vh', fontFamily: F.g, color: C.white, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <AnimatedBg />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <Header screen={screen} onNav={nav} cart={cart} />
+        <div key={screen} style={{ flex: 1 }}>{screens[screen]}</div>
+        <Footer onNav={nav} />
+      </div>
     </div>
   );
 };
