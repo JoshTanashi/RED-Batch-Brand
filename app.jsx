@@ -65,7 +65,7 @@ const SETS = [
       'Shared batch stamp',
       'Collector packaging',
     ],
-    images: ['./images/set-001-a.jpg', './images/set-001-b.jpg'],
+    images: ['./images/set-001-a.png', './images/set-001-b.png'],
   },
 ];
 
@@ -76,7 +76,7 @@ const BATCHES = [
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
     desc: 'Heavyweight 380gsm cotton. Oversized boxy cut, dropped shoulder. Each unit is issued a permanent batch identifier. Washed black and off-white colourways. 70 units. No restock.',
-    images: ['./images/rb-001-a.jpg','./images/rb-001-b.jpg','./images/rb-001-c.jpg'],
+    images: ['./images/rb-001-a.png','./images/rb-001-b.png','./images/rb-001-c.png'],
   },
   {
     id: 'RB-002', season: 'CYCLE-01', name: 'Oversized Hoodie',
@@ -84,7 +84,7 @@ const BATCHES = [
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
     desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, single kangaroo pocket, ribbed cuffs and hem. Batch identifier woven into back neck label. 50 units. No restock.',
-    images: ['./images/rb-002-a.jpg','./images/rb-002-b.jpg','./images/rb-002-c.jpg'],
+    images: ['./images/rb-002-a.png','./images/rb-002-b.png','./images/rb-002-c.png'],
   },
   {
     id: 'RB-003', season: 'CYCLE-01', name: 'Heavyweight Tee Vol.2',
@@ -92,7 +92,7 @@ const BATCHES = [
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
     desc: 'Second colourway drop. Heavyweight 380gsm cotton. Same oversized boxy cut as RB-001. New graphic treatment. 60 units. No restock.',
-    images: ['./images/rb-003-a.jpg','./images/rb-003-b.jpg'],
+    images: ['./images/rb-003-a.png','./images/rb-003-b.png'],
   },
   {
     id: 'RB-004', season: 'CYCLE-01', name: 'Oversized Hoodie Vol.2',
@@ -100,7 +100,7 @@ const BATCHES = [
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
     desc: 'Second colourway drop. 500gsm fleece. Same silhouette as RB-002. New CYCLE-01 graphic on back. 40 units. No restock.',
-    images: ['./images/rb-004-a.jpg','./images/rb-004-b.jpg'],
+    images: ['./images/rb-004-a.png','./images/rb-004-b.png'],
   },
   {
     id: 'RB-005', season: 'CYCLE-01', name: 'Heavyweight Tee Vol.3',
@@ -108,7 +108,7 @@ const BATCHES = [
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
     desc: 'Third graphic. Heavyweight 380gsm cotton. Oversized boxy construction. Limited colourway. 50 units. No restock.',
-    images: ['./images/rb-005-a.jpg','./images/rb-005-b.jpg'],
+    images: ['./images/rb-005-a.png','./images/rb-005-b.png'],
   },
   {
     id: 'RB-006', season: 'CYCLE-01', name: 'Pullover Hoodie Vol.3',
@@ -116,7 +116,7 @@ const BATCHES = [
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
     desc: 'Third colourway. 500gsm fleece. Double-layered hood, kangaroo pocket. Batch label at neck. 30 units. No restock.',
-    images: ['./images/rb-006-a.jpg','./images/rb-006-b.jpg'],
+    images: ['./images/rb-006-a.png','./images/rb-006-b.png'],
   },
 ];
 
@@ -319,9 +319,7 @@ const Header = ({ screen, onNav, cart }) => {
   const navItems = [
     { id: 'drop',    label: 'DROP' },
     { id: 'product', label: 'PRODUCT' },
-    { id: 'archive', label: 'ARCHIVE' },
     { id: 'origin',  label: 'ORIGIN' },
-    { id: 'queue',   label: 'QUEUE' },
     { id: 'sets',    label: 'THE RECORD' },
   ];
 
@@ -433,7 +431,7 @@ const ProductCardInline = ({ batch, onClick }) => {
       data-hover
       style={{ background: C.black, cursor: 'pointer', position: 'relative', border: `1px solid ${hov ? (isClosed ? C.grey : C.red) : C.grey}`, transition: 'border-color 0.2s' }}>
       <div style={{ position: 'absolute', top: -1, right: -1, width: 10, height: 10, background: isClosed ? 'transparent' : (batch.status === 'ACTIVE' ? C.red : 'transparent'), transition: 'background 0.2s', zIndex: 1 }} />
-      <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', zIndex: 10 }}>
         {batch.images && batch.images[0] ? (
           <img src={batch.images[0]} alt={batch.name}
             onError={e => { e.target.style.display = 'none'; }}
@@ -460,7 +458,22 @@ const ProductCardInline = ({ batch, onClick }) => {
 const DropScreen = ({ onNav, onSelectBatch }) => {
   const isMobile = useIsMobile();
   const [heroHov, setHeroHov] = useState(false);
+  const [filter, setFilter] = useState('ALL');
   const featuredBatch = BATCHES.find(b => b.status === 'ACTIVE');
+
+  const filters = [
+    { id: 'ALL',      label: 'ALL',      count: BATCHES.length },
+    { id: 'TEE',      label: 'TEES',     count: BATCHES.filter(b => b.type === 'Tee').length },
+    { id: 'HOODIE',   label: 'HOODIES',  count: BATCHES.filter(b => b.type === 'Hoodie').length },
+    { id: 'ACTIVE',   label: 'ACTIVE',   count: BATCHES.filter(b => b.status === 'ACTIVE').length },
+    { id: 'INCOMING', label: 'INCOMING', count: BATCHES.filter(b => b.status === 'COMING_SOON').length },
+  ];
+
+  const filteredBatches = filter === 'ALL' ? BATCHES
+    : filter === 'TEE'    ? BATCHES.filter(b => b.type === 'Tee')
+    : filter === 'HOODIE' ? BATCHES.filter(b => b.type === 'Hoodie')
+    : filter === 'ACTIVE' ? BATCHES.filter(b => b.status === 'ACTIVE')
+    : BATCHES.filter(b => b.status === 'COMING_SOON');
 
   const handleCardClick = (batch) => {
     onSelectBatch(batch.id);
@@ -503,7 +516,7 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
             onMouseLeave={() => setHeroHov(false)}
             style={{ border: `1px solid ${heroHov ? C.red : C.grey}`, background: C.black, position: 'relative', cursor: 'pointer', transition: 'border-color 0.2s' }}
           >
-            <div style={{ aspectRatio: '3/4', background: '#111', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ aspectRatio: '3/4', background: '#111', position: 'relative', overflow: 'hidden', zIndex: 10 }}>
               {featuredBatch.images && featuredBatch.images[0] ? (
                 <img src={featuredBatch.images[0]} alt={featuredBatch.name} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               ) : (
@@ -559,15 +572,30 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
         <Btn v="ghost" onClick={() => { onNav('origin'); window.scrollTo(0,0); }}>Read Origin →</Btn>
       </div>
 
-      <div id="product-grid" style={{ padding: isMobile ? '32px 24px' : '48px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
-          <div style={{ ...mono(9), marginBottom: 0 }}>CYCLE-01 · {BATCHES.length} drops · {ACTIVE_BATCHES.length} active now</div>
-          <span style={{ ...mono(8, C.red) }}>CYCLE-01</span>
+      <div id="product-grid">
+        <div style={{ padding: isMobile ? '12px 24px' : '16px 48px', borderBottom: `1px solid ${C.grey}`, display: 'flex', gap: 0, overflowX: 'auto' }}>
+          {filters.map(({ id, label, count }) => {
+            const active = filter === id;
+            return (
+              <button key={id} onClick={() => setFilter(id)}
+                style={{ background: 'transparent', border: 'none', borderBottom: `2px solid ${active ? C.red : 'transparent'}`, padding: '10px 20px', cursor: 'pointer', fontFamily: F.m, fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', whiteSpace: 'nowrap', transition: 'all 0.15s', color: active ? C.white : '#888' }}
+                onMouseEnter={e => { if (!active) e.currentTarget.style.color = C.white; }}
+                onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#888'; }}>
+                {label}<span style={{ color: active ? C.red : '#444', fontSize: 8, marginLeft: 4 }}>({count})</span>
+              </button>
+            );
+          })}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill,minmax(160px,1fr))' : 'repeat(auto-fill,minmax(240px,1fr))', gap: 1, background: C.grey }}>
-          {BATCHES.map(b => (
-            <ProductCardInline key={b.id} batch={b} onClick={b.status === 'COMING_SOON' ? undefined : () => handleCardClick(b)} />
-          ))}
+        <div style={{ padding: isMobile ? '24px 24px' : '32px 48px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
+            <div style={{ ...mono(9), marginBottom: 0 }}>CYCLE-01 · {filteredBatches.length} drops · {ACTIVE_BATCHES.length} active now</div>
+            <span style={{ ...mono(8, C.red) }}>CYCLE-01</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill,minmax(160px,1fr))' : 'repeat(auto-fill,minmax(240px,1fr))', gap: 1, background: C.grey }}>
+            {filteredBatches.map(b => (
+              <ProductCardInline key={b.id} batch={b} onClick={b.status === 'COMING_SOON' ? undefined : () => handleCardClick(b)} />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -616,6 +644,9 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
   const [hovColour, setHovColour] = useState(null);
   const [activeImg, setActiveImg] = useState(0);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const minSwipeDistance = 50;
   const topRef = useRef(null);
   const isClosed = batch.units === 0;
 
@@ -645,13 +676,32 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
       <div style={{ padding: isMobile ? '24px' : '48px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '32px' : '64px', maxWidth: 1100 }}>
 
         <div>
-          <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', border: `1px solid ${C.grey}` }}>
+          <div
+            onTouchStart={e => setTouchStart(e.targetTouches[0].clientX)}
+            onTouchMove={e => setTouchEnd(e.targetTouches[0].clientX)}
+            onTouchEnd={() => {
+              if (!touchStart || !touchEnd) return;
+              const distance = touchStart - touchEnd;
+              const isLeftSwipe = distance > minSwipeDistance;
+              const isRightSwipe = distance < -minSwipeDistance;
+              if (isLeftSwipe && activeImg < batch.images.length - 1) setActiveImg(i => i + 1);
+              if (isRightSwipe && activeImg > 0) setActiveImg(i => i - 1);
+              setTouchStart(null);
+              setTouchEnd(null);
+            }}
+            style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', border: `1px solid ${C.grey}`, zIndex: 10 }}>
             {batch.images && batch.images[activeImg] ? (
-              <img src={batch.images[activeImg]} alt={`${batch.name} ${activeImg + 1}`}
+              <img key={activeImg} src={batch.images[activeImg]} alt={`${batch.name} ${activeImg + 1}`}
                 onError={e => { e.target.style.display = 'none'; }}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             ) : (
               <span style={{ ...mono(9, '#222') }}>IMG</span>
+            )}
+            {activeImg > 0 && (
+              <div style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', fontFamily: F.m, fontSize: 12, color: 'rgba(240,240,240,0.3)', pointerEvents: 'none' }}>‹</div>
+            )}
+            {batch.images && activeImg < batch.images.length - 1 && (
+              <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontFamily: F.m, fontSize: 12, color: 'rgba(240,240,240,0.3)', pointerEvents: 'none' }}>›</div>
             )}
             <div style={{ position: 'absolute', top: 12, left: 12 }}>
               <div style={{ border: `1px solid ${C.grey}`, padding: '4px 10px', ...mono(9), background: C.black }}>{batch.id}</div>
@@ -664,7 +714,7 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
           {batch.images && batch.images.length > 1 && (
             <div style={{ display: 'flex', gap: 8, marginTop: 8, overflowX: isMobile ? 'auto' : 'visible' }}>
               {batch.images.map((img, idx) => (
-                <div key={idx} onClick={() => setActiveImg(idx)} style={{ width: 60, height: 75, background: C.g2, flexShrink: 0, border: `1px solid ${activeImg === idx ? C.red : C.grey}`, cursor: 'pointer', overflow: 'hidden' }}>
+                <div key={idx} onClick={() => setActiveImg(idx)} style={{ width: 60, height: 75, background: C.g2, flexShrink: 0, border: `1px solid ${activeImg === idx ? C.red : C.grey}`, cursor: 'pointer', overflow: 'hidden', position: 'relative', zIndex: 10 }}>
                   <img src={img} alt={`thumb ${idx + 1}`} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
               ))}
@@ -941,7 +991,7 @@ const ArchiveScreen = ({ onSelectBatch, onNav }) => {
 
             <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', marginBottom: 16 }}>
               {!isMobile && (
-                <div style={{ width: 100, height: 125, background: C.black, border: `1px solid ${C.grey}`, flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ width: 100, height: 125, background: C.black, border: `1px solid ${C.grey}`, flexShrink: 0, position: 'relative', overflow: 'hidden', zIndex: 10 }}>
                   <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red, zIndex: 1 }} />
                   {selected.images && selected.images[0] ? (
                     <img src={selected.images[0]} alt={selected.name} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -1114,8 +1164,55 @@ const QueueScreen = () => {
                 </div>
               </div>
               <Divider />
-              <Btn onClick={() => { if (email) setSubmitted(true); }} disabled={!email}>Submit Record</Btn>
-              <div style={{ ...mono(8), lineHeight: 1.8 }}>Registration does not guarantee allocation. Records are permanent. No confirmation email is sent.</div>
+              <Btn onClick={async () => {
+                if (!email) return;
+                try {
+                  if (window.emailjs) {
+                    const qRef = 'QUEUE-' + Date.now();
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_OWNER_TEMPLATE, {
+                      contact_ref: qRef,
+                      order_ref: qRef,
+                      customer_name: 'Queue Registration',
+                      customer_email: email,
+                      customer_phone: 'N/A',
+                      subject: 'New Queue Registration — RB-003 / CYCLE-02',
+                      message: email + ' has registered for the next batch queue.',
+                      type: 'QUEUE REGISTRATION',
+                      address_line1: 'N/A',
+                      suburb: 'N/A',
+                      city: 'N/A',
+                      province: 'N/A',
+                      postal_code: 'N/A',
+                      product_name: 'RB-003 / CYCLE-02 Queue',
+                      size: 'N/A',
+                      colour: 'N/A',
+                      price: 'N/A',
+                    });
+                    const qRef2 = 'QUEUE-' + Date.now();
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE, {
+                      contact_ref: qRef2,
+                      order_ref: qRef2,
+                      customer_name: 'Record',
+                      customer_email: email,
+                      customer_phone: 'N/A',
+                      subject: 'Queue Registration Confirmed — RED-BATCH',
+                      message: 'Your record has been created. You will be notified when the next batch drops.',
+                      type: 'QUEUE CONFIRMATION',
+                      address_line1: 'N/A',
+                      suburb: 'N/A',
+                      city: 'N/A',
+                      province: 'N/A',
+                      postal_code: 'N/A',
+                      product_name: 'CYCLE-02 Queue',
+                      size: 'N/A',
+                      colour: 'N/A',
+                      price: 'N/A',
+                    });
+                  }
+                } catch (err) { console.error('EmailJS error:', err); }
+                setSubmitted(true);
+              }} disabled={!email}>Submit Record</Btn>
+              <div style={{ ...mono(8), lineHeight: 1.8 }}>Registration does not guarantee allocation. Records are permanent.</div>
             </div>
           ) : (
             <div style={{ animation: 'fadeUp 0.4s ease forwards' }}>
@@ -1142,7 +1239,6 @@ const QueueScreen = () => {
 const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
   const isMobile = useIsMobile();
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-  const total = subtotal + DELIVERY_FEE;
   const fmt = (n) => `R ${n.toLocaleString()}`;
 
   return (
@@ -1166,7 +1262,10 @@ const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
                     <div style={{ flex: 1 }}>
                       <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.white, marginBottom: 6 }}>{item.id} — {item.name}</div>
                       {item.isSet && (
-                        <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>Set includes: {item.setItems.join(' · ')}</div>
+                        <div style={{ marginBottom: 4 }}>
+                          <div style={{ ...mono(8, C.dim) }}>Tee: {item.teeSize} · Hoodie: {item.hoodieSize}</div>
+                          <div style={{ ...mono(8, C.dim) }}>Colourway: Washed Black</div>
+                        </div>
                       )}
                       <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}</div>
                       {!item.isSet && (
@@ -1206,7 +1305,7 @@ const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
             <div style={{ border: `1px solid ${C.grey}`, padding: 28, position: 'relative' }}>
               <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
               <div style={{ ...mono(9, C.red), marginBottom: 20 }}>ORDER SUMMARY</div>
-              {[['Subtotal', fmt(subtotal)], ['Delivery (Pudo)', fmt(DELIVERY_FEE)]].map(([k, v]) => (
+              {[['Subtotal', fmt(subtotal)], ['Delivery', 'Calculated at checkout']].map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.g2}` }}>
                   <span style={{ ...grotesk(13, 400, C.dim) }}>{k}</span>
                   <span style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{v}</span>
@@ -1214,8 +1313,8 @@ const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
               ))}
               <Divider color={C.red} />
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0 20px' }}>
-                <span style={{ ...grotesk(14, 600) }}>Total</span>
-                <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.white }}>{fmt(total)}</span>
+                <span style={{ ...grotesk(14, 600) }}>Subtotal</span>
+                <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.white }}>{fmt(subtotal)}</span>
               </div>
               <Btn onClick={() => { onNav('checkout'); window.scrollTo(0,0); }} style={{ width: '100%' }}>Proceed to Checkout →</Btn>
             </div>
@@ -1230,7 +1329,10 @@ const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
 const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   const isMobile = useIsMobile();
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-  const total = subtotal + DELIVERY_FEE;
+  const [deliveryMethod, setDeliveryMethod] = useState('door');
+  const [pudoLocker, setPudoLocker] = useState('');
+  const deliveryFee = deliveryMethod === 'locker' ? 60 : 120;
+  const total = subtotal + deliveryFee;
   const fmt = (n) => `R ${n.toLocaleString()}`;
 
   const blankForm = { fullName: '', email: '', phone: '', address: '', suburb: '', city: '', province: '', postalCode: '' };
@@ -1271,11 +1373,14 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
 
     const emailParams = {
       order_ref: orderRef, product_name: productName,
-      size: cart.map(i => i.size).join(', '), colour: cart.map(i => i.colour).join(', '),
+      size: cart.map(i => i.isSet ? 'Tee: ' + i.teeSize + ' / Hoodie: ' + i.hoodieSize : i.size).join(', '),
+      colour: cart.map(i => i.isSet ? 'Washed Black — Complete Set' : i.colour).join(', '),
       price: fmt(total), customer_name: form.fullName, customer_phone: form.phone,
       customer_email: form.email, address_line1: form.address, suburb: form.suburb,
       city: form.city, province: form.province, postal_code: form.postalCode,
       courier: 'Pudo',
+      delivery_method: deliveryMethod === 'locker' ? 'Pudo Locker-to-Locker (R60)' : 'Pudo Door-to-Door (R120)',
+      pudo_locker: pudoLocker || 'N/A',
     };
 
     try {
@@ -1292,7 +1397,7 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
       return_url: 'https://redbatch.store/success', cancel_url: 'https://redbatch.store/cancel',
       notify_url: 'https://redbatch.store/.netlify/functions/payfast-notify',
       name_first: firstName, name_last: lastName, email_address: form.email,
-      m_payment_id: orderRef, amount: total.toFixed(2),
+      m_payment_id: orderRef, amount: (subtotal + deliveryFee).toFixed(2),
       item_name: `RED-BATCH ${orderRef}`, item_description: productDesc,
       passphrase: PAYFAST_PASSPHRASE,
     };
@@ -1373,7 +1478,7 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
                 <span style={{ fontFamily: F.m, fontSize: 12, color: C.white }}>{fmt(item.price * item.quantity)}</span>
               </div>
             ))}
-            {[['Subtotal', fmt(subtotal)], ['Delivery (Pudo)', fmt(DELIVERY_FEE)]].map(([k, v]) => (
+            {[['Subtotal', fmt(subtotal)], [deliveryMethod === 'locker' ? 'Pudo Locker-to-Locker' : 'Pudo Door-to-Door', fmt(deliveryFee)]].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.g2}` }}>
                 <span style={{ ...grotesk(13, 400, C.dim) }}>{k}</span>
                 <span style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{v}</span>
@@ -1387,7 +1492,30 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
           </div>
         </div>
 
-        <div style={{ marginTop: 40, borderTop: `1px solid ${C.grey}`, paddingTop: 32 }}>
+        <div style={{ marginTop: 32 }}>
+          <div style={{ ...mono(9, C.red), marginBottom: 12 }}>DELIVERY METHOD</div>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 1, background: C.grey, marginBottom: 20 }}>
+            <div onClick={() => setDeliveryMethod('locker')} style={{ background: C.black, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'locker' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
+              <div style={{ ...mono(9, deliveryMethod === 'locker' ? C.red : C.dim) }}>PUDO LOCKER · R 60</div>
+              <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Collect from your nearest Pudo locker. You will receive a collection notification via SMS or email.</div>
+              {deliveryMethod === 'locker' && (
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>YOUR NEAREST PUDO LOCKER / AREA</div>
+                  <input value={pudoLocker} onChange={e => setPudoLocker(e.target.value)}
+                    placeholder="e.g. Sandton City Pudo Locker"
+                    style={{ background: C.g2, border: `1px solid ${C.grey}`, color: C.white, fontFamily: F.g, fontSize: 14, padding: '10px 12px', outline: 'none', borderRadius: 0, width: '100%', boxSizing: 'border-box' }} />
+                </div>
+              )}
+            </div>
+            <div onClick={() => setDeliveryMethod('door')} style={{ background: C.black, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'door' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
+              {deliveryMethod === 'door' && <div style={{ position: 'absolute', top: 0, right: 0, width: 6, height: 6, background: C.red }} />}
+              <div style={{ ...mono(9, deliveryMethod === 'door' ? C.red : C.dim) }}>PUDO DOOR-TO-DOOR · R 120</div>
+              <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Delivered directly to your address. Allow 2–4 business days after dispatch.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 0, borderTop: `1px solid ${C.grey}`, paddingTop: 32 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 16 }}>
             <div
               onClick={() => { setPolicyAccepted(a => !a); setPolicyError(false); }}
@@ -1517,20 +1645,26 @@ const MerchScreen = ({ onNav }) => {
 
 /* ── SET CARD ── */
 const SetCard = ({ set, addToCart, onNav, isMobile }) => {
-  const [setColour, setSetColour] = useState(null);
+  const [teeSize, setTeeSize] = useState(null);
+  const [hoodieSize, setHoodieSize] = useState(null);
   const [added, setAdded] = useState(false);
   const isArchived = set.status !== 'ACTIVE';
 
+  const canAddSet = teeSize !== null && hoodieSize !== null;
+
   const handleAddSet = () => {
-    if (!setColour) return;
+    if (!canAddSet) return;
     addToCart({
       id: set.id,
       name: set.name,
       price: parsePrice(set.price),
-      size: 'SET',
-      colour: setColour,
+      size: `Tee: ${teeSize} / Hoodie: ${hoodieSize}`,
+      colour: 'Washed Black',
+      quantity: 1,
       isSet: true,
       setItems: set.items,
+      teeSize,
+      hoodieSize,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -1540,7 +1674,7 @@ const SetCard = ({ set, addToCart, onNav, isMobile }) => {
     <div style={{ background: C.black, position: 'relative' }}>
       {!isArchived && <div style={{ position: 'absolute', top: -1, right: -1, width: 10, height: 10, background: C.red, zIndex: 1 }} />}
 
-      <div style={{ aspectRatio: '3/2', background: C.g2, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ aspectRatio: '3/2', background: C.g2, position: 'relative', overflow: 'hidden', zIndex: 10 }}>
         {set.images && set.images[0] ? (
           <img src={set.images[0]} alt={set.name}
             onError={e => { e.target.style.display = 'none'; }}
@@ -1593,30 +1727,55 @@ const SetCard = ({ set, addToCart, onNav, isMobile }) => {
           </>
         ) : (
           <>
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>
-                Select colourway{setColour && <span style={{ color: C.red }}> — {setColour}</span>}
-              </div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {['Washed Black', 'Off-White'].map(cw => {
-                  const sel = setColour === cw;
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, marginTop: 20 }}>
+              <div style={{ width: 8, height: 8, background: '#F0F0F0', flexShrink: 0 }} />
+              <span style={{ ...mono(9, C.dim) }}>COLOURWAY — WASHED BLACK</span>
+            </div>
+            <div style={{ ...mono(8, C.dim), marginBottom: 20 }}>All pieces in this set ship in the same colourway.</div>
+
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ ...mono(8, C.dim), marginBottom: 8 }}>TEE SIZE — RB-001 / RB-003 / RB-005</div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {['S','M','L','XL','2XL'].map(s => {
+                  const sel = teeSize === s;
                   return (
-                    <button key={cw} onClick={() => setSetColour(cw)}
-                      style={{ padding: '10px 16px', background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.grey}`, color: sel ? C.white : C.dim, ...mono(10), cursor: 'pointer', transition: 'all 0.15s' }}>
-                      {cw}
+                    <button key={s} onClick={() => setTeeSize(s)}
+                      onMouseEnter={e => { if (!sel) { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.color = '#F0F0F0'; } }}
+                      onMouseLeave={e => { if (!sel) { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#888'; } }}
+                      style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.grey}`, color: sel ? C.white : C.dim, ...mono(10), cursor: 'pointer', borderRadius: 0, transition: 'all 0.15s' }}>
+                      {s}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <Btn onClick={handleAddSet} disabled={!setColour} style={{ width: '100%' }}>
-              {added ? 'Set Added.' : 'Add Set to Cart'}
-            </Btn>
+            <div style={{ marginTop: 20 }}>
+              <div style={{ ...mono(8, C.dim), marginBottom: 8 }}>HOODIE SIZE — RB-002</div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {['S','M','L','XL','2XL'].map(s => {
+                  const sel = hoodieSize === s;
+                  return (
+                    <button key={s} onClick={() => setHoodieSize(s)}
+                      onMouseEnter={e => { if (!sel) { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.color = '#F0F0F0'; } }}
+                      onMouseLeave={e => { if (!sel) { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#888'; } }}
+                      style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.grey}`, color: sel ? C.white : C.dim, ...mono(10), cursor: 'pointer', borderRadius: 0, transition: 'all 0.15s' }}>
+                      {s}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ marginTop: 12 }}>
+              <Btn onClick={handleAddSet} disabled={!canAddSet} style={{ width: '100%' }}>
+                {added ? 'Set Added.' : 'Add Set to Cart'}
+              </Btn>
+            </div>
 
             <div style={{ ...mono(8, C.dim), lineHeight: 1.8, marginTop: 10 }}>
               Sets are made-to-order. Allow 7–10 business days for full set production and fulfilment.<br />
-              Sets ship together. Delivery: R 60 via Pudo.<br />
+              Sets ship together. Delivery calculated at checkout.<br />
               This set exists in the archive permanently after closing.
             </div>
           </>
@@ -1756,12 +1915,43 @@ const ContactScreen = ({ onNav }) => {
     try {
       if (window.emailjs) {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_OWNER_TEMPLATE, {
-          contact_ref: ref, customer_name: cForm.name, customer_email: cForm.email,
-          subject: cForm.subject, message: cForm.message, type: 'CONTACT', to_email: STORE_OWNER_EMAIL,
+          contact_ref: ref,
+          order_ref: ref,
+          customer_name: cForm.name,
+          customer_email: cForm.email,
+          customer_phone: 'N/A',
+          subject: cForm.subject,
+          message: cForm.message,
+          type: 'CONTACT ENQUIRY',
+          address_line1: 'N/A',
+          suburb: 'N/A',
+          city: 'N/A',
+          province: 'N/A',
+          postal_code: 'N/A',
+          product_name: cForm.subject,
+          size: 'N/A',
+          colour: 'N/A',
+          price: 'N/A',
+          to_email: STORE_OWNER_EMAIL,
         });
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE, {
-          contact_ref: ref, customer_name: cForm.name, customer_email: cForm.email,
-          subject: cForm.subject, message: cForm.message, type: 'CONTACT_REPLY',
+          contact_ref: ref,
+          order_ref: ref,
+          customer_name: cForm.name,
+          customer_email: cForm.email,
+          customer_phone: 'N/A',
+          subject: cForm.subject,
+          message: cForm.message,
+          type: 'CONTACT_REPLY',
+          address_line1: 'N/A',
+          suburb: 'N/A',
+          city: 'N/A',
+          province: 'N/A',
+          postal_code: 'N/A',
+          product_name: cForm.subject,
+          size: 'N/A',
+          colour: 'N/A',
+          price: 'N/A',
         });
       }
     } catch (err) { console.error('EmailJS error:', err); }
@@ -1878,7 +2068,28 @@ const App = () => {
 
   useEffect(() => { if (window.emailjs) emailjs.init(EMAILJS_PUBLIC_KEY); }, []);
 
-  const nav = s => { setScreen(s); };
+  useEffect(() => {
+    const handlePop = (e) => {
+      if (e.state && e.state.screen) {
+        setScreen(e.state.screen);
+      } else {
+        setScreen('drop');
+      }
+    };
+    window.addEventListener('popstate', handlePop);
+    const params = new URLSearchParams(window.location.search);
+    const initialScreen = params.get('s') || 'drop';
+    setScreen(initialScreen);
+    window.history.replaceState(
+      { screen: initialScreen }, '', '?s=' + initialScreen
+    );
+    return () => window.removeEventListener('popstate', handlePop);
+  }, []);
+
+  const nav = (s) => {
+    setScreen(s);
+    window.history.pushState({ screen: s }, '', '?s=' + s);
+  };
 
   const addToCart = (item) => {
     const qty = item.quantity || 1;
