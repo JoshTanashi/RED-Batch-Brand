@@ -1188,26 +1188,6 @@ const QueueScreen = () => {
                       colour: 'N/A',
                       price: 'N/A',
                     });
-                    const qRef2 = 'QUEUE-' + Date.now();
-                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE, {
-                      contact_ref: qRef2,
-                      order_ref: qRef2,
-                      customer_name: 'Record',
-                      customer_email: email,
-                      customer_phone: 'N/A',
-                      subject: 'Queue Registration Confirmed — RED-BATCH',
-                      message: 'Your record has been created. You will be notified when the next batch drops.',
-                      type: 'QUEUE CONFIRMATION',
-                      address_line1: 'N/A',
-                      suburb: 'N/A',
-                      city: 'N/A',
-                      province: 'N/A',
-                      postal_code: 'N/A',
-                      product_name: 'CYCLE-02 Queue',
-                      size: 'N/A',
-                      colour: 'N/A',
-                      price: 'N/A',
-                    });
                   }
                 } catch (err) { console.error('EmailJS error:', err); }
                 setSubmitted(true);
@@ -1933,25 +1913,6 @@ const ContactScreen = ({ onNav }) => {
           colour: 'N/A',
           price: 'N/A',
           to_email: STORE_OWNER_EMAIL,
-        });
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE, {
-          contact_ref: ref,
-          order_ref: ref,
-          customer_name: cForm.name,
-          customer_email: cForm.email,
-          customer_phone: 'N/A',
-          subject: cForm.subject,
-          message: cForm.message,
-          type: 'CONTACT_REPLY',
-          address_line1: 'N/A',
-          suburb: 'N/A',
-          city: 'N/A',
-          province: 'N/A',
-          postal_code: 'N/A',
-          product_name: cForm.subject,
-          size: 'N/A',
-          colour: 'N/A',
-          price: 'N/A',
         });
       }
     } catch (err) { console.error('EmailJS error:', err); }
