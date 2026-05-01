@@ -457,9 +457,7 @@ const ProductCardInline = ({ batch, onClick }) => {
 /* ── SCREEN: DROP ── */
 const DropScreen = ({ onNav, onSelectBatch }) => {
   const isMobile = useIsMobile();
-  const [heroHov, setHeroHov] = useState(false);
   const [filter, setFilter] = useState('ALL');
-  const featuredBatch = BATCHES.find(b => b.status === 'ACTIVE');
 
   const filters = [
     { id: 'ALL',      label: 'ALL',      count: BATCHES.length },
@@ -485,91 +483,12 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
     <div className="screen-enter">
       <Ticker />
 
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 40 : 64, padding: isMobile ? '40px 24px' : '64px 48px', borderBottom: `1px solid ${C.grey}`, position: 'relative', overflow: 'hidden' }}>
-        <div className="stagger">
-          <div style={{ ...mono(10, C.red), letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20 }}>SS26-A · 2026.04.23 · BATCH RB-001</div>
-          <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(52px,8vw,96px)', letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 24 }}>
-            <div style={{ color: C.white }}>RELEASE</div>
-            <div style={{ color: C.red }}>ACTIVE.</div>
-          </div>
-          <div style={{ ...grotesk(14, 300, '#999'), maxWidth: 480, lineHeight: 1.9, marginBottom: 32 }}>
-            Each release is logged, catalogued, and issued a permanent batch identifier. CYCLE-01 is live. 120 units across two garments. No restock. No exceptions.
-          </div>
-          <div style={{ display: 'flex', gap: 32, marginBottom: 40, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, padding: '20px 0' }}>
-            {[['Units', ACTIVE_UNITS.toString()], ['Products', BATCHES.length.toString()], ['Delivery', 'R 60 via Pudo']].map(([label, value]) => (
-              <div key={label}>
-                <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>{label}</div>
-                <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 14, letterSpacing: '0.1em', color: C.white }}>{value}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <Btn onClick={() => document.getElementById('product-grid')?.scrollIntoView({ behavior: 'smooth' })}>View Drop →</Btn>
-            <Btn v="ghost" onClick={() => { onNav('archive'); window.scrollTo(0,0); }}>Browse Archive →</Btn>
-          </div>
+      <div style={{ padding: isMobile ? '32px 24px' : '48px', borderBottom: `1px solid ${C.grey}` }}>
+        <div style={{ ...mono(9, C.red), letterSpacing: '0.2em', marginBottom: 16 }}>CYCLE-01 · RB-001 · 2026.04.23</div>
+        <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px, 9vw, 96px)', letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 0 }}>
+          <div style={{ color: C.white }}>RELEASE</div>
+          <div style={{ color: C.red }}>ACTIVE.</div>
         </div>
-
-        {!isMobile && featuredBatch && (
-          <div
-            onClick={() => { onSelectBatch(featuredBatch.id); onNav('product'); window.scrollTo(0,0); }}
-            onMouseEnter={() => setHeroHov(true)}
-            onMouseLeave={() => setHeroHov(false)}
-            style={{ border: `1px solid ${heroHov ? C.red : C.grey}`, background: C.black, position: 'relative', cursor: 'pointer', transition: 'border-color 0.2s' }}
-          >
-            <div style={{ aspectRatio: '3/4', background: '#111', position: 'relative', overflow: 'hidden', zIndex: 10 }}>
-              {featuredBatch.images && featuredBatch.images[0] ? (
-                <img src={featuredBatch.images[0]} alt={featuredBatch.name} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                  <span style={{ ...mono(9, '#1A1A1A') }}>RB-001</span>
-                </div>
-              )}
-              <div style={{ position: 'absolute', top: 0, right: 0, width: 10, height: 10, background: C.red }} />
-              <div style={{ position: 'absolute', bottom: 12, left: 12, border: `1px solid ${C.grey}`, background: C.black, padding: '4px 10px', ...mono(9) }}>{featuredBatch.id}</div>
-            </div>
-            <div style={{ padding: 16 }}>
-              <div style={{ ...mono(9, C.dim), marginBottom: 4 }}>{featuredBatch.id} · {featuredBatch.season}</div>
-              <div style={{ ...grotesk(13, 600), letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>{featuredBatch.name}</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontFamily: F.m, fontSize: 14, color: C.white }}>{featuredBatch.price}</span>
-                <Badge v="active">{featuredBatch.status}</Badge>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div style={{ position: 'absolute', right: -20, bottom: -30, fontFamily: F.m, fontWeight: 700, fontSize: '200px', color: 'rgba(178,34,34,0.035)', pointerEvents: 'none', userSelect: 'none', lineHeight: 1 }}>RB-001</div>
-      </div>
-
-      <div style={{ borderBottom: `1px solid ${C.grey}`, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr 1fr' }}>
-        {[['Units Issued', ACTIVE_UNITS.toString()], ['Season', 'CYCLE-01'], ['Active Drops', ACTIVE_BATCHES.length.toString()], ['Status', 'ACTIVE']].map(([k, v], i) => {
-          const isLast = i === 3;
-          const isSecondOnMobile = i === 1;
-          return (
-            <div key={k} style={{ padding: isMobile ? '16px 20px' : '20px 32px', borderRight: isMobile ? (isSecondOnMobile ? 'none' : `1px solid ${C.grey}`) : (isLast ? 'none' : `1px solid ${C.grey}`), borderBottom: isMobile && i < 2 ? `1px solid ${C.grey}` : 'none' }}>
-              <div style={{ ...mono(9), marginBottom: 6 }}>{k}</div>
-              <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: isMobile ? 15 : 18, letterSpacing: '0.1em', textTransform: 'uppercase', color: k === 'Status' ? C.red : C.white }}>{v}</div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div style={{ padding: isMobile ? '20px 24px' : '24px 48px', borderBottom: `1px solid ${C.grey}`, background: C.black, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite', flexShrink: 0 }} />
-          <span style={{ ...mono(9, C.red), letterSpacing: '0.16em' }}>CYCLE-01 · NOW ACTIVE</span>
-          <div style={{ width: 1, height: 16, background: C.grey, flexShrink: 0 }} />
-          <span style={{ ...mono(9, C.dim) }}>{BATCHES.length} items · {ACTIVE_UNITS} units available</span>
-        </div>
-        <span style={{ ...mono(9, C.dim) }}>Delivery: R 60 · Pudo · South Africa</span>
-      </div>
-
-      <div style={{ borderBottom: `1px solid ${C.grey}`, background: '#0D0D0D', padding: isMobile ? '16px 24px' : '20px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ ...mono(9, C.dim), letterSpacing: '0.18em' }}>DOC-000 · BRAND ORIGIN</div>
-          <div style={{ ...grotesk(14, 400, '#888'), marginTop: 4, maxWidth: 480, lineHeight: 1.6 }}>New here? Read the record — what RED-BATCH is, why it exists, and how the system works.</div>
-        </div>
-        <Btn v="ghost" onClick={() => { onNav('origin'); window.scrollTo(0,0); }}>Read Origin →</Btn>
       </div>
 
       <div id="product-grid">
@@ -610,36 +529,6 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
               <ProductCardInline key={b.id} batch={b} onClick={b.status === 'COMING_SOON' ? undefined : () => handleCardClick(b)} />
             ))}
           </div>
-        </div>
-      </div>
-
-      <div style={{ padding: isMobile ? '0 24px 32px' : '0 48px 40px' }}>
-        <div style={{ border: `1px solid ${C.grey}`, background: C.g2, padding: isMobile ? '16px 20px' : '20px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', flexWrap: 'wrap', gap: 16 }}>
-          <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
-          <div>
-            <div style={{ ...mono(9, C.red) }}>THE RECORD · CYCLE-01</div>
-            <div style={{ ...grotesk(16, 600), letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 6 }}>Complete CYCLE-01 Set.</div>
-            <div style={{ ...mono(9, C.dim), marginTop: 4 }}>20 sets. Tee + Hoodie. One colourway. Permanent.</div>
-          </div>
-          <Btn v="ghost" onClick={() => { onNav('sets'); window.scrollTo(0,0); }}>View Set →</Btn>
-        </div>
-      </div>
-
-      <div style={{ padding: isMobile ? '0 24px 48px' : '0 48px 64px' }}>
-        <div style={{ borderTop: `1px solid ${C.grey}`, paddingTop: 40 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
-            <div style={{ ...grotesk(isMobile ? 16 : 20, 600), letterSpacing: '0.1em', textTransform: 'uppercase' }}>Recent Archive</div>
-            <button onClick={() => { onNav('archive'); window.scrollTo(0,0); }} style={{ ...mono(9, C.red), background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>View all →</button>
-          </div>
-          {BATCHES.filter(b => b.status === 'ARCHIVED').slice(0, 4).map(b => (
-            <div key={b.id} className="batch-row" onClick={() => { onNav('archive'); window.scrollTo(0,0); }}
-              style={{ display: 'grid', gridTemplateColumns: isMobile ? '90px 1fr 80px' : '120px 1fr 80px 120px', alignItems: 'center', padding: '12px 0', borderBottom: `1px solid ${C.g2}`, cursor: 'pointer' }}>
-              <span className="row-id" style={{ fontFamily: F.m, fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.dim, transition: 'color 0.15s' }}>{b.id}</span>
-              <span style={{ ...grotesk(13, 400, C.white) }}>{b.name}</span>
-              <span style={{ ...mono(9) }}>{b.season}</span>
-              {!isMobile && <Badge v="neutral">{b.status}</Badge>}
-            </div>
-          ))}
         </div>
       </div>
     </div>
