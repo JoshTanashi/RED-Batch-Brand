@@ -573,6 +573,20 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
       </div>
 
       <div id="product-grid">
+        <div style={{ background: C.g2, borderBottom: `1px solid ${C.grey}`, borderTop: `1px solid ${C.grey}`, padding: isMobile ? '12px 24px' : '14px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, position: 'relative' }}>
+          <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite', flexShrink: 0 }} />
+            <div>
+              <div style={{ ...mono(9, C.red), letterSpacing: '0.18em' }}>CYCLE-01 GIVEAWAY · ACTIVE</div>
+              <div style={{ ...grotesk(13, 300, '#888'), marginTop: 4 }}>Every purchase enters you into the SET-001 giveaway. One winner receives the complete CYCLE-01 set. Free.</div>
+            </div>
+          </div>
+          <div style={{ ...mono(8, C.dim), lineHeight: 1.8, textAlign: 'right' }}>
+            Winner selected when batch closes.<br />
+            1 purchase = 1 entry.
+          </div>
+        </div>
         <div style={{ padding: isMobile ? '12px 24px' : '16px 48px', borderBottom: `1px solid ${C.grey}`, display: 'flex', gap: 0, overflowX: 'auto' }}>
           {filters.map(({ id, label, count }) => {
             const active = filter === id;
@@ -827,6 +841,17 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
               Manufactured in South Africa  ·  Delivered via Pudo
             </div>
           </div>
+
+          {batch.status === 'ACTIVE' && (
+            <div style={{ border: `1px solid ${C.grey}`, background: C.black, padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite', flexShrink: 0, marginTop: 3 }} />
+              <div>
+                <div style={{ ...mono(9, C.red) }}>GIVEAWAY ENTRY</div>
+                <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.7, marginTop: 4 }}>This purchase enters you into the CYCLE-01 SET-001 giveaway. One winner receives the complete set at no cost. Winner announced when the batch closes.</div>
+                <div style={{ ...mono(8, C.dim), marginTop: 6 }}>1 unit purchased = 1 entry. No purchase limit.</div>
+              </div>
+            </div>
+          )}
 
           <div style={{ padding: '12px 16px', borderTop: `1px solid ${C.g2}` }}>
             <div style={{ ...mono(8, C.dim), lineHeight: 1.8 }}>
@@ -1296,6 +1321,18 @@ const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
                 <span style={{ ...grotesk(14, 600) }}>Subtotal</span>
                 <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.white }}>{fmt(subtotal)}</span>
               </div>
+              {(() => {
+                const giveawayCount = cart.filter(item => !item.isSet && BATCHES.find(b => b.id === item.id)?.status === 'ACTIVE').reduce((s, item) => s + item.quantity, 0);
+                if (giveawayCount === 0) return null;
+                return (
+                  <div style={{ border: `1px solid ${C.grey}`, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                    <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.red, flexShrink: 0 }} />
+                    <div style={{ ...mono(9, C.dim), lineHeight: 1.6 }}>
+                      Your order includes {giveawayCount} giveaway {giveawayCount === 1 ? 'entry' : 'entries'} for the CYCLE-01 SET-001.
+                    </div>
+                  </div>
+                );
+              })()}
               <Btn onClick={() => { onNav('checkout'); window.scrollTo(0,0); }} style={{ width: '100%' }}>Proceed to Checkout →</Btn>
             </div>
           </div>
@@ -1361,6 +1398,7 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
       courier: 'Pudo',
       delivery_method: deliveryMethod === 'locker' ? 'Pudo Locker-to-Locker (R60)' : 'Pudo Door-to-Door (R120)',
       pudo_locker: pudoLocker || 'N/A',
+      giveaway: 'Your order includes a giveaway entry for the CYCLE-01 SET-001. Winner announced when the batch closes.',
     };
 
     try {
@@ -1537,6 +1575,12 @@ const SuccessScreen = ({ orderRef, clearCart, onNav }) => {
               Your unit is being prepared. You will be contacted once your order has been dispatched.
             </div>
           </div>
+          <div style={{ border: `1px solid ${C.grey}`, background: C.g2, padding: '16px 20px', maxWidth: 400, margin: '24px auto 0', textAlign: 'center', position: 'relative' }}>
+            <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red }} />
+            <div style={{ ...mono(9, C.red), marginBottom: 8 }}>GIVEAWAY ENTRY CONFIRMED.</div>
+            <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.8 }}>Your purchase has been entered into the CYCLE-01 SET-001 giveaway. Winner is selected when the batch closes and announced on our social channels.</div>
+            <div style={{ ...mono(8, C.dim), marginTop: 8 }}>redbatch.store · @redbatch</div>
+          </div>
           <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>Return to Drop</Btn>
         </div>
       </div>
@@ -1712,6 +1756,10 @@ const SetCard = ({ set, addToCart, onNav, isMobile }) => {
               <span style={{ ...mono(9, C.dim) }}>COLOURWAY — WASHED BLACK</span>
             </div>
             <div style={{ ...mono(8, C.dim), marginBottom: 20 }}>All pieces in this set ship in the same colourway.</div>
+
+            <div style={{ ...mono(8, C.dim), lineHeight: 1.6, borderTop: `1px solid ${C.grey}`, paddingTop: 12, marginBottom: 16 }}>
+              Note: SET-001 is the giveaway prize. Purchasing this set does not count as a giveaway entry — it IS the prize. Individual batch purchases earn entries.
+            </div>
 
             <div style={{ marginBottom: 20 }}>
               <div style={{ ...mono(8, C.dim), marginBottom: 8 }}>TEE SIZE — RB-001 / RB-003 / RB-005</div>

@@ -24,15 +24,6 @@ html, body { height: 100%; background: #0D0D0D; overflow-x: hidden; }
   z-index: 9999; opacity: 0.055; mix-blend-mode: screen;
 }
 
-/* ── Scanline overlay ── */
-#scanlines {
-  position: fixed; inset: 0; pointer-events: none; z-index: 9998;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px
-  );
-}
-
 /* ── Custom cursor ── */
 #cursor-dot {
   position: fixed; width: 6px; height: 6px; background: #B22222;
