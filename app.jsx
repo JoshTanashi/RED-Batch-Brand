@@ -84,7 +84,23 @@ const BATCHES = [
     sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
     weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
     desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, single kangaroo pocket, ribbed cuffs and hem. Batch identifier woven into back neck label. 50 units. No restock.',
-    images: ['./images/rb-002-a.png','./images/rb-002-b.png','./images/rb-002-c.png'],
+    images: ['./images/rb-002-a.png','./images/rb-004-b.png','./images/rb-002-c.png'],
+  },
+  {
+    id: 'RB-007', season: 'CYCLE-01', name: 'Heavyweight Tee Vol.4',
+    units: 60, status: 'ACTIVE', date: '2026.04.23', price: 'R 599',
+    sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
+    weight: '380gsm Cotton', fit: 'Oversized / Boxy', type: 'Tee',
+    desc: 'Heavyweight 380gsm cotton. Oversized boxy cut, dropped shoulder. New graphic treatment on the fourth colourway. Each unit is issued a permanent batch identifier. 60 units. No restock.',
+    images: ['./images/rb-003-a.png','./images/rb-003-b.png'],
+  },
+  {
+    id: 'RB-008', season: 'CYCLE-01', name: 'Oversized Hoodie Vol.4',
+    units: 40, status: 'ACTIVE', date: '2026.04.23', price: 'R 799',
+    sizes: ['S','M','L','XL','2XL'], origin: 'South Africa',
+    weight: '500gsm Fleece', fit: 'Oversized / Drop Shoulder', type: 'Hoodie',
+    desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, kangaroo pocket, ribbed cuffs and hem. Fourth colourway. Batch identifier woven into back neck label. 40 units. No restock.',
+    images: ['./images/rb-004-a.png','./images/rb-004-b.png'],
   },
   {
     id: 'RB-003', season: 'CYCLE-01', name: 'Heavyweight Tee Vol.2',
@@ -250,7 +266,6 @@ const Footer = ({ onNav }) => {
   const isMobile = useIsMobile();
   const navLinks = [
     { id: 'drop',      label: 'DROP' },
-    { id: 'archive',   label: 'ARCHIVE' },
     { id: 'origin',    label: 'ORIGIN' },
     { id: 'contact',   label: 'CONTACT' },
     { id: 'manifesto', label: 'MANIFESTO' },
@@ -299,7 +314,7 @@ const Footer = ({ onNav }) => {
       <div style={{ borderTop: `1px solid #1A1A1A`, marginTop: 32, paddingTop: 20 }}>
         <div style={{ ...mono(9, C.red), marginBottom: 10 }}>POLICY</div>
         <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.8, maxWidth: 560 }}>
-          All sales are final. No returns, no refunds, no exchanges. Every RED-BATCH unit is made-to-order — production begins when payment is confirmed. We cannot cancel or reverse an order once placed. Please review your size and colourway selection carefully before completing your purchase.
+          All sales are final. No returns, no refunds, no exchanges. Every RED-BATCH unit is made-to-order — production begins when payment is confirmed. We cannot cancel or reverse an order once placed. Please review your size carefully before completing your purchase.
         </div>
       </div>
       <div style={{ borderTop: `1px solid #1A1A1A`, marginTop: 24, paddingTop: 20, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
@@ -410,8 +425,18 @@ const ProductCardInline = ({ batch, onClick }) => {
   if (isComingSoon) {
     return (
       <div style={{ background: C.black, position: 'relative', border: `1px solid ${C.grey}`, cursor: 'default' }}>
-        <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ ...mono(9, '#222') }}>INCOMING.</span>
+        <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', zIndex: 10 }}>
+          {batch.images && batch.images[0] ? (
+            <img
+              src={batch.images[0]}
+              alt={batch.name}
+              onError={e => { e.target.style.display = 'none'; }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0, opacity: 0.5 }}
+            />
+          ) : null}
+          <div style={{ position: 'relative', zIndex: 2, background: 'rgba(13,13,13,0.6)', padding: '6px 12px', border: `1px solid ${C.grey}` }}>
+            <span style={{ ...mono(9, C.dim) }}>INCOMING.</span>
+          </div>
         </div>
         <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ ...mono(9, C.dim) }}>{batch.id} · {batch.season}</div>
@@ -460,18 +485,16 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
   const [filter, setFilter] = useState('ALL');
 
   const filters = [
-    { id: 'ALL',      label: 'ALL',      count: BATCHES.length },
-    { id: 'TEE',      label: 'TEES',     count: BATCHES.filter(b => b.type === 'Tee').length },
-    { id: 'HOODIE',   label: 'HOODIES',  count: BATCHES.filter(b => b.type === 'Hoodie').length },
-    { id: 'ACTIVE',   label: 'ACTIVE',   count: BATCHES.filter(b => b.status === 'ACTIVE').length },
-    { id: 'INCOMING', label: 'INCOMING', count: BATCHES.filter(b => b.status === 'COMING_SOON').length },
+    { id: 'ALL',    label: 'ALL',     count: BATCHES.filter(b => b.status !== 'COMING_SOON').length },
+    { id: 'TEE',    label: 'TEES',    count: BATCHES.filter(b => b.type === 'Tee' && b.status !== 'COMING_SOON').length },
+    { id: 'HOODIE', label: 'HOODIES', count: BATCHES.filter(b => b.type === 'Hoodie' && b.status !== 'COMING_SOON').length },
+    { id: 'ACTIVE', label: 'ACTIVE',  count: BATCHES.filter(b => b.status === 'ACTIVE').length },
   ];
 
-  const filteredBatches = filter === 'ALL' ? BATCHES
-    : filter === 'TEE'    ? BATCHES.filter(b => b.type === 'Tee')
-    : filter === 'HOODIE' ? BATCHES.filter(b => b.type === 'Hoodie')
-    : filter === 'ACTIVE' ? BATCHES.filter(b => b.status === 'ACTIVE')
-    : BATCHES.filter(b => b.status === 'COMING_SOON');
+  const filteredBatches = filter === 'ALL'    ? BATCHES.filter(b => b.status !== 'COMING_SOON')
+    : filter === 'TEE'    ? BATCHES.filter(b => b.type === 'Tee'    && b.status !== 'COMING_SOON')
+    : filter === 'HOODIE' ? BATCHES.filter(b => b.type === 'Hoodie' && b.status !== 'COMING_SOON')
+    : BATCHES.filter(b => b.status === 'ACTIVE');
 
   const handleCardClick = (batch) => {
     onSelectBatch(batch.id);
@@ -483,7 +506,7 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
     <div className="screen-enter">
       <Ticker />
 
-      <div style={{ padding: isMobile ? '32px 24px' : '48px', borderBottom: `1px solid ${C.grey}` }}>
+      <div style={{ padding: isMobile ? '40px 24px' : '64px 48px', borderBottom: `1px solid ${C.grey}` }}>
         <div style={{ ...mono(9, C.red), letterSpacing: '0.2em', marginBottom: 16 }}>CYCLE-01 · RB-001 · 2026.04.23</div>
         <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px, 9vw, 96px)', letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 0 }}>
           <div style={{ color: C.white }}>RELEASE</div>
@@ -492,20 +515,6 @@ const DropScreen = ({ onNav, onSelectBatch }) => {
       </div>
 
       <div id="product-grid">
-        <div style={{ background: C.g2, borderBottom: `1px solid ${C.grey}`, borderTop: `1px solid ${C.grey}`, padding: isMobile ? '12px 24px' : '14px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, position: 'relative' }}>
-          <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite', flexShrink: 0 }} />
-            <div>
-              <div style={{ ...mono(9, C.red), letterSpacing: '0.18em' }}>CYCLE-01 GIVEAWAY · ACTIVE</div>
-              <div style={{ ...grotesk(13, 300, '#888'), marginTop: 4 }}>Every purchase enters you into the SET-001 giveaway. One winner receives the complete CYCLE-01 set. Free.</div>
-            </div>
-          </div>
-          <div style={{ ...mono(8, C.dim), lineHeight: 1.8, textAlign: 'right' }}>
-            Winner selected when batch closes.<br />
-            1 purchase = 1 entry.
-          </div>
-        </div>
         <div style={{ padding: isMobile ? '12px 24px' : '16px 48px', borderBottom: `1px solid ${C.grey}`, display: 'flex', gap: 0, overflowX: 'auto' }}>
           {filters.map(({ id, label, count }) => {
             const active = filter === id;
@@ -540,11 +549,9 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
   const isMobile = useIsMobile();
   const batch = BATCHES.find(b => b.id === batchId) || BATCHES[0];
   const [size, setSize] = useState(null);
-  const [colour, setColour] = useState(null);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [hovSize, setHovSize] = useState(null);
-  const [hovColour, setHovColour] = useState(null);
   const [activeImg, setActiveImg] = useState(0);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
@@ -553,7 +560,7 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
   const topRef = useRef(null);
   const isClosed = batch.units === 0;
 
-  useEffect(() => { setActiveImg(0); setSize(null); setColour(null); setQty(1); }, [batchId]);
+  useEffect(() => { setActiveImg(0); setSize(null); setQty(1); }, [batchId]);
 
   useEffect(() => {
     if (topRef.current) {
@@ -562,8 +569,8 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
   }, [batchId]);
 
   const handleAddToCart = () => {
-    if (!size || !colour || isClosed) return;
-    addToCart({ id: batch.id, name: batch.name, price: parsePrice(batch.price), size, colour, quantity: qty });
+    if (!size || isClosed) return;
+    addToCart({ id: batch.id, name: batch.name, price: parsePrice(batch.price), size, quantity: qty });
     setAdded(true);
     setQty(1);
     setTimeout(() => setAdded(false), 2000);
@@ -651,25 +658,6 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
           <Divider />
 
           <div>
-            <div style={{ ...mono(9), marginBottom: 12 }}>
-              Select colourway {colour && <span style={{ color: C.red }}>— {colour}</span>}
-            </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {['Washed Black', 'Off-White'].map(cw => {
-                const sel = colour === cw, hov = hovColour === cw;
-                return (
-                  <button key={cw} onClick={() => setColour(cw)}
-                    onMouseEnter={() => setHovColour(cw)} onMouseLeave={() => setHovColour(null)}
-                    data-hover
-                    style={{ padding: '10px 16px', background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : hov ? C.white : C.grey}`, color: sel ? C.white : hov ? C.white : C.dim, ...mono(10), cursor: 'pointer', transition: 'all 0.15s' }}>
-                    {cw}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
             <div style={{ ...mono(9), marginBottom: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
               <span>Select size {size && <span style={{ color: C.red }}>— {size}</span>}</span>
               <button onClick={() => setSizeGuideOpen(true)}
@@ -715,7 +703,7 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
             </div>
           </div>
 
-          <Btn onClick={handleAddToCart} disabled={!size || !colour || isClosed}>
+          <Btn onClick={handleAddToCart} disabled={!size || isClosed}>
             {isClosed ? 'Batch closed.' : added ? 'Unit Added.' : 'Add to Cart'}
           </Btn>
           {added && <div style={{ ...mono(10, C.red) }}>Unit added to cart.</div>}
@@ -730,17 +718,6 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
               Manufactured in South Africa  ·  Delivered via Pudo
             </div>
           </div>
-
-          {batch.status === 'ACTIVE' && (
-            <div style={{ border: `1px solid ${C.grey}`, background: C.black, padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite', flexShrink: 0, marginTop: 3 }} />
-              <div>
-                <div style={{ ...mono(9, C.red) }}>GIVEAWAY ENTRY</div>
-                <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.7, marginTop: 4 }}>This purchase enters you into the CYCLE-01 SET-001 giveaway. One winner receives the complete set at no cost. Winner announced when the batch closes.</div>
-                <div style={{ ...mono(8, C.dim), marginTop: 6 }}>1 unit purchased = 1 entry. No purchase limit.</div>
-              </div>
-            </div>
-          )}
 
           <div style={{ padding: '12px 16px', borderTop: `1px solid ${C.g2}` }}>
             <div style={{ ...mono(8, C.dim), lineHeight: 1.8 }}>
@@ -770,16 +747,13 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
             ))}
           </div>
 
-          <button onClick={() => { onNav('drop'); window.scrollTo(0,0); }} style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>← Back to drop</button>
-        </div>
-      </div>
-
-      <div style={{ padding: isMobile ? '0 24px 48px' : '0 48px 64px', borderTop: `1px solid ${C.grey}`, marginTop: 16, paddingTop: 40 }}>
-        <div style={{ ...mono(9), marginBottom: 24 }}>Also in CYCLE-01</div>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill,minmax(160px,1fr))' : 'repeat(auto-fill,minmax(200px,1fr))', gap: 1, background: C.grey }}>
-          {BATCHES.filter(b => b.id !== batch.id).slice(0, isMobile ? 2 : 4).map(b => (
-            <ProductCardInline key={b.id} batch={b} onClick={b.status === 'COMING_SOON' ? undefined : () => { onSelectBatch(b.id); onNav('product'); }} />
-          ))}
+          <button
+            onClick={() => { onNav('drop'); window.scrollTo(0,0); }}
+            onMouseEnter={e => { e.currentTarget.style.color = C.white; e.currentTarget.style.borderColor = C.white; }}
+            onMouseLeave={e => { e.currentTarget.style.color = C.dim; e.currentTarget.style.borderColor = C.grey; }}
+            style={{ ...mono(10, C.dim), background: 'none', border: `1px solid ${C.grey}`, cursor: 'pointer', padding: '10px 20px', transition: 'all 0.15s', marginTop: 8 }}>
+            ← BACK TO DROP
+          </button>
         </div>
       </div>
 
@@ -821,143 +795,6 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-/* ── SCREEN: ARCHIVE ── */
-const ArchiveScreen = ({ onSelectBatch, onNav }) => {
-  const isMobile = useIsMobile();
-  const [selected, setSelected] = useState(null);
-  const [filter, setFilter] = useState('ALL');
-  const [votes, setVotes] = useState({});
-  const filters = ['ALL', 'ACTIVE', 'ARCHIVED', 'INCOMING'];
-
-  const shown = filter === 'ALL' ? BATCHES
-    : filter === 'INCOMING' ? BATCHES.filter(b => b.status === 'COMING_SOON')
-    : BATCHES.filter(b => b.status === filter);
-
-  useEffect(() => {
-    const v = {};
-    BATCHES.forEach(b => { if (localStorage.getItem(`rb-vote-${b.id}`)) v[b.id] = true; });
-    setVotes(v);
-  }, []);
-
-  const handleVote = (id) => {
-    localStorage.setItem(`rb-vote-${id}`, '1');
-    setVotes(prev => ({ ...prev, [id]: true }));
-  };
-
-  const handleRowClick = (b) => { setSelected(selected?.id === b.id ? null : b); };
-
-  return (
-    <div className="screen-enter">
-      <Ticker />
-      <div style={{ padding: isMobile ? '32px 24px' : '48px' }}>
-
-        <div className="stagger" style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', marginBottom: 32, flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 16 : 0 }}>
-          <div>
-            <div style={{ ...mono(9, C.red), marginBottom: 8 }}>DOC-ARC · BATCH RECORD · SOUTH AFRICA</div>
-            <div style={{ ...grotesk(isMobile ? 22 : 28, 600), letterSpacing: '0.1em', textTransform: 'uppercase' }}>Batch Archive</div>
-          </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {filters.map(f => (
-              <button key={f} onClick={() => setFilter(f)} data-hover
-                style={{ ...mono(9, filter === f ? C.white : C.dim), background: 'transparent', border: `1px solid ${filter === f ? C.red : C.grey}`, padding: '6px 14px', cursor: 'pointer', transition: 'all 0.15s' }}>
-                {f}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? '560px' : 'unset' }}>
-            <thead>
-              <tr style={{ borderBottom: `1px solid ${C.grey}` }}>
-                {['Batch ID', 'Item', 'Season', 'Units', 'Price', 'Status', 'Issued'].map(h => (
-                  <th key={h} style={{ ...mono(9), padding: '10px 12px', textAlign: 'left', fontWeight: 400, whiteSpace: 'nowrap' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {shown.map(b => {
-                const isCS = b.status === 'COMING_SOON';
-                return (
-                  <tr key={b.id} className="batch-row" onClick={() => handleRowClick(b)}
-                    style={{ borderBottom: `1px solid ${C.g2}`, cursor: 'pointer', background: selected?.id === b.id ? '#0F0F0F' : 'transparent' }}>
-                    <td className="row-id" style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.dim, padding: '12px', transition: 'color 0.15s', whiteSpace: 'nowrap' }}>{b.id}</td>
-                    <td style={{ ...grotesk(13), padding: '12px', whiteSpace: 'nowrap' }}>{b.name}</td>
-                    <td style={{ ...mono(10, C.dim), padding: '12px', whiteSpace: 'nowrap' }}>{b.season}</td>
-                    <td style={{ ...mono(11, C.white), padding: '12px' }}>{b.units}</td>
-                    <td style={{ fontFamily: F.m, fontSize: 12, color: C.white, padding: '12px', whiteSpace: 'nowrap' }}>{b.price}</td>
-                    <td style={{ padding: '12px' }}><Badge v={b.status === 'ACTIVE' ? 'active' : 'neutral'}>{isCS ? 'INCOMING' : b.status}</Badge></td>
-                    <td style={{ ...mono(10), padding: '12px', whiteSpace: 'nowrap' }}>{isCS ? 'TBC' : b.date}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {selected && (
-          <div style={{ marginTop: 1, background: C.g2, border: `1px solid ${C.grey}`, padding: isMobile ? 20 : 28, position: 'relative', animation: 'fadeUp 0.2s ease forwards' }}>
-            <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
-
-            <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', marginBottom: 16 }}>
-              {!isMobile && (
-                <div style={{ width: 100, height: 125, background: C.black, border: `1px solid ${C.grey}`, flexShrink: 0, position: 'relative', overflow: 'hidden', zIndex: 10 }}>
-                  <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red, zIndex: 1 }} />
-                  {selected.images && selected.images[0] ? (
-                    <img src={selected.images[0]} alt={selected.name} onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ ...mono(9, '#222') }}>IMG</span>
-                    </div>
-                  )}
-                </div>
-              )}
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr 1fr', gap: isMobile ? 16 : 20, flex: 1 }}>
-                {[['Batch ID', selected.id], ['Season', selected.season], ['Origin', selected.origin], ['Issued', selected.date]].map(([k, v]) => (
-                  <div key={k}>
-                    <div style={{ ...mono(8), marginBottom: 4 }}>{k}</div>
-                    <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 12, letterSpacing: '0.08em', color: C.white }}>{v}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ borderTop: `1px solid ${C.grey}`, paddingTop: 16 }}>
-              <div style={{ ...mono(8), marginBottom: 6 }}>Description</div>
-              <div style={{ ...grotesk(13, 300, '#999'), lineHeight: 1.7 }}>{selected.desc}</div>
-            </div>
-            <div style={{ display: 'flex', gap: 12, borderTop: `1px solid ${C.grey}`, paddingTop: 16, marginTop: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-              <Badge v={selected.status === 'ACTIVE' ? 'active' : selected.status === 'COMING_SOON' ? 'neutral' : 'archived'}>{selected.status === 'COMING_SOON' ? 'INCOMING' : selected.status}</Badge>
-              <span style={{ ...mono(9), alignSelf: 'center' }}>{selected.units} units · {selected.type} · {selected.fit} fit</span>
-              {selected.status === 'ACTIVE' && (
-                <button onClick={() => { onSelectBatch(selected.id); onNav('product'); window.scrollTo(0,0); }} style={{ ...mono(9, C.red), background: 'none', border: `1px solid ${C.red}`, padding: '4px 12px', cursor: 'pointer', marginLeft: 'auto' }}>VIEW UNIT →</button>
-              )}
-            </div>
-
-            {selected.status === 'ARCHIVED' && (
-              <div style={{ borderTop: `1px solid ${C.grey}`, paddingTop: 16, marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-                <div>
-                  <div style={{ ...mono(9, C.red), marginBottom: 4 }}>REISSUE VOTE · {selected.id}</div>
-                  <div style={{ ...grotesk(13, 300, '#999'), lineHeight: 1.8 }}>Cast your record. Votes are logged. No guarantees.</div>
-                </div>
-                <button onClick={() => !votes[selected.id] && handleVote(selected.id)} disabled={votes[selected.id]}
-                  style={{ border: `1px solid ${votes[selected.id] ? C.red : C.grey}`, color: votes[selected.id] ? C.red : C.dim, background: 'transparent', ...mono(9, votes[selected.id] ? C.red : C.dim), padding: '6px 16px', cursor: votes[selected.id] ? 'default' : 'pointer', transition: 'all 0.15s' }}>
-                  {votes[selected.id] ? 'Vote Recorded.' : 'Cast Vote →'}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${C.g2}`, paddingTop: 20, flexWrap: 'wrap', gap: 8 }}>
-          <span style={{ ...mono(9) }}>{shown.length} records retrieved</span>
-          <span style={{ ...mono(9, C.red) }}>ARCHIVE UPDATED · 2026.04.23</span>
-        </div>
-      </div>
     </div>
   );
 };
@@ -1158,10 +995,9 @@ const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
                       {item.isSet && (
                         <div style={{ marginBottom: 4 }}>
                           <div style={{ ...mono(8, C.dim) }}>Tee: {item.teeSize} · Hoodie: {item.hoodieSize}</div>
-                          <div style={{ ...mono(8, C.dim) }}>Colourway: Washed Black</div>
                         </div>
                       )}
-                      <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}</div>
+                      <div style={{ ...mono(9, C.dim), marginBottom: 8 }}>{item.isSet ? 'COMPLETE SET' : item.size}</div>
                       {!item.isSet && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 8 }}>
                           <button
@@ -1210,18 +1046,6 @@ const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) => {
                 <span style={{ ...grotesk(14, 600) }}>Subtotal</span>
                 <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.white }}>{fmt(subtotal)}</span>
               </div>
-              {(() => {
-                const giveawayCount = cart.filter(item => !item.isSet && BATCHES.find(b => b.id === item.id)?.status === 'ACTIVE').reduce((s, item) => s + item.quantity, 0);
-                if (giveawayCount === 0) return null;
-                return (
-                  <div style={{ border: `1px solid ${C.grey}`, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                    <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.red, flexShrink: 0 }} />
-                    <div style={{ ...mono(9, C.dim), lineHeight: 1.6 }}>
-                      Your order includes {giveawayCount} giveaway {giveawayCount === 1 ? 'entry' : 'entries'} for the CYCLE-01 SET-001.
-                    </div>
-                  </div>
-                );
-              })()}
               <Btn onClick={() => { onNav('checkout'); window.scrollTo(0,0); }} style={{ width: '100%' }}>Proceed to Checkout →</Btn>
             </div>
           </div>
@@ -1287,7 +1111,6 @@ const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
       courier: 'Pudo',
       delivery_method: deliveryMethod === 'locker' ? 'Pudo Locker-to-Locker (R60)' : 'Pudo Door-to-Door (R120)',
       pudo_locker: pudoLocker || 'N/A',
-      giveaway: 'Your order includes a giveaway entry for the CYCLE-01 SET-001. Winner announced when the batch closes.',
     };
 
     try {
@@ -1464,12 +1287,6 @@ const SuccessScreen = ({ orderRef, clearCart, onNav }) => {
               Your unit is being prepared. You will be contacted once your order has been dispatched.
             </div>
           </div>
-          <div style={{ border: `1px solid ${C.grey}`, background: C.g2, padding: '16px 20px', maxWidth: 400, margin: '24px auto 0', textAlign: 'center', position: 'relative' }}>
-            <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red }} />
-            <div style={{ ...mono(9, C.red), marginBottom: 8 }}>GIVEAWAY ENTRY CONFIRMED.</div>
-            <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.8 }}>Your purchase has been entered into the CYCLE-01 SET-001 giveaway. Winner is selected when the batch closes and announced on our social channels.</div>
-            <div style={{ ...mono(8, C.dim), marginTop: 8 }}>redbatch.store · @redbatch</div>
-          </div>
           <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>Return to Drop</Btn>
         </div>
       </div>
@@ -1635,7 +1452,7 @@ const SetCard = ({ set, addToCart, onNav, isMobile }) => {
             <Badge v="archived">ARCHIVED</Badge>
             <div style={{ ...mono(9, C.dim), marginTop: 8 }}>This set is permanently archived.</div>
             <div style={{ marginTop: 12 }}>
-              <Btn v="ghost" onClick={() => { onNav('archive'); window.scrollTo(0,0); }}>View in Archive →</Btn>
+              <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>Return to Drop →</Btn>
             </div>
           </>
         ) : (
@@ -1645,10 +1462,6 @@ const SetCard = ({ set, addToCart, onNav, isMobile }) => {
               <span style={{ ...mono(9, C.dim) }}>COLOURWAY — WASHED BLACK</span>
             </div>
             <div style={{ ...mono(8, C.dim), marginBottom: 20 }}>All pieces in this set ship in the same colourway.</div>
-
-            <div style={{ ...mono(8, C.dim), lineHeight: 1.6, borderTop: `1px solid ${C.grey}`, paddingTop: 12, marginBottom: 16 }}>
-              Note: SET-001 is the giveaway prize. Purchasing this set does not count as a giveaway entry — it IS the prize. Individual batch purchases earn entries.
-            </div>
 
             <div style={{ marginBottom: 20 }}>
               <div style={{ ...mono(8, C.dim), marginBottom: 8 }}>TEE SIZE — RB-001 / RB-003 / RB-005</div>
@@ -1957,6 +1770,56 @@ const ContactScreen = ({ onNav }) => {
   );
 };
 
+/* ────────────────────────────────────────────────────────────────
+   LAUNCH — DELETE THIS ENTIRE BLOCK WHEN THE SITE GOES LIVE
+   (from the comment above to the closing }; below DroppingScreen)
+──────────────────────────────────────────────────────────────── */
+const DroppingScreen = () => {
+  const isMobile = useIsMobile();
+  const [dots, setDots] = React.useState('');
+
+  React.useEffect(() => {
+    const t = setInterval(() => setDots(d => d.length >= 3 ? '' : d + '.'), 600);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: C.black, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+      <AnimatedBg />
+
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', padding: isMobile ? '0 32px' : '0 64px', textAlign: 'center' }}>
+
+        <div style={{ ...mono(10, C.red), letterSpacing: '0.3em', marginBottom: 32 }}>RED-BATCH · CYCLE-01</div>
+
+        <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: isMobile ? 'clamp(52px, 16vw, 80px)' : 'clamp(72px, 10vw, 128px)', letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 0.9, marginBottom: 40 }}>
+          <div style={{ color: C.white }}>DROPPING</div>
+          <div style={{ color: C.red }}>SOON.</div>
+        </div>
+
+        <div style={{ width: isMobile ? '100%' : 480, height: 1, background: `linear-gradient(to right, transparent, ${C.grey}, transparent)`, marginBottom: 40 }} />
+
+        <div style={{ ...mono(10, C.dim), letterSpacing: '0.2em', marginBottom: 12 }}>2026.04.23</div>
+        <div style={{ ...grotesk(13, 300, '#666'), maxWidth: 400, lineHeight: 1.8 }}>
+          Controlled release apparel. South Africa.<br />
+          Limited units. No restock. Ever.
+        </div>
+
+        <div style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite' }} />
+          <span style={{ ...mono(9, C.red) }}>STANDING BY{dots}</span>
+        </div>
+
+      </div>
+
+      <div style={{ position: 'absolute', bottom: 32, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', padding: isMobile ? '0 24px' : '0 48px' }}>
+        <span style={{ ...mono(8, '#333') }}>DOC-001</span>
+        <span style={{ ...mono(8, '#333') }}>RED-BATCH SYSTEM</span>
+      </div>
+    </div>
+  );
+};
+/* ── END LAUNCH BLOCK ── */
+
 /* ── APP ── */
 const App = () => {
   const [screen, setScreen] = useState('drop');
@@ -2014,7 +1877,6 @@ const App = () => {
   const screens = {
     drop:      <DropScreen onNav={nav} onSelectBatch={setSelectedBatchId} />,
     product:   <ProductScreen onNav={nav} batchId={selectedBatchId} cart={cart} addToCart={addToCart} onSelectBatch={setSelectedBatchId} />,
-    archive:   <ArchiveScreen onNav={nav} onSelectBatch={setSelectedBatchId} />,
     manifesto: <ManifestoScreen />,
     queue:     <QueueScreen />,
     sets:      <SetsScreen onNav={nav} cart={cart} addToCart={addToCart} />,
@@ -2035,6 +1897,9 @@ const App = () => {
         <div key={screen} style={{ flex: 1 }}>{screens[screen]}</div>
         <Footer onNav={nav} />
       </div>
+      {/* LAUNCH — DELETE THIS LINE WHEN THE SITE GOES LIVE */}
+      <DroppingScreen />
+      {/* ── END LAUNCH LINE ── */}
     </div>
   );
 };
