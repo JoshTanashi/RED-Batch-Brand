@@ -1,35 +1,4 @@
-/* RED-BATCH · Visual Effects — film grain + custom cursor */
-
-/* ── Film Grain ── */
-(function () {
-  const canvas = document.getElementById('grain');
-  const ctx = canvas.getContext('2d');
-  let w, h, buf;
-
-  const resize = () => {
-    w = canvas.width  = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-    buf = ctx.createImageData(w, h);
-  };
-  resize();
-  window.addEventListener('resize', resize);
-
-  let frame = 0;
-  const draw = () => {
-    frame++;
-    if (frame % 2 === 0) {
-      const d = buf.data;
-      for (let i = 0; i < d.length; i += 4) {
-        const v = Math.random() * 255 | 0;
-        d[i] = d[i + 1] = d[i + 2] = v;
-        d[i + 3] = (Math.random() * 40) | 0;
-      }
-      ctx.putImageData(buf, 0, 0);
-    }
-    requestAnimationFrame(draw);
-  };
-  draw();
-})();
+/* RED-BATCH · Visual Effects — custom cursor */
 
 /* ── Custom Cursor ── */
 (function () {
