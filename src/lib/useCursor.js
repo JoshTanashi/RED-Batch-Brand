@@ -1,10 +1,6 @@
 import { useEffect } from 'react';
 
-/* ── Custom Cursor ──
-   Mirrors the legacy effects.js IIFE as a hook: a dot that tracks the mouse
-   directly and a lerped ring that trails it, both wired up once at the app
-   root. Listeners are passive (no preventDefault needed) and torn down on
-   unmount. */
+/* Dot tracks the mouse directly; ring trails it via lerp. */
 export const useCursor = () => {
   useEffect(() => {
     const dot = document.getElementById('cursor-dot');
