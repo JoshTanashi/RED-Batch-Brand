@@ -1,14 +1,15 @@
 [build]
-  publish = "."
+  command = "npm run build"
+  publish = "dist"
 
 [[redirects]]
   from = "/success"
-  to = "/?screen=success"
+  to = "/?s=success"
   status = 200
 
 [[redirects]]
   from = "/cancel"
-  to = "/?screen=cancel"
+  to = "/?s=cancel"
   status = 200
 
 [[headers]]

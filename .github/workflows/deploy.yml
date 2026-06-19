@@ -24,22 +24,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build config.js from secrets
-        run: |
-          echo "const STORE_CONFIG = {" > config.js
-          echo "  PAYFAST_MERCHANT_ID:       '${{ secrets.PAYFAST_MERCHANT_ID }}'," >> config.js
-          echo "  PAYFAST_MERCHANT_KEY:      '${{ secrets.PAYFAST_MERCHANT_KEY }}'," >> config.js
-          echo "  PAYFAST_PASSPHRASE:        '${{ secrets.PAYFAST_PASSPHRASE }}'," >> config.js
-          echo "  EMAILJS_PUBLIC_KEY:        '${{ secrets.EMAILJS_PUBLIC_KEY }}'," >> config.js
-          echo "  EMAILJS_SERVICE_ID:        '${{ secrets.EMAILJS_SERVICE_ID }}'," >> config.js
-          echo "  EMAILJS_OWNER_TEMPLATE:    '${{ secrets.EMAILJS_OWNER_TEMPLATE }}'," >> config.js
-          echo "  EMAILJS_CUSTOMER_TEMPLATE: '${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}'," >> config.js
-          echo "  STORE_OWNER_EMAIL:         '${{ secrets.STORE_OWNER_EMAIL }}'," >> config.js
-          echo "  DELIVERY_FEE:              60," >> config.js
-          echo "  PAYFAST_URL:               'https://sandbox.payfast.co.za/eng/process'," >> config.js
-          echo "};" >> config.js
-          echo "config.js contents:"
-          cat config.js
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_PAYFAST_MERCHANT_ID: ${{ secrets.PAYFAST_MERCHANT_ID }}
+          VITE_PAYFAST_MERCHANT_KEY: ${{ secrets.PAYFAST_MERCHANT_KEY }}
+          VITE_PAYFAST_PASSPHRASE: ${{ secrets.PAYFAST_PASSPHRASE }}
+          VITE_PAYFAST_URL: https://sandbox.payfast.co.za/eng/process
+          VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          VITE_EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          VITE_EMAILJS_OWNER_TEMPLATE: ${{ secrets.EMAILJS_OWNER_TEMPLATE }}
+          VITE_EMAILJS_CUSTOMER_TEMPLATE: ${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}
+          VITE_STORE_OWNER_EMAIL: ${{ secrets.STORE_OWNER_EMAIL }}
+          VITE_DELIVERY_FEE: 60
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -47,7 +52,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment

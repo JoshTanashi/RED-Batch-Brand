@@ -1,0 +1,63 @@
+import { useEffect } from 'react';
+
+/* ── Custom Cursor ──
+   Mirrors the legacy effects.js IIFE as a hook: a dot that tracks the mouse
+   directly and a lerped ring that trails it, both wired up once at the app
+   root. Listeners are passive (no preventDefault needed) and torn down on
+   unmount. */
+export const useCursor = () => {
+  useEffect(() => {
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    if (!dot || !ring) return;
+
+    let rx = 0, ry = 0, mx = 0, my = 0;
+    let animId;
+
+    const onMouseMove = (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+      dot.style.left = mx + 'px';
+      dot.style.top  = my + 'px';
+    };
+
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const tick = () => {
+      rx = lerp(rx, mx, 0.12);
+      ry = lerp(ry, my, 0.12);
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      animId = requestAnimationFrame(tick);
+    };
+    animId = requestAnimationFrame(tick);
+
+    const onMouseDown = () => { dot.style.transform = 'translate(-50%,-50%) scale(1.8)'; };
+    const onMouseUp   = () => { dot.style.transform = 'translate(-50%,-50%) scale(1)'; };
+
+    const onMouseOver = (e) => {
+      const el = e.target.closest('button,a,[data-hover]');
+      if (el) {
+        ring.style.width  = '44px';
+        ring.style.height = '44px';
+        ring.style.borderColor = '#B22222';
+      } else {
+        ring.style.width  = '28px';
+        ring.style.height = '28px';
+        ring.style.borderColor = 'rgba(178,34,34,0.5)';
+      }
+    };
+
+    document.addEventListener('mousemove', onMouseMove, { passive: true });
+    document.addEventListener('mousedown', onMouseDown, { passive: true });
+    document.addEventListener('mouseup', onMouseUp, { passive: true });
+    document.addEventListener('mouseover', onMouseOver, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(animId);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mouseover', onMouseOver);
+    };
+  }, []);
+};

@@ -6,6 +6,10 @@
 # Store config — contains real credentials locally
 config.js
 
+# Build tooling
+node_modules/
+dist/
+
 # OS files
 .DS_Store
 Thumbs.db
