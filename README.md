@@ -2,9 +2,9 @@
 
 Web storefront for RED-Batch — a controlled release apparel brand from South Africa. Each drop is a numbered batch. Once a batch closes, it's archived.
 
-Live product categories: **T-shirts** and **Hoodies** only.
-
 **Live site:** [joshtanashi.github.io/RED-Batch-Brand](https://joshtanashi.github.io/RED-Batch-Brand/)
+
+The site currently sits behind a permanent "DROPPING SOON" overlay — this is intentional pre-launch gating, not a bug.
 
 ---
 
@@ -12,97 +12,102 @@ Live product categories: **T-shirts** and **Hoodies** only.
 
 | Layer | Tech |
 |---|---|
-| UI | React 18 (UMD via CDN) |
-| JSX | Babel Standalone (no build step) |
+| UI | React 18 |
+| Build | Vite |
 | Styles | Inline React styles + `styles.css` |
+| Data | Supabase (Postgres) — `products` table |
+| Auth | Supabase Auth (email/password) — gates `/admin` |
+| Email | EmailJS |
+| Payments | PayFast |
 | Fonts | Space Grotesk · Space Mono (Google Fonts) |
-| Effects | Vanilla JS — film grain canvas, custom cursor |
-
-No bundler. No framework. No dependencies to install. Open `index.html` via a local server and it runs.
 
 ---
 
 ## Structure
 
 ```
-index.html       — Shell. Loads fonts, React, Babel, and the three source files.
-styles.css       — Global styles: cursor, ticker, animations, scrollbar.
-effects.js       — Film grain canvas + custom crosshair cursor (vanilla JS).
-app.jsx          — Full React app: data, components, screens, routing.
-config.js        — Store credentials (gitignored — never committed).
-config.example.js — Template for config.js. Safe to commit.
+index.html              — Vite entry shell.
+src/main.jsx             — React root.
+src/App.jsx              — State machine, query-param routing, product fetch.
+src/lib/
+  supabaseClient.js       — Supabase client + fetchProducts().
+  payfast.js              — PayFast MD5 signature helpers.
+  config.js                — Reads import.meta.env.* into named exports.
+  format.js, theme.js, useCursor.js, useIsMobile.js
+src/components/          — Shared UI: Header, Footer, Btn, Divider, Ticker, etc.
+src/screens/             — One file per screen (Drop, Product, Cart, Checkout,
+                            Success, Cancel, Queue, Sets, Contact, Admin, Dropping).
+.env.example             — Template for required environment variables.
 ```
 
 ---
 
 ## Screens
 
-- **DROP** — Active batches available now. Stats bar shows units issued, season, and drop count.
-- **PRODUCT** — Detail view for a single batch: specs, sizing, price, origin.
-- **ARCHIVE** — All closed batches. Click any row to expand the record.
-- **MANIFESTO** — Brand principles.
-- **QUEUE** — Next batch preview with notification register.
+- **DROP** (`?s=drop`) — Active batches available now.
+- **PRODUCT** (`?s=product`) — Detail view for a single batch: specs, sizing, price, origin.
+- **SETS** (`?s=sets`) — Permanent cycle sets (tee + hoodie bundles).
+- **QUEUE** (`?s=queue`) — Next batch preview with notification register.
+- **CART** / **CHECKOUT** / **SUCCESS** / **CANCEL** — Order flow via PayFast.
+- **CONTACT** (`?s=contact`) — Contact form via EmailJS.
+- **ADMIN** (`?s=admin`) — Password-gated product management (not linked from nav).
 
 ---
 
-## Current Drop — SS26-A
+## Products
 
-| ID | Item | Units | Price |
-|---|---|---|---|
-| RB-001 | Heavy Tee | 120 | R 850 |
-| RB-002 | Pullover Hoodie | 80 | R 1 200 |
-| RB-003 | Acid Wash Tee | 60 | R 950 |
-
-All units manufactured in **South Africa**.
-
----
-
-## Deployment
-
-The site deploys automatically to GitHub Pages on every push to `main`.
-
-**How it works:**
-1. GitHub Actions runs `.github/workflows/deploy.yml` on push to `main`
-2. The workflow builds `config.js` from GitHub Secrets and copies all site files to the `gh-pages` branch
-3. GitHub Pages serves the `gh-pages` branch at the live URL above
-
-**Setting up credentials for production:**
-1. Go to the repo on GitHub → Settings → Secrets and variables → Actions
-2. Add each secret key from `config.example.js` with your real values
-3. Push any change to `main` to trigger a redeploy with the new secrets
+Products are not hardcoded — they live in a Supabase `products` table and are fetched on page load. To add, edit, or remove a product, sign in at `?s=admin` with the owner's Supabase Auth credentials.
 
 ---
 
 ## Running Locally
 
-Babel Standalone requires HTTP — it won't load `.jsx` files over `file://`.
-
-**Step 1 — Copy config:**
+**1. Install dependencies:**
 ```bash
-cp config.example.js config.js
-# Fill in your real credentials in config.js
+npm install
 ```
 
-**Option 1 — VS Code Live Server**
-Install the Live Server extension, right-click `index.html` → *Open with Live Server*.
-
-**Option 2 — Python**
+**2. Set up environment variables:**
 ```bash
-python -m http.server 8000
-# open http://localhost:8000
+cp .env.example .env
+# Fill in your real PayFast, EmailJS, and Supabase credentials in .env
 ```
 
-**Option 3 — Node**
+**3. Start the dev server:**
 ```bash
-npx serve .
+npm run dev
 ```
+
+**4. Build for production:**
+```bash
+npm run build
+npx serve dist   # preview the production build locally
+```
+
+---
+
+## Deployment
+
+The site deploys automatically to GitHub Pages on every push to `main` via `.github/workflows/deploy.yml`, and is also configured for Netlify (`netlify.toml`).
+
+**How it works:**
+1. GitHub Actions checks out the repo, runs `npm ci` and `npm run build`
+2. Each `VITE_*` variable is injected at build time from a matching GitHub Secret
+3. The built `dist/` folder is uploaded and published to GitHub Pages
+
+**Setting up credentials for production:**
+1. Go to the repo on GitHub → Settings → Secrets and variables → Actions
+2. Add a secret for each key listed in `.env.example` (e.g. `PAYFAST_MERCHANT_ID`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, etc.)
+3. Push any change to `main` to trigger a redeploy with the new secrets
+
+`VITE_PAYFAST_URL` defaults to the PayFast **sandbox** endpoint. Switching to the production PayFast URL is a deliberate manual step, not something a routine deploy should change.
 
 ---
 
 ## Responsive
 
-Mobile layout activates at `≤ 768px`. Custom cursor and film grain are disabled on touch devices.
+Mobile layout activates at `≤ 768px`. The custom cursor is disabled on touch devices.
 
 ---
 
-*RED-BATCH · South Africa · SS26-A*
+*RED-BATCH · South Africa*
