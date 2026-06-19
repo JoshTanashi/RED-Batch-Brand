@@ -3,11 +3,11 @@ import { C, F, mono } from '../lib/theme';
 import { useIsMobile } from '../lib/useIsMobile';
 import { Ticker } from '../components/Ticker';
 import { ProductCardInline } from '../components/ProductCardInline';
-import { BATCHES, ACTIVE_BATCHES } from '../data/products';
 
-export const DropScreen = ({ onNav, onSelectBatch }) => {
+export const DropScreen = ({ onNav, onSelectBatch, batches: BATCHES }) => {
   const isMobile = useIsMobile();
   const [filter, setFilter] = useState('ALL');
+  const ACTIVE_BATCHES = BATCHES.filter(b => b.status === 'ACTIVE');
 
   const filters = [
     { id: 'ALL',    label: 'ALL',     count: BATCHES.filter(b => b.status !== 'COMING_SOON').length },

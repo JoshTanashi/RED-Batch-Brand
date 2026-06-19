@@ -6,9 +6,8 @@ import { Ticker } from '../components/Ticker';
 import { Badge } from '../components/Badge';
 import { Btn } from '../components/Btn';
 import { Divider } from '../components/Divider';
-import { BATCHES } from '../data/products';
 
-export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
+export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, batches: BATCHES }) => {
   const isMobile = useIsMobile();
   const batch = BATCHES.find(b => b.id === batchId) || BATCHES[0];
   const [size, setSize] = useState(null);

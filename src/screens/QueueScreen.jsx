@@ -6,7 +6,8 @@ import { EMAILJS_SERVICE_ID, EMAILJS_OWNER_TEMPLATE } from '../lib/config';
 import { Ticker } from '../components/Ticker';
 import { Divider } from '../components/Divider';
 import { Btn } from '../components/Btn';
-import { NEXT } from '../data/products';
+
+const NEXT = { id: 'RB-003', season: 'CYCLE-02', date: '2026.TBC', desc: 'Batch not yet released. Register to receive notification when the record opens.' };
 
 export const QueueScreen = () => {
   const isMobile = useIsMobile();

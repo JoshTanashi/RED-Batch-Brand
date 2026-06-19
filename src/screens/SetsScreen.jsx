@@ -3,9 +3,8 @@ import { useIsMobile } from '../lib/useIsMobile';
 import { Ticker } from '../components/Ticker';
 import { Divider } from '../components/Divider';
 import { SetCard } from '../components/SetCard';
-import { SETS } from '../data/products';
 
-export const SetsScreen = ({ onNav, cart, addToCart }) => {
+export const SetsScreen = ({ onNav, cart, addToCart, sets: SETS }) => {
   const isMobile = useIsMobile();
 
   return (
