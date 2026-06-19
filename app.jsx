@@ -266,12 +266,9 @@ const Footer = ({ onNav }) => {
   const isMobile = useIsMobile();
   const navLinks = [
     { id: 'drop',      label: 'DROP' },
-    { id: 'origin',    label: 'ORIGIN' },
     { id: 'contact',   label: 'CONTACT' },
-    { id: 'manifesto', label: 'MANIFESTO' },
     { id: 'queue',     label: 'QUEUE' },
     { id: 'sets',      label: 'THE RECORD' },
-    { id: 'merch',     label: 'MERCH' },
   ];
   return (
     <footer style={{ borderTop: `1px solid ${C.grey}`, background: C.black, padding: isMobile ? '24px' : '32px 48px' }}>
@@ -334,7 +331,6 @@ const Header = ({ screen, onNav, cart }) => {
   const navItems = [
     { id: 'drop',    label: 'DROP' },
     { id: 'product', label: 'PRODUCT' },
-    { id: 'origin',  label: 'ORIGIN' },
     { id: 'sets',    label: 'THE RECORD' },
   ];
 
@@ -371,9 +367,6 @@ const Header = ({ screen, onNav, cart }) => {
                   </button>
                 );
               })}
-              <button onClick={() => { onNav('merch'); window.scrollTo(0,0); }} style={{ background: 'transparent', border: 'none', color: '#888', fontFamily: "'Space Mono', monospace", fontSize: '9px', letterSpacing: '0.16em', textTransform: 'uppercase', padding: '0 20px', height: '58px', cursor: 'pointer', animation: 'glitch 4s ease infinite, glitch-color 4s ease infinite' }}>
-                MERCH
-              </button>
             </nav>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.red, animation: 'pulse 2s ease-in-out infinite' }} />
@@ -400,9 +393,6 @@ const Header = ({ screen, onNav, cart }) => {
               </button>
             );
           })}
-          <button onClick={() => handleNav('merch')} style={{ background: 'transparent', border: 'none', borderBottom: `1px solid ${C.g2}`, color: '#888', fontFamily: "'Space Mono', monospace", fontSize: '13px', letterSpacing: '0.16em', textTransform: 'uppercase', padding: '20px 0', cursor: 'pointer', textAlign: 'left', animation: 'glitch 4s ease infinite, glitch-color 4s ease infinite' }}>
-            MERCH
-          </button>
           <button onClick={() => handleNav('contact')} style={{ background: 'transparent', border: 'none', borderBottom: `1px solid ${C.g2}`, ...mono(13, C.dim), padding: '20px 0', cursor: 'pointer', textAlign: 'left', transition: 'color 0.15s' }}>
             CONTACT
           </button>
@@ -795,51 +785,6 @@ const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch }) => {
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-/* ── SCREEN: MANIFESTO ── */
-const ManifestoScreen = () => {
-  const isMobile = useIsMobile();
-  const lines = [
-    { text: 'Every release is documented.', size: isMobile ? 32 : 48, delay: 0.05 },
-    { text: 'Every unit is verified.',       size: isMobile ? 32 : 48, delay: 0.15 },
-    { text: 'Nothing is hype.',              size: isMobile ? 44 : 64, delay: 0.28, red: true },
-    { text: 'RED-BATCH operates on a simple premise: clothing should be made with intention, released with precision, and archived permanently. No urgency. No restock. No second run.', size: 16, delay: 0.42, body: true },
-    { text: 'Record exists.',                size: isMobile ? 22 : 32, delay: 0.55, mono: true },
-  ];
-
-  return (
-    <div className="screen-enter" style={{ minHeight: '100vh' }}>
-      <Ticker />
-      <div style={{ padding: isMobile ? '56px 24px' : '96px 48px', maxWidth: 820 }}>
-        {lines.map((l, i) => (
-          <div key={i} style={{ marginBottom: l.body ? 48 : 16, opacity: 0, animation: `fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) ${l.delay}s forwards` }}>
-            {l.body ? (
-              <p style={{ fontFamily: F.g, fontWeight: 300, fontSize: l.size, lineHeight: 1.8, color: '#888', letterSpacing: '0.01em' }}>{l.text}</p>
-            ) : l.mono ? (
-              <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: l.size, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.red, marginTop: 32 }}>{l.text}</div>
-            ) : (
-              <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: l.size, letterSpacing: '0.08em', textTransform: 'uppercase', color: l.red ? C.red : C.white, lineHeight: 1 }}>{l.text}</div>
-            )}
-          </div>
-        ))}
-      </div>
-      <div style={{ borderTop: `1px solid ${C.grey}`, margin: isMobile ? '0 24px' : '0 48px', paddingTop: 48, paddingBottom: 80, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '32px' : '40px 64px', maxWidth: 720 }}>
-        <div>
-          <div style={{ ...mono(9, C.red), marginBottom: 20 }}>Always</div>
-          {['Grid-based, aligned layouts', 'Hard edges — zero border-radius', 'Short declarative copy', 'Red used sparingly', 'Mono font for all IDs', 'Corner marks on stamp elements'].map(r => (
-            <div key={r} style={{ ...grotesk(13, 400, '#999'), padding: '8px 0', borderBottom: `1px solid ${C.g2}`, lineHeight: 1.5 }}>✓ {r}</div>
-          ))}
-        </div>
-        <div>
-          <div style={{ ...mono(9), marginBottom: 20 }}>Never</div>
-          {['Gradients or glow effects', 'Emoji or decorative icons', 'Rounded corners', 'Exclamation marks', 'Hype language', 'Decorative elements without function'].map(r => (
-            <div key={r} style={{ ...grotesk(13, 400, '#444'), padding: '8px 0', borderBottom: `1px solid ${C.g2}`, lineHeight: 1.5 }}>— {r}</div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
@@ -1323,56 +1268,6 @@ const CancelScreen = ({ onNav }) => {
   );
 };
 
-/* ── SCREEN: MERCH ── */
-const MerchScreen = ({ onNav }) => {
-  const isMobile = useIsMobile();
-  const [noted, setNoted] = useState(() => !!localStorage.getItem('rb-merch-notify'));
-
-  const handleNotify = () => { localStorage.setItem('rb-merch-notify', '1'); setNoted(true); };
-
-  return (
-    <div className="screen-enter" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Ticker />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 600, margin: '0 auto', padding: isMobile ? '64px 24px' : '80px 48px', textAlign: 'center', width: '100%' }}>
-
-        <div style={{ fontFamily: F.m, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.red, marginBottom: 24, animation: 'glitch 4s ease infinite, glitch-color 4s ease infinite' }}>
-          MERCH · OBJECTS · COLLECTIBLES
-        </div>
-
-        <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px,8vw,96px)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 40 }}>
-          <div style={{ color: C.white }}>COMING</div>
-          <div style={{ color: C.red }}>SOON.</div>
-        </div>
-
-        <div style={{ borderBottom: `1px solid ${C.grey}`, marginBottom: 40 }} />
-
-        <div style={{ fontFamily: F.g, fontWeight: 300, fontSize: 14, color: '#888', lineHeight: 1.8, marginBottom: 32 }}>
-          Mugs. Metal prints. Canvas prints. Objects from the RED-BATCH system. Not clothing. Everything else. Dropping alongside CYCLE-02.
-        </div>
-
-        <div style={{ ...mono(9, C.dim), marginBottom: 32 }}>RECORD WILL EXIST.</div>
-
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Btn v="ghost" onClick={noted ? undefined : handleNotify} disabled={noted}>
-            {noted ? 'Noted. Record created.' : 'Notify Me →'}
-          </Btn>
-        </div>
-
-        <div style={{ border: `1px solid ${C.grey}`, padding: 24, maxWidth: 320, margin: '48px auto 0', position: 'relative' }}>
-          {[{ t: true, l: true }, { t: true, l: false }, { t: false, l: true }, { t: false, l: false }].map(({ t, l }, i) => (
-            <div key={i} style={{ position: 'absolute', width: 6, height: 6, background: C.red, top: t ? -1 : 'auto', bottom: !t ? -1 : 'auto', left: l ? -1 : 'auto', right: !l ? -1 : 'auto' }} />
-          ))}
-          <div style={{ ...mono(8, C.dim), marginBottom: 8 }}>SECTION</div>
-          <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 14, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.white, marginBottom: 12 }}>MERCH · OBJECTS</div>
-          <div style={{ borderBottom: `1px solid ${C.grey}`, marginBottom: 12 }} />
-          <div style={{ ...mono(9, C.dim), marginBottom: 4 }}>STATUS</div>
-          <div style={{ fontFamily: F.m, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red }}>UNANNOUNCED</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 /* ── SET CARD ── */
 const SetCard = ({ set, addToCart, onNav, isMobile }) => {
   const [teeSize, setTeeSize] = useState(null);
@@ -1540,73 +1435,6 @@ const SetsScreen = ({ onNav, cart, addToCart }) => {
         {SETS.map(set => (
           <SetCard key={set.id} set={set} addToCart={addToCart} onNav={onNav} isMobile={isMobile} />
         ))}
-      </div>
-    </div>
-  );
-};
-
-/* ── SCREEN: ORIGIN ── */
-const OriginScreen = ({ onNav }) => {
-  const isMobile = useIsMobile();
-
-  const sections = [
-    { label: 'RECORD', body: 'RED-BATCH started as a question: what if clothing worked like a limited document. Not a trend. Not a drop culture flex. A record. Something issued, numbered, and permanent.' },
-    { label: 'THE SYSTEM', body: 'Every batch has an ID. Every unit has a number. When a batch closes, it is archived — not deleted. The archive is not a graveyard. It is proof. Proof that something real existed, was made, and was claimed.' },
-    { label: 'SOUTH AFRICA', body: 'This brand is South African. Built here, shipped from here, for here first. The manufacturing, the printing, the delivery — all local. That is not a selling point. That is just the record.' },
-    { label: 'THE CYCLE', body: 'A cycle is not a season. It ends when it sells out, not when the calendar says so. CYCLE-01 is the first. When it is gone, it is gone. CYCLE-02 will be different. Every cycle will be different. That is the only promise.' },
-    { label: 'THE GOAL', body: 'To build something that lasts without being loud about it. No hype. No countdown timers. No collab drops for attention. Just the work. Just the record.' },
-  ];
-
-  return (
-    <div className="screen-enter">
-      <div style={{ maxWidth: 720, margin: '0 auto', padding: isMobile ? '48px 24px' : '80px 48px' }}>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: `1px solid ${C.grey}`, paddingBottom: 24, marginBottom: 48 }}>
-          <div>
-            <div style={{ ...mono(9, C.red) }}>DOC-000</div>
-            <div style={{ ...grotesk(13, 700), letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 4 }}>RED-BATCH</div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ ...mono(9, C.dim), lineHeight: 1.8 }}>
-              ORIGIN DOCUMENT<br />
-              2026<br />
-              SOUTH AFRICA
-            </div>
-          </div>
-        </div>
-
-        <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px,8vw,80px)', letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 48, opacity: 0, animation: 'fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) 0.05s forwards' }}>
-          ORIGIN.
-        </div>
-
-        {sections.map((s, i) => (
-          <div key={s.label} style={{ marginBottom: 40, opacity: 0, animation: `fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) ${0.12 + i * 0.08}s forwards` }}>
-            <div style={{ ...mono(9, C.red), marginBottom: 12 }}>{s.label}</div>
-            <div style={{ ...grotesk(15, 300, '#999'), lineHeight: 2.0 }}>{s.body}</div>
-          </div>
-        ))}
-
-        <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '48px 0' }} />
-
-        <div style={{ border: `1px solid ${C.grey}`, padding: 32, maxWidth: 320, position: 'relative' }}>
-          {[{ t: true, l: true }, { t: true, l: false }, { t: false, l: true }, { t: false, l: false }].map(({ t, l }, i) => (
-            <div key={i} style={{ position: 'absolute', width: 6, height: 6, background: C.red, top: t ? -1 : 'auto', bottom: !t ? -1 : 'auto', left: l ? -1 : 'auto', right: !l ? -1 : 'auto' }} />
-          ))}
-          <div style={{ ...mono(8, C.dim) }}>DOCUMENT</div>
-          <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 14, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.white, marginTop: 8 }}>DOC-000 · ORIGIN</div>
-          <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '16px 0' }} />
-          <div style={{ ...mono(9, C.dim) }}>FILED</div>
-          <div style={{ ...mono(11, C.white), marginTop: 4 }}>2026 · SOUTH AFRICA</div>
-          <div style={{ marginTop: 8 }}>
-            <div style={{ ...mono(9, C.dim) }}>STATUS</div>
-            <div style={{ ...mono(11, C.red), marginTop: 4 }}>ACTIVE</div>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 32 }}>
-          <Btn v="ghost" onClick={() => { onNav('drop'); window.scrollTo(0,0); }}>View Current Drop →</Btn>
-        </div>
-
       </div>
     </div>
   );
@@ -1877,15 +1705,12 @@ const App = () => {
   const screens = {
     drop:      <DropScreen onNav={nav} onSelectBatch={setSelectedBatchId} />,
     product:   <ProductScreen onNav={nav} batchId={selectedBatchId} cart={cart} addToCart={addToCart} onSelectBatch={setSelectedBatchId} />,
-    manifesto: <ManifestoScreen />,
     queue:     <QueueScreen />,
     sets:      <SetsScreen onNav={nav} cart={cart} addToCart={addToCart} />,
-    origin:    <OriginScreen onNav={nav} />,
     cart:      <CartScreen cart={cart} removeFromCart={removeFromCart} updateCartQuantity={updateCartQuantity} clearCart={clearCart} onNav={nav} />,
     checkout:  <CheckoutScreen cart={cart} onNav={nav} onOrderComplete={onOrderComplete} />,
     success:   <SuccessScreen orderRef={orderRef} clearCart={clearCart} onNav={nav} />,
     cancel:    <CancelScreen onNav={nav} />,
-    merch:     <MerchScreen onNav={nav} />,
     contact:   <ContactScreen onNav={nav} />,
   };
 
@@ -1894,7 +1719,7 @@ const App = () => {
       <AnimatedBg />
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
         <Header screen={screen} onNav={nav} cart={cart} />
-        <div key={screen} style={{ flex: 1 }}>{screens[screen]}</div>
+        <div key={screen} style={{ flex: 1 }}>{screens[screen] || screens.drop}</div>
         <Footer onNav={nav} />
       </div>
       {/* LAUNCH — DELETE THIS LINE WHEN THE SITE GOES LIVE */}
