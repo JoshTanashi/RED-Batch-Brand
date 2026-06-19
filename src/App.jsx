@@ -16,7 +16,6 @@ import { CheckoutScreen } from './screens/CheckoutScreen';
 import { SuccessScreen } from './screens/SuccessScreen';
 import { CancelScreen } from './screens/CancelScreen';
 import { ContactScreen } from './screens/ContactScreen';
-import { DroppingScreen } from './screens/DroppingScreen';
 import { AdminScreen } from './screens/AdminScreen';
 
 export const App = () => {
@@ -115,9 +114,6 @@ export const App = () => {
         <div key={screen} style={{ flex: 1 }}>{screens[screen] || screens.drop}</div>
         <Footer onNav={nav} />
       </div>
-      {/* LAUNCH — DELETE THIS LINE WHEN THE SITE GOES LIVE */}
-      <DroppingScreen />
-      {/* ── END LAUNCH LINE ── */}
     </div>
   );
 };
