@@ -10,9 +10,10 @@ export const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) 
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
   return (
+    <>
     <div className="screen-enter">
       <Ticker />
-      <div style={{ padding: isMobile ? '32px 24px' : '48px' }}>
+      <div style={{ padding: isMobile ? '32px 24px' : '48px', paddingBottom: isMobile && cart.length > 0 ? 100 : (isMobile ? '32px' : '48px') }}>
         <div style={{ ...mono(9, C.red), marginBottom: 12 }}>ORDER RECORD</div>
         <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: isMobile ? 36 : 52, letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1, marginBottom: 40 }}>CART.</div>
 
@@ -39,17 +40,17 @@ export const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) 
                         <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 8 }}>
                           <button
                             onClick={() => updateCartQuantity(item.id, item.size, item.colour, item.quantity - 1)}
-                            style={{ width: 26, height: 26, border: `1px solid ${C.grey}`, background: 'transparent', color: C.dim, fontSize: 14, cursor: 'pointer', transition: 'color 0.15s' }}
+                            style={{ width: isMobile ? 40 : 26, height: isMobile ? 40 : 26, border: `1px solid ${C.grey}`, background: 'transparent', color: C.dim, fontSize: 16, cursor: 'pointer', transition: 'color 0.15s' }}
                             onMouseEnter={e => e.currentTarget.style.color = C.white}
                             onMouseLeave={e => e.currentTarget.style.color = C.dim}>
                             −
                           </button>
-                          <div style={{ width: 36, height: 26, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 11, color: C.white }}>
+                          <div style={{ width: isMobile ? 44 : 36, height: isMobile ? 40 : 26, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 11, color: C.white }}>
                             {item.quantity}
                           </div>
                           <button
                             onClick={() => updateCartQuantity(item.id, item.size, item.colour, Math.min(10, item.quantity + 1))}
-                            style={{ width: 26, height: 26, border: `1px solid ${C.grey}`, background: 'transparent', color: C.dim, fontSize: 14, cursor: 'pointer', transition: 'color 0.15s' }}
+                            style={{ width: isMobile ? 40 : 26, height: isMobile ? 40 : 26, border: `1px solid ${C.grey}`, background: 'transparent', color: C.dim, fontSize: 16, cursor: 'pointer', transition: 'color 0.15s' }}
                             onMouseEnter={e => e.currentTarget.style.color = C.white}
                             onMouseLeave={e => e.currentTarget.style.color = C.dim}>
                             +
@@ -59,7 +60,7 @@ export const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) 
                       <div style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{fmtCurrency(item.price * item.quantity)}</div>
                     </div>
                     <button onClick={() => removeFromCart(item.id, item.size, item.colour)}
-                      style={{ ...mono(14, C.dim), background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 16px', lineHeight: 1, transition: 'color 0.15s' }}
+                      style={{ ...mono(14, C.dim), background: 'none', border: 'none', cursor: 'pointer', padding: isMobile ? '8px 0 8px 16px' : '0 0 0 16px', lineHeight: 1, transition: 'color 0.15s' }}
                       onMouseEnter={e => e.currentTarget.style.color = C.red}
                       onMouseLeave={e => e.currentTarget.style.color = C.dim}>
                       ×
@@ -89,5 +90,16 @@ export const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) 
         )}
       </div>
     </div>
+
+      {isMobile && cart.length > 0 && (
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'rgba(13,13,13,0.97)', backdropFilter: 'blur(8px)', borderTop: `1px solid ${C.grey}`, padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, zIndex: 200 }}>
+          <div>
+            <div style={{ ...mono(8, C.dim) }}>Subtotal</div>
+            <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 16, color: C.white }}>{fmtCurrency(subtotal)}</div>
+          </div>
+          <Btn onClick={() => { onNav('checkout'); window.scrollTo(0,0); }} style={{ flexShrink: 0 }}>Checkout →</Btn>
+        </div>
+      )}
+    </>
   );
 };

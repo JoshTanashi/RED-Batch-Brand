@@ -152,16 +152,16 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
               <button
                 onClick={() => setQty(q => Math.max(1, q - 1))}
                 disabled={qty === 1}
-                style={{ width: 32, height: 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 1 ? 'not-allowed' : 'pointer', opacity: qty === 1 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
+                style={{ width: isMobile ? 44 : 32, height: isMobile ? 44 : 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 1 ? 'not-allowed' : 'pointer', opacity: qty === 1 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
                 −
               </button>
-              <div style={{ width: 48, height: 32, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 13, color: C.white }}>
+              <div style={{ width: isMobile ? 52 : 48, height: isMobile ? 44 : 32, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 13, color: C.white }}>
                 {qty}
               </div>
               <button
                 onClick={() => setQty(q => Math.min(10, q + 1))}
                 disabled={qty === 10}
-                style={{ width: 32, height: 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 10 ? 'not-allowed' : 'pointer', opacity: qty === 10 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
+                style={{ width: isMobile ? 44 : 32, height: isMobile ? 44 : 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 10 ? 'not-allowed' : 'pointer', opacity: qty === 10 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
                 +
               </button>
             </div>

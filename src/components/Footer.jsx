@@ -30,7 +30,7 @@ export const Footer = ({ onNav }) => {
         <div>
           <div style={{ ...mono(9, C.red), marginBottom: 8 }}>NAVIGATE</div>
           {navLinks.map(({ id, label }) => (
-            <button key={id} onClick={() => { onNav(id); window.scrollTo(0,0); }} style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', display: 'block', lineHeight: 2, padding: 0, transition: 'color 0.15s' }}
+            <button key={id} onClick={() => { onNav(id); window.scrollTo(0,0); }} style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', display: 'block', lineHeight: 2, padding: isMobile ? '8px 0' : 0, transition: 'color 0.15s' }}
               onMouseEnter={e => e.currentTarget.style.color = C.white}
               onMouseLeave={e => e.currentTarget.style.color = C.dim}>
               {label}
