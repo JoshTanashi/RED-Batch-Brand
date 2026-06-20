@@ -8,7 +8,9 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
   const [teeSize, setTeeSize] = useState(null);
   const [hoodieSize, setHoodieSize] = useState(null);
   const [added, setAdded] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
   const isArchived = set.status !== 'ACTIVE';
+  const hasImage = set.images && set.images[0] && !imgFailed;
 
   const canAddSet = teeSize !== null && hoodieSize !== null;
 
@@ -35,10 +37,10 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
       {!isArchived && <div style={{ position: 'absolute', top: -1, right: -1, width: 10, height: 10, background: C.red, zIndex: 1 }} />}
 
       <div style={{ aspectRatio: '3/2', background: C.g2, position: 'relative', overflow: 'hidden', zIndex: 10 }}>
-        {set.images && set.images[0] ? (
+        {hasImage ? (
           <img src={set.images[0]} alt={set.name}
             loading="lazy"
-            onError={e => { e.target.style.display = 'none'; }}
+            onError={() => setImgFailed(true)}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         ) : (
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>

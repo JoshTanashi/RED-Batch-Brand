@@ -18,11 +18,13 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [failedImgs, setFailedImgs] = useState(() => new Set());
   const minSwipeDistance = 50;
   const topRef = useRef(null);
   const isClosed = batch.units === 0;
+  const hasActiveImg = batch.images && batch.images[activeImg] && !failedImgs.has(batch.images[activeImg]);
 
-  useEffect(() => { setActiveImg(0); setSize(null); setQty(1); }, [batchId]);
+  useEffect(() => { setActiveImg(0); setSize(null); setQty(1); setFailedImgs(new Set()); }, [batchId]);
 
   useEffect(() => {
     if (topRef.current) {
@@ -62,9 +64,9 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
               setTouchEnd(null);
             }}
             style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', border: `1px solid ${C.grey}`, zIndex: 10 }}>
-            {batch.images && batch.images[activeImg] ? (
+            {hasActiveImg ? (
               <img key={activeImg} src={batch.images[activeImg]} alt={`${batch.name} ${activeImg + 1}`}
-                onError={e => { e.target.style.display = 'none'; }}
+                onError={() => setFailedImgs(prev => new Set(prev).add(batch.images[activeImg]))}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             ) : (
               <span style={{ ...mono(9, '#222') }}>IMG</span>

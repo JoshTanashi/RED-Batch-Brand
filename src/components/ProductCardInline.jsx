@@ -4,19 +4,21 @@ import { Badge } from './Badge';
 
 export const ProductCardInline = ({ batch, onClick }) => {
   const [hov, setHov] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
   const isClosed = batch.units === 0;
   const isComingSoon = batch.status === 'COMING_SOON';
+  const hasImage = batch.images && batch.images[0] && !imgFailed;
 
   if (isComingSoon) {
     return (
       <div style={{ background: C.black, position: 'relative', border: `1px solid ${C.grey}`, cursor: 'default' }}>
         <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', zIndex: 10 }}>
-          {batch.images && batch.images[0] ? (
+          {hasImage ? (
             <img
               src={batch.images[0]}
               alt={batch.name}
               loading="lazy"
-              onError={e => { e.target.style.display = 'none'; }}
+              onError={() => setImgFailed(true)}
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0, opacity: 0.5 }}
             />
           ) : null}
@@ -43,10 +45,10 @@ export const ProductCardInline = ({ batch, onClick }) => {
       style={{ background: C.black, cursor: 'pointer', position: 'relative', border: `1px solid ${hov ? (isClosed ? C.grey : C.red) : C.grey}`, transition: 'border-color 0.2s' }}>
       <div style={{ position: 'absolute', top: -1, right: -1, width: 10, height: 10, background: isClosed ? 'transparent' : (batch.status === 'ACTIVE' ? C.red : 'transparent'), transition: 'background 0.2s', zIndex: 1 }} />
       <div style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', zIndex: 10 }}>
-        {batch.images && batch.images[0] ? (
+        {hasImage ? (
           <img src={batch.images[0]} alt={batch.name}
             loading="lazy"
-            onError={e => { e.target.style.display = 'none'; }}
+            onError={() => setImgFailed(true)}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }} />
         ) : (
           <span style={{ ...mono(9, '#222') }}>IMAGE SLOT</span>
