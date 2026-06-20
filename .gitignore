@@ -3,8 +3,8 @@
 .env.local
 .env.*.local
 
-# Store config — contains real credentials locally
-config.js
+# Legacy store config — contained real credentials locally (pre-Vite)
+/config.js
 
 # Build tooling
 node_modules/
