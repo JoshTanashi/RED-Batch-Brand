@@ -7,6 +7,7 @@ import { submitPayfastForm } from '../lib/payfast';
 import {
   PAYFAST_MERCHANT_ID, PAYFAST_MERCHANT_KEY, PAYFAST_PASSPHRASE, PAYFAST_URL,
   EMAILJS_SERVICE_ID, EMAILJS_OWNER_TEMPLATE, EMAILJS_CUSTOMER_TEMPLATE, STORE_OWNER_EMAIL,
+  DELIVERY_FEE_LOCKER, DELIVERY_FEE_DOOR,
 } from '../lib/config';
 import { Ticker } from '../components/Ticker';
 import { Divider } from '../components/Divider';
@@ -17,7 +18,7 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const [deliveryMethod, setDeliveryMethod] = useState('door');
   const [pudoLocker, setPudoLocker] = useState('');
-  const deliveryFee = deliveryMethod === 'locker' ? 60 : 120;
+  const deliveryFee = deliveryMethod === 'locker' ? DELIVERY_FEE_LOCKER : DELIVERY_FEE_DOOR;
   const total = subtotal + deliveryFee;
 
   const blankForm = { fullName: '', email: '', phone: '', address: '', suburb: '', city: '', province: '', postalCode: '' };
@@ -64,7 +65,7 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
       customer_email: form.email, address_line1: form.address, suburb: form.suburb,
       city: form.city, province: form.province, postal_code: form.postalCode,
       courier: 'Pudo',
-      delivery_method: deliveryMethod === 'locker' ? 'Pudo Locker-to-Locker (R60)' : 'Pudo Door-to-Door (R120)',
+      delivery_method: deliveryMethod === 'locker' ? `Pudo Locker-to-Locker (${fmtCurrency(DELIVERY_FEE_LOCKER)})` : `Pudo Door-to-Door (${fmtCurrency(DELIVERY_FEE_DOOR)})`,
       pudo_locker: pudoLocker || 'N/A',
     };
 
@@ -164,7 +165,7 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
           <div style={{ ...mono(9, C.red), marginBottom: 12 }}>DELIVERY METHOD</div>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 1, background: C.grey, marginBottom: 20 }}>
             <div onClick={() => setDeliveryMethod('locker')} style={{ background: C.black, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'locker' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
-              <div style={{ ...mono(9, deliveryMethod === 'locker' ? C.red : C.dim) }}>PUDO LOCKER · R 60</div>
+              <div style={{ ...mono(9, deliveryMethod === 'locker' ? C.red : C.dim) }}>PUDO LOCKER · {fmtCurrency(DELIVERY_FEE_LOCKER)}</div>
               <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Collect from your nearest Pudo locker. You will receive a collection notification via SMS or email.</div>
               {deliveryMethod === 'locker' && (
                 <div style={{ marginTop: 12 }}>
@@ -177,7 +178,7 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
             </div>
             <div onClick={() => setDeliveryMethod('door')} style={{ background: C.black, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'door' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
               {deliveryMethod === 'door' && <div style={{ position: 'absolute', top: 0, right: 0, width: 6, height: 6, background: C.red }} />}
-              <div style={{ ...mono(9, deliveryMethod === 'door' ? C.red : C.dim) }}>PUDO DOOR-TO-DOOR · R 120</div>
+              <div style={{ ...mono(9, deliveryMethod === 'door' ? C.red : C.dim) }}>PUDO DOOR-TO-DOOR · {fmtCurrency(DELIVERY_FEE_DOOR)}</div>
               <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Delivered directly to your address. Allow 2–4 business days after dispatch.</div>
             </div>
           </div>

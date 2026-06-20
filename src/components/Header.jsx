@@ -10,6 +10,7 @@ export const Header = ({ screen, onNav, cart }) => {
   const navItems = [
     { id: 'drop',    label: 'DROP' },
     { id: 'product', label: 'PRODUCT' },
+    { id: 'queue',   label: 'QUEUE' },
     { id: 'sets',    label: 'THE RECORD' },
   ];
 
