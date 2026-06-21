@@ -15,8 +15,7 @@ The site currently sits behind a permanent "DROPPING SOON" overlay — this is i
 | UI | React 18 |
 | Build | Vite |
 | Styles | Inline React styles + `styles.css` |
-| Data | Supabase (Postgres) — `products` table |
-| Auth | Supabase Auth (email/password) — gates `/admin` |
+| Data | Static array in `src/lib/products.js` |
 | Email | EmailJS |
 | Payments | PayFast |
 | Fonts | Space Grotesk · Space Mono (Google Fonts) |
@@ -28,15 +27,15 @@ The site currently sits behind a permanent "DROPPING SOON" overlay — this is i
 ```
 index.html              — Vite entry shell.
 src/main.jsx             — React root.
-src/App.jsx              — State machine, query-param routing, product fetch.
+src/App.jsx              — State machine, query-param routing.
 src/lib/
-  supabaseClient.js       — Supabase client + fetchProducts().
+  products.js             — Static product catalogue (BATCHES, SETS).
   payfast.js              — PayFast MD5 signature helpers.
   config.js                — Reads import.meta.env.* into named exports.
   format.js, theme.js, useCursor.js, useIsMobile.js
 src/components/          — Shared UI: Header, Footer, Btn, Divider, Ticker, etc.
 src/screens/             — One file per screen (Drop, Product, Cart, Checkout,
-                            Success, Cancel, Queue, Sets, Contact, Admin, Dropping).
+                            Success, Cancel, Queue, Sets, Contact, Dropping).
 .env.example             — Template for required environment variables.
 ```
 
@@ -50,13 +49,12 @@ src/screens/             — One file per screen (Drop, Product, Cart, Checkout,
 - **QUEUE** (`?s=queue`) — Next batch preview with notification register.
 - **CART** / **CHECKOUT** / **SUCCESS** / **CANCEL** — Order flow via PayFast.
 - **CONTACT** (`?s=contact`) — Contact form via EmailJS.
-- **ADMIN** (`?s=admin`) — Password-gated product management (not linked from nav).
 
 ---
 
 ## Products
 
-Products are not hardcoded — they live in a Supabase `products` table and are fetched on page load. To add, edit, or remove a product, sign in at `?s=admin` with the owner's Supabase Auth credentials.
+Products live in `src/lib/products.js` as two plain arrays, `BATCHES` and `SETS`. To add, edit, or remove a product (or swap an image), edit that file directly and redeploy.
 
 ---
 
@@ -70,7 +68,7 @@ npm install
 **2. Set up environment variables:**
 ```bash
 cp .env.example .env
-# Fill in your real PayFast, EmailJS, and Supabase credentials in .env
+# Fill in your real PayFast and EmailJS credentials in .env
 ```
 
 **3. Start the dev server:**
@@ -97,7 +95,7 @@ The site deploys automatically to GitHub Pages on every push to `main` via `.git
 
 **Setting up credentials for production:**
 1. Go to the repo on GitHub → Settings → Secrets and variables → Actions
-2. Add a secret for each key listed in `.env.example` (e.g. `PAYFAST_MERCHANT_ID`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, etc.)
+2. Add a secret for each key listed in `.env.example` (e.g. `PAYFAST_MERCHANT_ID`, `EMAILJS_PUBLIC_KEY`, etc.)
 3. Push any change to `main` to trigger a redeploy with the new secrets
 
 `VITE_PAYFAST_URL` defaults to the PayFast **sandbox** endpoint. Switching to the production PayFast URL is a deliberate manual step, not something a routine deploy should change.
