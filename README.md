@@ -4,8 +4,6 @@ Web storefront for RED-Batch — a controlled release apparel brand from South A
 
 **Live site:** [joshtanashi.github.io/RED-Batch-Brand](https://joshtanashi.github.io/RED-Batch-Brand/)
 
-The site currently sits behind a permanent "DROPPING SOON" overlay — this is intentional pre-launch gating, not a bug.
-
 ---
 
 ## Stack

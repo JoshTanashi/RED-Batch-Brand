@@ -31,7 +31,7 @@ export const BATCHES = [
     fit: 'Oversized / Drop Shoulder',
     type: 'Hoodie',
     desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, single kangaroo pocket, ribbed cuffs and hem. Batch identifier woven into back neck label. 50 units. No restock.',
-    images: ['./images/rb-002-a.webp', './images/rb-004-b.webp', './images/rb-002-b.webp'],
+    images: ['./images/rb-002-a.webp', './images/rb-002-b.webp'],
   },
   {
     id: 'RB-007',
