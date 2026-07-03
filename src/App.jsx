@@ -8,7 +8,7 @@ import { LazyMotion, domAnimation, MotionConfig, AnimatePresence, m, EASE } from
 import { BATCHES, SETS } from './lib/products';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { DropScreen } from './screens/DropScreen';
+import { HomeScreen } from './screens/HomeScreen';
 import { ProductScreen } from './screens/ProductScreen';
 import { CartScreen } from './screens/CartScreen';
 import { CheckoutScreen } from './screens/CheckoutScreen';
@@ -140,7 +140,7 @@ export const App = () => {
   const onOrderComplete = (ref) => setOrderRef(ref);
 
   const screens = {
-    drop:      <DropScreen onNav={nav} onSelectBatch={setSelectedBatchId} batches={BATCHES} sets={SETS} cart={cart} addToCart={addToCart} introDone={introDone} />,
+    drop:      <HomeScreen onNav={nav} onSelectBatch={setSelectedBatchId} batches={BATCHES} sets={SETS} addToCart={addToCart} introDone={introDone} />,
     product:   <ProductScreen onNav={nav} batchId={selectedBatchId} cart={cart} addToCart={addToCart} onSelectBatch={setSelectedBatchId} batches={BATCHES} />,
     cart:      <CartScreen cart={cart} removeFromCart={removeFromCart} updateCartQuantity={updateCartQuantity} clearCart={clearCart} onNav={nav} />,
     checkout:  <CheckoutScreen cart={cart} onNav={nav} onOrderComplete={onOrderComplete} />,
