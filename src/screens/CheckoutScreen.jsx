@@ -9,9 +9,9 @@ import {
   EMAILJS_SERVICE_ID, EMAILJS_OWNER_TEMPLATE, EMAILJS_CUSTOMER_TEMPLATE, STORE_OWNER_EMAIL,
   DELIVERY_FEE_LOCKER, DELIVERY_FEE_DOOR,
 } from '../lib/config';
-import { Ticker } from '../components/Ticker';
-import { Divider } from '../components/Divider';
+import { Section } from '../components/Section';
 import { Btn } from '../components/Btn';
+import { display, TONES } from '../lib/theme';
 
 export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   const isMobile = useIsMobile();
@@ -99,11 +99,10 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   ];
 
   return (
-    <div className="screen-enter">
-      <Ticker />
-      <div style={{ padding: isMobile ? '32px 24px' : '48px' }}>
-        <div style={{ ...mono(9, C.red), marginBottom: 12 }}>DELIVERY RECORD</div>
-        <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: isMobile ? 36 : 52, letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1, marginBottom: 40 }}>CHECKOUT.</div>
+    <Section tone="light">
+      <div style={{ padding: isMobile ? '48px 24px' : '72px 48px', maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ ...mono(9, C.red), marginBottom: 14 }}>DELIVERY RECORD</div>
+        <h1 style={{ ...display(96), marginBottom: 44 }}>checkout<span style={{ color: C.red }}>.</span></h1>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? 40 : 48, alignItems: 'start' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -135,11 +134,11 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
             </div>
           </div>
 
-          <div style={{ border: `1px solid ${C.line}`, padding: 28, position: 'relative' }}>
-            <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
+          <div style={{ ...TONES.dark, background: 'var(--bg)', color: 'var(--ink)', padding: 30, position: 'relative' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 10, height: 10, background: C.red }} />
             <div style={{ ...mono(9, C.red), marginBottom: 20 }}>ORDER SUMMARY</div>
             {cart.map(item => (
-              <div key={`${item.id}-${item.size}-${item.colour}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${C.bg2}` }}>
+              <div key={`${item.id}-${item.size}-${item.colour}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${C.line}` }}>
                 <div>
                   <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 11, letterSpacing: '0.08em', color: C.ink }}>{item.name}</div>
                   <div style={{ ...mono(8, C.dim), marginTop: 3 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}</div>
@@ -148,12 +147,12 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
               </div>
             ))}
             {[['Subtotal', fmtCurrency(subtotal)], [deliveryMethod === 'locker' ? 'Pudo Locker-to-Locker' : 'Pudo Door-to-Door', fmtCurrency(deliveryFee)]].map(([k, v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.bg2}` }}>
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.line}` }}>
                 <span style={{ ...grotesk(13, 400, C.dim) }}>{k}</span>
                 <span style={{ fontFamily: F.m, fontSize: 13, color: C.ink }}>{v}</span>
               </div>
             ))}
-            <Divider color={C.red} />
+            <div style={{ borderTop: `1px solid ${C.red}`, marginTop: 4 }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0 0' }}>
               <span style={{ ...grotesk(14, 600) }}>Total</span>
               <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.ink }}>{fmtCurrency(total)}</span>
@@ -166,7 +165,7 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 1, background: C.line, marginBottom: 20 }}>
             <div onClick={() => setDeliveryMethod('locker')} style={{ background: C.bg, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'locker' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
               <div style={{ ...mono(9, deliveryMethod === 'locker' ? C.red : C.dim) }}>PUDO LOCKER · {fmtCurrency(DELIVERY_FEE_LOCKER)}</div>
-              <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Collect from your nearest Pudo locker. You will receive a collection notification via SMS or email.</div>
+              <div style={{ ...grotesk(13, 300, C.dim), marginTop: 6 }}>Collect from your nearest Pudo locker. You will receive a collection notification via SMS or email.</div>
               {deliveryMethod === 'locker' && (
                 <div style={{ marginTop: 12 }}>
                   <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>YOUR NEAREST PUDO LOCKER / AREA</div>
@@ -179,7 +178,7 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
             <div onClick={() => setDeliveryMethod('door')} style={{ background: C.bg, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'door' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
               {deliveryMethod === 'door' && <div style={{ position: 'absolute', top: 0, right: 0, width: 6, height: 6, background: C.red }} />}
               <div style={{ ...mono(9, deliveryMethod === 'door' ? C.red : C.dim) }}>PUDO DOOR-TO-DOOR · {fmtCurrency(DELIVERY_FEE_DOOR)}</div>
-              <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Delivered directly to your address. Allow 2–4 business days after dispatch.</div>
+              <div style={{ ...grotesk(13, 300, C.dim), marginTop: 6 }}>Delivered directly to your address. Allow 2–4 business days after dispatch.</div>
             </div>
           </div>
         </div>
@@ -189,9 +188,9 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
             <div
               onClick={() => { setPolicyAccepted(a => !a); setPolicyError(false); }}
               style={{ width: 14, height: 14, border: `1px solid ${policyAccepted ? C.red : C.line}`, background: policyAccepted ? C.red : 'transparent', cursor: 'pointer', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
-              {policyAccepted && <span style={{ color: C.ink, fontSize: 10, lineHeight: 1 }}>✓</span>}
+              {policyAccepted && <span style={{ color: '#EDEAE4', fontSize: 10, lineHeight: 1 }}>✓</span>}
             </div>
-            <div style={{ ...mono(9, '#888'), lineHeight: 1.6 }}>
+            <div style={{ ...mono(9, C.dim), lineHeight: 1.6 }}>
               I understand that all sales are final. No returns or refunds are accepted. Each item is made-to-order for me specifically.
             </div>
           </div>
@@ -201,6 +200,6 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
           {policyError && <div style={{ ...mono(9, C.red), marginTop: 8 }}>Please accept the policy to continue.</div>}
         </div>
       </div>
-    </div>
+    </Section>
   );
 };

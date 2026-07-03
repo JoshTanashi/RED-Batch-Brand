@@ -12,8 +12,7 @@ import { HomeScreen } from './screens/HomeScreen';
 import { ProductScreen } from './screens/ProductScreen';
 import { CartScreen } from './screens/CartScreen';
 import { CheckoutScreen } from './screens/CheckoutScreen';
-import { SuccessScreen } from './screens/SuccessScreen';
-import { CancelScreen } from './screens/CancelScreen';
+import { ResultScreen } from './screens/ResultScreen';
 
 const HEADER_H = 58;
 const SCREENS = ['drop', 'product', 'cart', 'checkout', 'success', 'cancel'];
@@ -144,8 +143,8 @@ export const App = () => {
     product:   <ProductScreen onNav={nav} batchId={selectedBatchId} cart={cart} addToCart={addToCart} onSelectBatch={setSelectedBatchId} batches={BATCHES} />,
     cart:      <CartScreen cart={cart} removeFromCart={removeFromCart} updateCartQuantity={updateCartQuantity} clearCart={clearCart} onNav={nav} />,
     checkout:  <CheckoutScreen cart={cart} onNav={nav} onOrderComplete={onOrderComplete} />,
-    success:   <SuccessScreen orderRef={orderRef} clearCart={clearCart} onNav={nav} />,
-    cancel:    <CancelScreen onNav={nav} />,
+    success:   <ResultScreen status="success" orderRef={orderRef} clearCart={clearCart} onNav={nav} />,
+    cancel:    <ResultScreen status="cancel" onNav={nav} />,
   };
 
   return (
