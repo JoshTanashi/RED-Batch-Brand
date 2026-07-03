@@ -8,7 +8,6 @@ export const Footer = ({ onNav }) => {
   const navLinks = [
     { id: 'drop',         label: 'Drop' },
     { id: 'drop#cycle',   label: 'The Cycle' },
-    { id: 'drop#record',  label: 'The Record' },
     { id: 'drop#queue',   label: 'Next Cycle' },
     { id: 'drop#contact', label: 'Contact' },
     { id: 'cart',         label: 'Cart' },
