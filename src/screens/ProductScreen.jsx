@@ -63,7 +63,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
               setTouchStart(null);
               setTouchEnd(null);
             }}
-            style={{ aspectRatio: '4/5', background: C.g2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', border: `1px solid ${C.grey}`, zIndex: 10 }}>
+            style={{ aspectRatio: '4/5', background: C.bg2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', border: `1px solid ${C.line}`, zIndex: 10 }}>
             {hasActiveImg ? (
               <img key={activeImg} src={batch.images[activeImg]} alt={`${batch.name} ${activeImg + 1}`}
                 onError={() => setFailedImgs(prev => new Set(prev).add(batch.images[activeImg]))}
@@ -78,7 +78,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
               <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontFamily: F.m, fontSize: 12, color: 'rgba(240,240,240,0.3)', pointerEvents: 'none' }}>›</div>
             )}
             <div style={{ position: 'absolute', top: 12, left: 12 }}>
-              <div style={{ border: `1px solid ${C.grey}`, padding: '4px 10px', ...mono(9), background: C.black }}>{batch.id}</div>
+              <div style={{ border: `1px solid ${C.line}`, padding: '4px 10px', ...mono(9), background: C.bg }}>{batch.id}</div>
             </div>
             <div style={{ position: 'absolute', bottom: 12, right: 12 }}>
               <Badge v={isClosed ? 'neutral' : (batch.status === 'ACTIVE' ? 'active' : 'neutral')}>{isClosed ? 'BATCH CLOSED' : batch.status}</Badge>
@@ -88,23 +88,23 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
           {batch.images && batch.images.length > 1 && (
             <div style={{ display: 'flex', gap: 8, marginTop: 8, overflowX: isMobile ? 'auto' : 'visible' }}>
               {batch.images.map((img, idx) => (
-                <div key={idx} onClick={() => setActiveImg(idx)} style={{ width: 60, height: 75, background: C.g2, flexShrink: 0, border: `1px solid ${activeImg === idx ? C.red : C.grey}`, cursor: 'pointer', overflow: 'hidden', position: 'relative', zIndex: 10 }}>
+                <div key={idx} onClick={() => setActiveImg(idx)} style={{ width: 60, height: 75, background: C.bg2, flexShrink: 0, border: `1px solid ${activeImg === idx ? C.red : C.line}`, cursor: 'pointer', overflow: 'hidden', position: 'relative', zIndex: 10 }}>
                   <img src={img} alt={`thumb ${idx + 1}`} loading="lazy" onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
               ))}
             </div>
           )}
 
-          <div style={{ marginTop: 16, border: `1px solid ${C.grey}`, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+          <div style={{ marginTop: 16, border: `1px solid ${C.line}`, padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
             <div style={{ position: 'absolute', top: -1, left: -1, width: 8, height: 8, background: C.red }} />
             <div style={{ position: 'absolute', bottom: -1, right: -1, width: 8, height: 8, background: C.red }} />
             <div>
               <div style={{ ...mono(8) }}>Batch identifier</div>
-              <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 13, letterSpacing: '0.1em', color: C.white, marginTop: 4 }}>{batch.id} · {batch.season}</div>
+              <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 13, letterSpacing: '0.1em', color: C.ink, marginTop: 4 }}>{batch.id} · {batch.season}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ ...mono(8) }}>Issued</div>
-              <div style={{ ...mono(11, C.white), marginTop: 4 }}>{batch.date}</div>
+              <div style={{ ...mono(11, C.ink), marginTop: 4 }}>{batch.date}</div>
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
           <div>
             <div style={{ ...mono(9, C.red), marginBottom: 8 }}>{batch.season} · {batch.type.toUpperCase()} · {batch.status}</div>
             <div style={{ ...grotesk(isMobile ? 24 : 32, 600), letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1 }}>{batch.name}</div>
-            <div style={{ fontFamily: F.m, fontSize: 20, color: C.white, marginTop: 14 }}>{batch.price}</div>
+            <div style={{ fontFamily: F.m, fontSize: 20, color: C.ink, marginTop: 14 }}>{batch.price}</div>
             <div style={{ ...mono(9, C.dim), marginTop: 8 }}>{isClosed ? '0 units remaining.' : `${batch.units} units remaining.`}</div>
           </div>
 
@@ -126,7 +126,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
               <span>Select size {size && <span style={{ color: C.red }}>— {size}</span>}</span>
               <button onClick={() => setSizeGuideOpen(true)}
                 style={{ fontFamily: F.m, fontSize: 9, color: '#888', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', letterSpacing: '0.16em', textTransform: 'uppercase', padding: 0 }}
-                onMouseEnter={e => e.currentTarget.style.color = C.white}
+                onMouseEnter={e => e.currentTarget.style.color = C.ink}
                 onMouseLeave={e => e.currentTarget.style.color = '#888'}>
                 [size guide]
               </button>
@@ -138,7 +138,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
                   <button key={s} onClick={() => setSize(s)}
                     onMouseEnter={() => setHovSize(s)} onMouseLeave={() => setHovSize(null)}
                     data-hover
-                    style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : hov ? C.white : C.grey}`, color: sel ? C.white : hov ? C.white : C.dim, ...mono(11), cursor: 'pointer', transition: 'all 0.15s' }}>
+                    style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : hov ? C.ink : C.line}`, color: sel ? C.ink : hov ? C.ink : C.dim, ...mono(11), cursor: 'pointer', transition: 'all 0.15s' }}>
                     {s}
                   </button>
                 );
@@ -152,16 +152,16 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
               <button
                 onClick={() => setQty(q => Math.max(1, q - 1))}
                 disabled={qty === 1}
-                style={{ width: isMobile ? 44 : 32, height: isMobile ? 44 : 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 1 ? 'not-allowed' : 'pointer', opacity: qty === 1 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
+                style={{ width: isMobile ? 44 : 32, height: isMobile ? 44 : 32, border: `1px solid ${C.line}`, background: 'transparent', color: C.ink, fontSize: 16, cursor: qty === 1 ? 'not-allowed' : 'pointer', opacity: qty === 1 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
                 −
               </button>
-              <div style={{ width: isMobile ? 52 : 48, height: isMobile ? 44 : 32, borderTop: `1px solid ${C.grey}`, borderBottom: `1px solid ${C.grey}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 13, color: C.white }}>
+              <div style={{ width: isMobile ? 52 : 48, height: isMobile ? 44 : 32, borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.m, fontSize: 13, color: C.ink }}>
                 {qty}
               </div>
               <button
                 onClick={() => setQty(q => Math.min(10, q + 1))}
                 disabled={qty === 10}
-                style={{ width: isMobile ? 44 : 32, height: isMobile ? 44 : 32, border: `1px solid ${C.grey}`, background: 'transparent', color: C.white, fontSize: 16, cursor: qty === 10 ? 'not-allowed' : 'pointer', opacity: qty === 10 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
+                style={{ width: isMobile ? 44 : 32, height: isMobile ? 44 : 32, border: `1px solid ${C.line}`, background: 'transparent', color: C.ink, fontSize: 16, cursor: qty === 10 ? 'not-allowed' : 'pointer', opacity: qty === 10 ? 0.4 : 1, transition: 'opacity 0.15s' }}>
                 +
               </button>
             </div>
@@ -172,7 +172,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
           </Btn>
           {added && <div style={{ ...mono(10, C.red) }}>Unit added to cart.</div>}
 
-          <div style={{ border: `1px solid ${C.grey}`, background: C.g2, padding: '14px 16px', marginTop: 16, position: 'relative' }}>
+          <div style={{ border: `1px solid ${C.line}`, background: C.bg2, padding: '14px 16px', marginTop: 16, position: 'relative' }}>
             <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red }} />
             <div style={{ ...mono(9, C.red), letterSpacing: '0.16em' }}>MADE TO ORDER</div>
             <div style={{ ...grotesk(13, 300, '#888'), lineHeight: 1.7, marginTop: 6 }}>
@@ -183,7 +183,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
             </div>
           </div>
 
-          <div style={{ padding: '12px 16px', borderTop: `1px solid ${C.g2}` }}>
+          <div style={{ padding: '12px 16px', borderTop: `1px solid ${C.bg2}` }}>
             <div style={{ ...mono(8, C.dim), lineHeight: 1.8 }}>
               No returns. No refunds. All sales are final.<br />
               Each unit is made-to-order specifically for you.<br />
@@ -207,15 +207,15 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             {['Care: Cold wash only', 'No tumble dry', 'Store folded'].map(c => (
-              <span key={c} style={{ ...mono(8), border: `1px solid ${C.grey}`, padding: '4px 10px' }}>{c}</span>
+              <span key={c} style={{ ...mono(8), border: `1px solid ${C.line}`, padding: '4px 10px' }}>{c}</span>
             ))}
           </div>
 
           <button
             onClick={() => { onNav('drop'); window.scrollTo(0,0); }}
-            onMouseEnter={e => { e.currentTarget.style.color = C.white; e.currentTarget.style.borderColor = C.white; }}
-            onMouseLeave={e => { e.currentTarget.style.color = C.dim; e.currentTarget.style.borderColor = C.grey; }}
-            style={{ ...mono(10, C.dim), background: 'none', border: `1px solid ${C.grey}`, cursor: 'pointer', padding: '10px 20px', transition: 'all 0.15s', marginTop: 8 }}>
+            onMouseEnter={e => { e.currentTarget.style.color = C.ink; e.currentTarget.style.borderColor = C.ink; }}
+            onMouseLeave={e => { e.currentTarget.style.color = C.dim; e.currentTarget.style.borderColor = C.line; }}
+            style={{ ...mono(10, C.dim), background: 'none', border: `1px solid ${C.line}`, cursor: 'pointer', padding: '10px 20px', transition: 'all 0.15s', marginTop: 8 }}>
             ← BACK TO DROP
           </button>
         </div>
@@ -224,11 +224,11 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
       {sizeGuideOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           onClick={e => { if (e.target === e.currentTarget) setSizeGuideOpen(false); }}>
-          <div style={{ background: C.black, border: `1px solid ${C.grey}`, padding: 32, maxWidth: 480, width: '90%', position: 'relative' }}>
+          <div style={{ background: C.bg, border: `1px solid ${C.line}`, padding: 32, maxWidth: 480, width: '90%', position: 'relative' }}>
             <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
             <button onClick={() => setSizeGuideOpen(false)}
               style={{ position: 'absolute', top: 16, right: 16, ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer' }}
-              onMouseEnter={e => e.currentTarget.style.color = C.white}
+              onMouseEnter={e => e.currentTarget.style.color = C.ink}
               onMouseLeave={e => e.currentTarget.style.color = C.dim}>
               × CLOSE
             </button>
@@ -236,7 +236,7 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
             <div style={{ ...grotesk(13, 400, C.dim), marginBottom: 20 }}>Measurements in centimetres. Garments run oversized.</div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: `1px solid ${C.grey}` }}>
+                <tr style={{ borderBottom: `1px solid ${C.line}` }}>
                   {['SIZE', 'CHEST', 'LENGTH', 'SHOULDER'].map(h => (
                     <th key={h} style={{ ...mono(9, C.dim), padding: '8px 12px', textAlign: 'left', fontWeight: 400 }}>{h}</th>
                   ))}
@@ -244,8 +244,8 @@ export const ProductScreen = ({ onNav, batchId, cart, addToCart, onSelectBatch, 
               </thead>
               <tbody>
                 {sizeRows.map(([sz, chest, len, shldr]) => (
-                  <tr key={sz} style={{ borderBottom: `1px solid ${C.g2}` }}>
-                    <td style={{ fontFamily: F.m, fontWeight: 700, fontSize: 13, color: C.white, padding: '10px 12px' }}>{sz}</td>
+                  <tr key={sz} style={{ borderBottom: `1px solid ${C.bg2}` }}>
+                    <td style={{ fontFamily: F.m, fontWeight: 700, fontSize: 13, color: C.ink, padding: '10px 12px' }}>{sz}</td>
                     <td style={{ ...grotesk(13, 400), padding: '10px 12px' }}>{chest}</td>
                     <td style={{ ...grotesk(13, 400), padding: '10px 12px' }}>{len}</td>
                     <td style={{ ...grotesk(13, 400), padding: '10px 12px' }}>{shldr}</td>

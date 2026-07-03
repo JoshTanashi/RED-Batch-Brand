@@ -33,10 +33,10 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
   };
 
   return (
-    <div style={{ background: C.black, position: 'relative' }}>
+    <div style={{ background: C.bg, position: 'relative' }}>
       {!isArchived && <div style={{ position: 'absolute', top: -1, right: -1, width: 10, height: 10, background: C.red, zIndex: 1 }} />}
 
-      <div style={{ aspectRatio: '3/2', background: C.g2, position: 'relative', overflow: 'hidden', zIndex: 10 }}>
+      <div style={{ aspectRatio: '3/2', background: C.bg2, position: 'relative', overflow: 'hidden', zIndex: 10 }}>
         {hasImage ? (
           <img src={set.images[0]} alt={set.name}
             loading="lazy"
@@ -44,7 +44,7 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         ) : (
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: `1px solid ${C.grey}` }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: `1px solid ${C.line}` }}>
               <span style={{ ...mono(9, '#333') }}>TEE</span>
             </div>
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -59,7 +59,7 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
         <div style={{ ...grotesk(14, 600), letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 4 }}>{set.name}</div>
         <div style={{ ...mono(9, C.dim), marginTop: 4 }}>Includes {set.items.length} items</div>
 
-        <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '14px 0' }} />
+        <div style={{ borderBottom: `1px solid ${C.line}`, margin: '14px 0' }} />
 
         <div style={{ marginBottom: 14 }}>
           {set.includes.map((inc, i) => (
@@ -70,11 +70,11 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
           ))}
         </div>
 
-        <div style={{ borderBottom: `1px solid ${C.grey}`, margin: '14px 0' }} />
+        <div style={{ borderBottom: `1px solid ${C.line}`, margin: '14px 0' }} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
           <div>
-            <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 16, color: C.white }}>{set.price}</span>
+            <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 16, color: C.ink }}>{set.price}</span>
             <div style={{ ...mono(8, C.dim), marginTop: 4 }}>Includes {set.items.length} items  ·  Saving vs individual purchase</div>
           </div>
           <span style={{ ...mono(9, C.dim) }}>{set.units} sets remaining.</span>
@@ -105,7 +105,7 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
                     <button key={s} onClick={() => setTeeSize(s)}
                       onMouseEnter={e => { if (!sel) { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.color = '#F0F0F0'; } }}
                       onMouseLeave={e => { if (!sel) { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#888'; } }}
-                      style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.grey}`, color: sel ? C.white : C.dim, ...mono(10), cursor: 'pointer', borderRadius: 0, transition: 'all 0.15s' }}>
+                      style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.line}`, color: sel ? C.ink : C.dim, ...mono(10), cursor: 'pointer', borderRadius: 0, transition: 'all 0.15s' }}>
                       {s}
                     </button>
                   );
@@ -122,7 +122,7 @@ export const SetCard = ({ set, addToCart, onNav, isMobile }) => {
                     <button key={s} onClick={() => setHoodieSize(s)}
                       onMouseEnter={e => { if (!sel) { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.color = '#F0F0F0'; } }}
                       onMouseLeave={e => { if (!sel) { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#888'; } }}
-                      style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.grey}`, color: sel ? C.white : C.dim, ...mono(10), cursor: 'pointer', borderRadius: 0, transition: 'all 0.15s' }}>
+                      style={{ width: 52, height: 52, background: sel ? C.red : 'transparent', border: `1px solid ${sel ? C.red : C.line}`, color: sel ? C.ink : C.dim, ...mono(10), cursor: 'pointer', borderRadius: 0, transition: 'all 0.15s' }}>
                       {s}
                     </button>
                   );

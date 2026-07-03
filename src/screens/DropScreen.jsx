@@ -31,22 +31,22 @@ export const DropScreen = ({ onNav, onSelectBatch, batches: BATCHES }) => {
     <div className="screen-enter">
       <Ticker />
 
-      <div style={{ padding: isMobile ? '40px 24px' : '64px 48px', borderBottom: `1px solid ${C.grey}` }}>
+      <div style={{ padding: isMobile ? '40px 24px' : '64px 48px', borderBottom: `1px solid ${C.line}` }}>
         <div style={{ ...mono(9, C.red), letterSpacing: '0.2em', marginBottom: 16 }}>CYCLE-01 · RB-001 · 2026.04.23</div>
         <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(48px, 9vw, 96px)', letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 0.92, marginBottom: 0 }}>
-          <div style={{ color: C.white }}>RELEASE</div>
+          <div style={{ color: C.ink }}>RELEASE</div>
           <div style={{ color: C.red }}>ACTIVE.</div>
         </div>
       </div>
 
       <div id="product-grid">
-        <div style={{ padding: isMobile ? '12px 24px' : '16px 48px', borderBottom: `1px solid ${C.grey}`, display: 'flex', gap: 0, overflowX: 'auto' }}>
+        <div style={{ padding: isMobile ? '12px 24px' : '16px 48px', borderBottom: `1px solid ${C.line}`, display: 'flex', gap: 0, overflowX: 'auto' }}>
           {filters.map(({ id, label, count }) => {
             const active = filter === id;
             return (
               <button key={id} onClick={() => setFilter(id)}
-                style={{ background: 'transparent', border: 'none', borderBottom: `2px solid ${active ? C.red : 'transparent'}`, padding: '10px 20px', cursor: 'pointer', fontFamily: F.m, fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', whiteSpace: 'nowrap', transition: 'all 0.15s', color: active ? C.white : '#888' }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.color = C.white; }}
+                style={{ background: 'transparent', border: 'none', borderBottom: `2px solid ${active ? C.red : 'transparent'}`, padding: '10px 20px', cursor: 'pointer', fontFamily: F.m, fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', whiteSpace: 'nowrap', transition: 'all 0.15s', color: active ? C.ink : '#888' }}
+                onMouseEnter={e => { if (!active) e.currentTarget.style.color = C.ink; }}
                 onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#888'; }}>
                 {label}<span style={{ color: active ? C.red : '#444', fontSize: 8, marginLeft: 4 }}>({count})</span>
               </button>
@@ -58,7 +58,7 @@ export const DropScreen = ({ onNav, onSelectBatch, batches: BATCHES }) => {
             <div style={{ ...mono(9), marginBottom: 0 }}>CYCLE-01 · {filteredBatches.length} drops · {ACTIVE_BATCHES.length} active now</div>
             <span style={{ ...mono(8, C.red) }}>CYCLE-01</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill,minmax(160px,1fr))' : 'repeat(auto-fill,minmax(240px,1fr))', gap: 1, background: C.grey }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill,minmax(160px,1fr))' : 'repeat(auto-fill,minmax(240px,1fr))', gap: 1, background: C.line }}>
             {filteredBatches.map(b => (
               <ProductCardInline key={b.id} batch={b} onClick={b.status === 'COMING_SOON' ? undefined : () => handleCardClick(b)} />
             ))}

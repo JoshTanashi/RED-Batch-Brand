@@ -11,7 +11,7 @@ export const SetsScreen = ({ onNav, cart, addToCart, sets: SETS }) => {
     <div className="screen-enter">
       <Ticker />
 
-      <div style={{ padding: isMobile ? '32px 24px 40px' : '48px 48px 64px', borderBottom: `1px solid ${C.grey}` }}>
+      <div style={{ padding: isMobile ? '32px 24px 40px' : '48px 48px 64px', borderBottom: `1px solid ${C.line}` }}>
         <div className="stagger">
           <div style={{ ...mono(9, C.red), marginBottom: 16 }}>THE RECORD · CYCLE SETS · PERMANENT</div>
           <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(40px,6vw,72px)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1 }}>THE RECORD.</div>
@@ -24,7 +24,7 @@ export const SetsScreen = ({ onNav, cart, addToCart, sets: SETS }) => {
 
       <Divider />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 1, background: C.grey }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 1, background: C.line }}>
         {SETS.map(set => (
           <SetCard key={set.id} set={set} addToCart={addToCart} onNav={onNav} isMobile={isMobile} />
         ))}

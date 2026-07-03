@@ -10,9 +10,9 @@ export const Btn = ({ children, v = 'primary', onClick, disabled, style: extraSt
     ...extraStyle,
   };
   const variants = {
-    primary:   { background: hov ? '#8B1A1A' : C.red, color: C.white, opacity: disabled ? 0.4 : 1 },
-    secondary: { background: 'transparent', border: `1px solid ${hov ? C.white : C.grey}`, color: hov ? C.white : C.dim },
-    ghost:     { background: 'transparent', border: `1px solid ${hov ? C.red : C.grey}`,   color: hov ? C.red   : C.dim },
+    primary:   { background: hov ? '#8B1A1A' : C.red, color: C.ink, opacity: disabled ? 0.4 : 1 },
+    secondary: { background: 'transparent', border: `1px solid ${hov ? C.ink : C.line}`, color: hov ? C.ink : C.dim },
+    ghost:     { background: 'transparent', border: `1px solid ${hov ? C.red : C.line}`,   color: hov ? C.red   : C.dim },
   };
   return (
     <button className="btn-fill" onClick={onClick} disabled={disabled}

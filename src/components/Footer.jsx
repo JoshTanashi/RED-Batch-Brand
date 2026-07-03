@@ -10,7 +10,7 @@ export const Footer = ({ onNav }) => {
     { id: 'sets',      label: 'THE RECORD' },
   ];
   return (
-    <footer style={{ borderTop: `1px solid ${C.grey}`, background: C.black, padding: isMobile ? '24px' : '32px 48px' }}>
+    <footer style={{ borderTop: `1px solid ${C.line}`, background: C.bg, padding: isMobile ? '24px' : '32px 48px' }}>
       <div style={{
         display: isMobile ? 'flex' : 'grid',
         flexDirection: isMobile ? 'column' : undefined,
@@ -31,7 +31,7 @@ export const Footer = ({ onNav }) => {
           <div style={{ ...mono(9, C.red), marginBottom: 8 }}>NAVIGATE</div>
           {navLinks.map(({ id, label }) => (
             <button key={id} onClick={() => { onNav(id); window.scrollTo(0,0); }} style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', display: 'block', lineHeight: 2, padding: isMobile ? '8px 0' : 0, transition: 'color 0.15s' }}
-              onMouseEnter={e => e.currentTarget.style.color = C.white}
+              onMouseEnter={e => e.currentTarget.style.color = C.ink}
               onMouseLeave={e => e.currentTarget.style.color = C.dim}>
               {label}
             </button>

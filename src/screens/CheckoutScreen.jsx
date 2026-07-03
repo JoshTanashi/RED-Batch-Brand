@@ -34,8 +34,8 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
   const setField = (k, v) => { setForm(f => ({ ...f, [k]: v })); if (errors[k]) setErrors(e => ({ ...e, [k]: false })); };
 
   const iStyle = (k) => ({
-    background: C.g2, border: `1px solid ${errors[k] ? C.red : focused === k ? C.red : C.grey}`,
-    color: C.white, fontFamily: F.g, fontSize: 14, padding: '13px 16px',
+    background: C.bg2, border: `1px solid ${errors[k] ? C.red : focused === k ? C.red : C.line}`,
+    color: C.ink, fontFamily: F.g, fontSize: 14, padding: '13px 16px',
     outline: 'none', borderRadius: 0, transition: 'border-color 0.15s', width: '100%', boxSizing: 'border-box',
   });
 
@@ -122,7 +122,7 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
                 onFocus={() => setFocused('province')} onBlur={() => setFocused(null)}
                 style={{ ...iStyle('province'), cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
                 <option value="">Select province</option>
-                {provinces.map(p => <option key={p} value={p} style={{ background: C.g2, color: C.white }}>{p}</option>)}
+                {provinces.map(p => <option key={p} value={p} style={{ background: C.bg2, color: C.ink }}>{p}</option>)}
               </select>
               {errors.province && <div style={{ ...mono(9, C.red) }}>Field required.</div>}
             </div>
@@ -135,36 +135,36 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
             </div>
           </div>
 
-          <div style={{ border: `1px solid ${C.grey}`, padding: 28, position: 'relative' }}>
+          <div style={{ border: `1px solid ${C.line}`, padding: 28, position: 'relative' }}>
             <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
             <div style={{ ...mono(9, C.red), marginBottom: 20 }}>ORDER SUMMARY</div>
             {cart.map(item => (
-              <div key={`${item.id}-${item.size}-${item.colour}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${C.g2}` }}>
+              <div key={`${item.id}-${item.size}-${item.colour}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${C.bg2}` }}>
                 <div>
-                  <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 11, letterSpacing: '0.08em', color: C.white }}>{item.name}</div>
+                  <div style={{ fontFamily: F.m, fontWeight: 700, fontSize: 11, letterSpacing: '0.08em', color: C.ink }}>{item.name}</div>
                   <div style={{ ...mono(8, C.dim), marginTop: 3 }}>{item.isSet ? 'COMPLETE SET' : item.size} · {item.colour}</div>
                 </div>
-                <span style={{ fontFamily: F.m, fontSize: 12, color: C.white }}>{fmtCurrency(item.price * item.quantity)}</span>
+                <span style={{ fontFamily: F.m, fontSize: 12, color: C.ink }}>{fmtCurrency(item.price * item.quantity)}</span>
               </div>
             ))}
             {[['Subtotal', fmtCurrency(subtotal)], [deliveryMethod === 'locker' ? 'Pudo Locker-to-Locker' : 'Pudo Door-to-Door', fmtCurrency(deliveryFee)]].map(([k, v]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.g2}` }}>
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${C.bg2}` }}>
                 <span style={{ ...grotesk(13, 400, C.dim) }}>{k}</span>
-                <span style={{ fontFamily: F.m, fontSize: 13, color: C.white }}>{v}</span>
+                <span style={{ fontFamily: F.m, fontSize: 13, color: C.ink }}>{v}</span>
               </div>
             ))}
             <Divider color={C.red} />
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0 0' }}>
               <span style={{ ...grotesk(14, 600) }}>Total</span>
-              <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.white }}>{fmtCurrency(total)}</span>
+              <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 18, color: C.ink }}>{fmtCurrency(total)}</span>
             </div>
           </div>
         </div>
 
         <div style={{ marginTop: 32 }}>
           <div style={{ ...mono(9, C.red), marginBottom: 12 }}>DELIVERY METHOD</div>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 1, background: C.grey, marginBottom: 20 }}>
-            <div onClick={() => setDeliveryMethod('locker')} style={{ background: C.black, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'locker' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 1, background: C.line, marginBottom: 20 }}>
+            <div onClick={() => setDeliveryMethod('locker')} style={{ background: C.bg, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'locker' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
               <div style={{ ...mono(9, deliveryMethod === 'locker' ? C.red : C.dim) }}>PUDO LOCKER · {fmtCurrency(DELIVERY_FEE_LOCKER)}</div>
               <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Collect from your nearest Pudo locker. You will receive a collection notification via SMS or email.</div>
               {deliveryMethod === 'locker' && (
@@ -172,11 +172,11 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
                   <div style={{ ...mono(8, C.dim), marginBottom: 4 }}>YOUR NEAREST PUDO LOCKER / AREA</div>
                   <input value={pudoLocker} onChange={e => setPudoLocker(e.target.value)}
                     placeholder="e.g. Sandton City Pudo Locker"
-                    style={{ background: C.g2, border: `1px solid ${C.grey}`, color: C.white, fontFamily: F.g, fontSize: 14, padding: '10px 12px', outline: 'none', borderRadius: 0, width: '100%', boxSizing: 'border-box' }} />
+                    style={{ background: C.bg2, border: `1px solid ${C.line}`, color: C.ink, fontFamily: F.g, fontSize: 14, padding: '10px 12px', outline: 'none', borderRadius: 0, width: '100%', boxSizing: 'border-box' }} />
                 </div>
               )}
             </div>
-            <div onClick={() => setDeliveryMethod('door')} style={{ background: C.black, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'door' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
+            <div onClick={() => setDeliveryMethod('door')} style={{ background: C.bg, padding: 16, cursor: 'pointer', border: `2px solid ${deliveryMethod === 'door' ? C.red : 'transparent'}`, transition: 'border-color 0.15s', position: 'relative' }}>
               {deliveryMethod === 'door' && <div style={{ position: 'absolute', top: 0, right: 0, width: 6, height: 6, background: C.red }} />}
               <div style={{ ...mono(9, deliveryMethod === 'door' ? C.red : C.dim) }}>PUDO DOOR-TO-DOOR · {fmtCurrency(DELIVERY_FEE_DOOR)}</div>
               <div style={{ ...grotesk(13, 300, '#888'), marginTop: 6 }}>Delivered directly to your address. Allow 2–4 business days after dispatch.</div>
@@ -184,12 +184,12 @@ export const CheckoutScreen = ({ cart, onNav, onOrderComplete }) => {
           </div>
         </div>
 
-        <div style={{ marginTop: 0, borderTop: `1px solid ${C.grey}`, paddingTop: 32 }}>
+        <div style={{ marginTop: 0, borderTop: `1px solid ${C.line}`, paddingTop: 32 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 16 }}>
             <div
               onClick={() => { setPolicyAccepted(a => !a); setPolicyError(false); }}
-              style={{ width: 14, height: 14, border: `1px solid ${policyAccepted ? C.red : C.grey}`, background: policyAccepted ? C.red : 'transparent', cursor: 'pointer', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
-              {policyAccepted && <span style={{ color: C.white, fontSize: 10, lineHeight: 1 }}>✓</span>}
+              style={{ width: 14, height: 14, border: `1px solid ${policyAccepted ? C.red : C.line}`, background: policyAccepted ? C.red : 'transparent', cursor: 'pointer', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+              {policyAccepted && <span style={{ color: C.ink, fontSize: 10, lineHeight: 1 }}>✓</span>}
             </div>
             <div style={{ ...mono(9, '#888'), lineHeight: 1.6 }}>
               I understand that all sales are final. No returns or refunds are accepted. Each item is made-to-order for me specifically.

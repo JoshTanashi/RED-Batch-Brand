@@ -19,7 +19,7 @@ export const ContactScreen = ({ onNav }) => {
   const cStyle = (k) => ({
     background: '#1A1A1A',
     border: `1px solid ${cErrors[k] ? C.red : cFocused === k ? C.red : '#2A2A2A'}`,
-    color: C.white, fontFamily: F.g, fontSize: 14, padding: '13px 16px',
+    color: C.ink, fontFamily: F.g, fontSize: 14, padding: '13px 16px',
     outline: 'none', borderRadius: 0, transition: 'border-color 0.15s', width: '100%', boxSizing: 'border-box',
   });
 
@@ -76,7 +76,7 @@ export const ContactScreen = ({ onNav }) => {
         <div>
           <div style={{ ...mono(9, C.red), marginBottom: 16 }}>CONTACT · SUPPORT · RED-BATCH</div>
           <div style={{ fontFamily: F.g, fontWeight: 700, fontSize: 'clamp(32px,5vw,56px)', letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 0.95, marginBottom: 32 }}>
-            <div style={{ color: C.white }}>GET IN</div>
+            <div style={{ color: C.ink }}>GET IN</div>
             <div style={{ color: C.red }}>TOUCH.</div>
           </div>
           <div style={{ ...grotesk(14, 300, '#888'), maxWidth: 400, lineHeight: 1.9, marginBottom: 40 }}>
@@ -84,11 +84,11 @@ export const ContactScreen = ({ onNav }) => {
           </div>
           <div>
             {infoCards.map(({ label, desc }) => (
-              <div key={label} style={{ border: `1px solid ${C.grey}`, padding: '16px 20px', marginBottom: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div key={label} style={{ border: `1px solid ${C.line}`, padding: '16px 20px', marginBottom: 1, display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div style={{ width: 8, height: 8, background: C.red, flexShrink: 0 }} />
                 <div>
                   <div style={{ ...mono(8, C.dim) }}>{label}</div>
-                  <div style={{ ...grotesk(13, 400, C.white), marginTop: 2 }}>{desc}</div>
+                  <div style={{ ...grotesk(13, 400, C.ink), marginTop: 2 }}>{desc}</div>
                 </div>
               </div>
             ))}
@@ -103,7 +103,7 @@ export const ContactScreen = ({ onNav }) => {
           <div style={{ ...grotesk(20, 600), letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 24 }}>Send a Record</div>
           <Divider />
           {cSent ? (
-            <div style={{ border: `1px solid ${C.grey}`, padding: 40, textAlign: 'center', position: 'relative', marginTop: 24 }}>
+            <div style={{ border: `1px solid ${C.line}`, padding: 40, textAlign: 'center', position: 'relative', marginTop: 24 }}>
               {[{ t: true, l: true }, { t: true, l: false }, { t: false, l: true }, { t: false, l: false }].map(({ t, l }, i) => (
                 <div key={i} style={{ position: 'absolute', width: 6, height: 6, background: C.red, top: t ? -1 : 'auto', bottom: !t ? -1 : 'auto', left: l ? -1 : 'auto', right: !l ? -1 : 'auto' }} />
               ))}
@@ -139,7 +139,7 @@ export const ContactScreen = ({ onNav }) => {
                   style={{ ...cStyle('subject'), cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
                   <option value="">Select subject</option>
                   {['Order Support', 'Sizing & Product Question', 'Collaboration / Press', 'General Enquiry'].map(opt => (
-                    <option key={opt} value={opt} style={{ background: C.g2, color: C.white }}>{opt}</option>
+                    <option key={opt} value={opt} style={{ background: C.bg2, color: C.ink }}>{opt}</option>
                   ))}
                 </select>
                 {cErrors.subject && <span style={{ ...mono(8, C.red) }}>Required.</span>}
