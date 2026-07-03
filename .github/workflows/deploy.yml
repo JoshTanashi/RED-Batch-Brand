@@ -44,9 +44,8 @@ jobs:
           VITE_EMAILJS_OWNER_TEMPLATE: ${{ secrets.EMAILJS_OWNER_TEMPLATE }}
           VITE_EMAILJS_CUSTOMER_TEMPLATE: ${{ secrets.EMAILJS_CUSTOMER_TEMPLATE }}
           VITE_STORE_OWNER_EMAIL: ${{ secrets.STORE_OWNER_EMAIL }}
-          VITE_DELIVERY_FEE: 60
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_DELIVERY_FEE_LOCKER: 60
+          VITE_DELIVERY_FEE_DOOR: 120
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -10,4 +10,5 @@ export const EMAILJS_OWNER_TEMPLATE    = import.meta.env.VITE_EMAILJS_OWNER_TEMP
 export const EMAILJS_CUSTOMER_TEMPLATE = import.meta.env.VITE_EMAILJS_CUSTOMER_TEMPLATE;
 
 export const STORE_OWNER_EMAIL         = import.meta.env.VITE_STORE_OWNER_EMAIL;
-export const DELIVERY_FEE              = Number(import.meta.env.VITE_DELIVERY_FEE);
+export const DELIVERY_FEE_LOCKER       = Number(import.meta.env.VITE_DELIVERY_FEE_LOCKER);
+export const DELIVERY_FEE_DOOR         = Number(import.meta.env.VITE_DELIVERY_FEE_DOOR);

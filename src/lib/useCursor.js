@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 
+const RED = '#C22B26';
+const RED_SOFT = 'rgba(194,43,38,0.55)';
+
 /* Dot tracks the mouse directly; ring trails it via lerp. */
 export const useCursor = () => {
   useEffect(() => {
@@ -35,11 +38,11 @@ export const useCursor = () => {
       if (el) {
         ring.style.width  = '44px';
         ring.style.height = '44px';
-        ring.style.borderColor = '#B22222';
+        ring.style.borderColor = RED;
       } else {
         ring.style.width  = '28px';
         ring.style.height = '28px';
-        ring.style.borderColor = 'rgba(178,34,34,0.5)';
+        ring.style.borderColor = RED_SOFT;
       }
     };
 

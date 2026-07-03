@@ -4,8 +4,6 @@ Web storefront for RED-Batch — a controlled release apparel brand from South A
 
 **Live site:** [joshtanashi.github.io/RED-Batch-Brand](https://joshtanashi.github.io/RED-Batch-Brand/)
 
-The site currently sits behind a permanent "DROPPING SOON" overlay — this is intentional pre-launch gating, not a bug.
-
 ---
 
 ## Stack
@@ -14,49 +12,55 @@ The site currently sits behind a permanent "DROPPING SOON" overlay — this is i
 |---|---|
 | UI | React 18 |
 | Build | Vite |
-| Styles | Inline React styles + `styles.css` |
-| Data | Supabase (Postgres) — `products` table |
-| Auth | Supabase Auth (email/password) — gates `/admin` |
+| Motion | motion (framer) + lenis smooth scroll |
+| Styles | Inline React styles + per-section CSS custom properties (`styles.css`) |
+| Data | Static array in `src/lib/products.js` |
 | Email | EmailJS |
 | Payments | PayFast |
-| Fonts | Space Grotesk · Space Mono (Google Fonts) |
+| Fonts | Space Grotesk Variable · Space Mono (self-hosted via @fontsource) |
+
+---
+
+## Design
+
+"Bone editorial" — off-white (#EDEAE4) base with alternating deep-charcoal sections, RED-BATCH red as the single accent, huge lowercase display typography, and transparent product cutouts floating across section boundaries. Sections set their palette via a `<Section tone="light|dark">` wrapper that provides CSS custom properties; components read semantic tokens (`C.bg`, `C.ink`, `C.dim`, `C.line`, `C.red`) that resolve per-section.
 
 ---
 
 ## Structure
 
 ```
-index.html              — Vite entry shell.
-src/main.jsx             — React root.
-src/App.jsx              — State machine, query-param routing, product fetch.
+index.html               — Vite entry shell + static preloader.
+styles.css               — Global CSS: tokens, cursor, marquee/float keyframes, grain.
+src/main.jsx             — React root + font imports.
+src/App.jsx              — State machine, ?s= routing with legacy aliases, scroll owner.
 src/lib/
-  supabaseClient.js       — Supabase client + fetchProducts().
-  payfast.js              — PayFast MD5 signature helpers.
-  config.js                — Reads import.meta.env.* into named exports.
-  format.js, theme.js, useCursor.js, useIsMobile.js
-src/components/          — Shared UI: Header, Footer, Btn, Divider, Ticker, etc.
-src/screens/             — One file per screen (Drop, Product, Cart, Checkout,
-                            Success, Cancel, Queue, Sets, Contact, Admin, Dropping).
-.env.example             — Template for required environment variables.
+  products.js            — Static product catalogue (BATCHES, SETS, optional cutout paths).
+  payfast.js             — PayFast MD5 signature helpers.
+  config.js              — Reads import.meta.env.* into named exports.
+  theme.js               — TONES (light/dark CSS vars) + C/F tokens + type helpers.
+  motion.js              — Shared motion re-exports and variants.
+  useLenis.js            — Smooth-scroll init (skipped under reduced motion).
+  format.js, useCursor.js, useIsMobile.js
+src/components/          — Section, Reveal, Marquee, ProductImage, Header, Footer, Btn, Badge.
+src/sections/            — Home page sections: Hero, CycleRow, QueueSection, ContactSection.
+src/screens/             — HomeScreen, ProductScreen, CartScreen, CheckoutScreen, ResultScreen.
+scripts/cutout.py        — One-off: extracts transparent product cutouts from photos.
 ```
 
 ---
 
-## Screens
+## Pages
 
-- **DROP** (`?s=drop`) — Active batches available now.
-- **PRODUCT** (`?s=product`) — Detail view for a single batch: specs, sizing, price, origin.
-- **SETS** (`?s=sets`) — Permanent cycle sets (tee + hoodie bundles).
-- **QUEUE** (`?s=queue`) — Next batch preview with notification register.
-- **CART** / **CHECKOUT** / **SUCCESS** / **CANCEL** — Order flow via PayFast.
-- **CONTACT** (`?s=contact`) — Contact form via EmailJS.
-- **ADMIN** (`?s=admin`) — Password-gated product management (not linked from nav).
+- **Home** (`?s=drop`) — one long editorial scroll: hero → red marquee band → the cycle's drops → the record set (with inline add-to-cart) → next-cycle queue signup → contact form. Legacy URLs `?s=queue`, `?s=contact`, `?s=sets` land on the matching home section.
+- **PRODUCT** (`?s=product`) — detail view for a single batch: specs, sizing, price, origin.
+- **CART** / **CHECKOUT** / **SUCCESS** / **CANCEL** — order flow via PayFast.
 
 ---
 
 ## Products
 
-Products are not hardcoded — they live in a Supabase `products` table and are fetched on page load. To add, edit, or remove a product, sign in at `?s=admin` with the owner's Supabase Auth credentials.
+Products live in `src/lib/products.js` as two plain arrays, `BATCHES` and `SETS`. To add, edit, or remove a product (or swap an image), edit that file directly and redeploy. The optional `cutout` field points at a transparent WebP in `public/images/cutouts/` — regenerate with `python3 scripts/cutout.py` after replacing source photos.
 
 ---
 
@@ -70,7 +74,7 @@ npm install
 **2. Set up environment variables:**
 ```bash
 cp .env.example .env
-# Fill in your real PayFast, EmailJS, and Supabase credentials in .env
+# Fill in your real PayFast and EmailJS credentials in .env
 ```
 
 **3. Start the dev server:**
@@ -97,16 +101,18 @@ The site deploys automatically to GitHub Pages on every push to `main` via `.git
 
 **Setting up credentials for production:**
 1. Go to the repo on GitHub → Settings → Secrets and variables → Actions
-2. Add a secret for each key listed in `.env.example` (e.g. `PAYFAST_MERCHANT_ID`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, etc.)
+2. Add a secret for each key listed in `.env.example` (e.g. `PAYFAST_MERCHANT_ID`, `EMAILJS_PUBLIC_KEY`, etc.)
 3. Push any change to `main` to trigger a redeploy with the new secrets
 
 `VITE_PAYFAST_URL` defaults to the PayFast **sandbox** endpoint. Switching to the production PayFast URL is a deliberate manual step, not something a routine deploy should change.
 
+> **Note:** `og:image` still points at `https://redbatch.store/images/og-image.jpg`, which is not in this repo — social link previews will show the old dark design until a new image is generated and hosted.
+
 ---
 
-## Responsive
+## Responsive & Accessibility
 
-Mobile layout activates at `≤ 768px`. The custom cursor is disabled on touch devices.
+Mobile layout activates at `≤ 768px`. The custom cursor is disabled on touch devices. Smooth scrolling and entrance animations are disabled under `prefers-reduced-motion`. Text colors meet WCAG AA (≥ 4.5:1) on both tones.
 
 ---
 
