@@ -59,7 +59,7 @@ export const CartScreen = ({ cart, removeFromCart, updateCartQuantity, onNav }) 
                       <button onClick={() => removeFromCart(item.id, item.size, item.colour)} data-hover
                         style={{ ...mono(14, C.dim), background: 'none', border: 'none', cursor: 'pointer', padding: isMobile ? '8px 0 8px 16px' : '0 0 0 16px', lineHeight: 1, transition: 'color 0.15s' }}
                         onMouseEnter={e => e.currentTarget.style.color = '#C22B26'}
-                        onMouseLeave={e => e.currentTarget.style.color = '#6F6A62'}>
+                        onMouseLeave={e => e.currentTarget.style.color = '#6B665E'}>
                         ×
                       </button>
                     </div>

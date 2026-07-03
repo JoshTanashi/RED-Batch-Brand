@@ -217,7 +217,7 @@ export const ProductScreen = ({ onNav, batchId, addToCart, onSelectBatch, batche
           <button
             onClick={() => onNav('drop#cycle')} data-hover
             onMouseEnter={e => { e.currentTarget.style.color = '#141414'; e.currentTarget.style.borderColor = '#141414'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = '#6F6A62'; e.currentTarget.style.borderColor = '#D3CEC4'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#6B665E'; e.currentTarget.style.borderColor = '#D3CEC4'; }}
             style={{ ...mono(10, C.dim), background: 'none', border: `1px solid ${C.line}`, cursor: 'pointer', padding: '10px 20px', transition: 'all 0.15s', alignSelf: 'flex-start' }}>
             ← BACK TO THE CYCLE
           </button>

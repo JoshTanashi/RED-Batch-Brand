@@ -45,7 +45,7 @@ export const Header = ({ screen, onNav, cart }) => {
                 return (
                   <button key={id} onClick={() => handleNav(id)} style={{ background: 'transparent', border: 'none', borderBottom: `2px solid ${active ? C.red : 'transparent'}`, ...mono(9, active ? C.ink : C.dim), padding: '0 20px', height: '58px', cursor: 'pointer', transition: 'color 0.15s, border-color 0.15s' }}
                     onMouseEnter={e => e.currentTarget.style.color = '#141414'}
-                    onMouseLeave={e => e.currentTarget.style.color = active ? '#141414' : '#6F6A62'}>
+                    onMouseLeave={e => e.currentTarget.style.color = active ? '#141414' : '#6B665E'}>
                     {label}
                   </button>
                 );
@@ -57,7 +57,7 @@ export const Header = ({ screen, onNav, cart }) => {
               <button onClick={() => handleNav('drop#contact')}
                 style={{ ...mono(9, C.dim), background: 'none', border: 'none', cursor: 'pointer', padding: '0 12px', transition: 'color 0.15s' }}
                 onMouseEnter={e => e.currentTarget.style.color = '#141414'}
-                onMouseLeave={e => e.currentTarget.style.color = '#6F6A62'}>
+                onMouseLeave={e => e.currentTarget.style.color = '#6B665E'}>
                 CONTACT
               </button>
               <CartBtn />

@@ -4,12 +4,12 @@
    so the same component reads correctly on bone or charcoal. */
 export const TONES = {
   light: {
-    '--bg': '#EDEAE4', '--bg2': '#E3DFD7', '--ink': '#141414', '--dim': '#6F6A62',
+    '--bg': '#EDEAE4', '--bg2': '#E3DFD7', '--ink': '#141414', '--dim': '#6B665E',
     '--line': '#D3CEC4', '--red': '#C22B26', '--veil': 'rgba(20,20,20,0.06)',
   },
   dark: {
     '--bg': '#141414', '--bg2': '#1C1C1C', '--ink': '#EDEAE4', '--dim': '#8B867D',
-    '--line': '#2C2C2C', '--red': '#C93A32', '--veil': 'rgba(237,234,228,0.07)',
+    '--line': '#2C2C2C', '--red': '#DA5147', '--veil': 'rgba(237,234,228,0.07)',
   },
 };
 

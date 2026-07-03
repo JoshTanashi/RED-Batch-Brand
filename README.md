@@ -12,47 +12,55 @@ Web storefront for RED-Batch — a controlled release apparel brand from South A
 |---|---|
 | UI | React 18 |
 | Build | Vite |
-| Styles | Inline React styles + `styles.css` |
+| Motion | motion (framer) + lenis smooth scroll |
+| Styles | Inline React styles + per-section CSS custom properties (`styles.css`) |
 | Data | Static array in `src/lib/products.js` |
 | Email | EmailJS |
 | Payments | PayFast |
-| Fonts | Space Grotesk · Space Mono (Google Fonts) |
+| Fonts | Space Grotesk Variable · Space Mono (self-hosted via @fontsource) |
+
+---
+
+## Design
+
+"Bone editorial" — off-white (#EDEAE4) base with alternating deep-charcoal sections, RED-BATCH red as the single accent, huge lowercase display typography, and transparent product cutouts floating across section boundaries. Sections set their palette via a `<Section tone="light|dark">` wrapper that provides CSS custom properties; components read semantic tokens (`C.bg`, `C.ink`, `C.dim`, `C.line`, `C.red`) that resolve per-section.
 
 ---
 
 ## Structure
 
 ```
-index.html              — Vite entry shell.
-src/main.jsx             — React root.
-src/App.jsx              — State machine, query-param routing.
+index.html               — Vite entry shell + static preloader.
+styles.css               — Global CSS: tokens, cursor, marquee/float keyframes, grain.
+src/main.jsx             — React root + font imports.
+src/App.jsx              — State machine, ?s= routing with legacy aliases, scroll owner.
 src/lib/
-  products.js             — Static product catalogue (BATCHES, SETS).
-  payfast.js              — PayFast MD5 signature helpers.
-  config.js                — Reads import.meta.env.* into named exports.
-  format.js, theme.js, useCursor.js, useIsMobile.js
-src/components/          — Shared UI: Header, Footer, Btn, Divider, Ticker, etc.
-src/screens/             — One file per screen (Drop, Product, Cart, Checkout,
-                            Success, Cancel, Queue, Sets, Contact, Dropping).
-.env.example             — Template for required environment variables.
+  products.js            — Static product catalogue (BATCHES, SETS, optional cutout paths).
+  payfast.js             — PayFast MD5 signature helpers.
+  config.js              — Reads import.meta.env.* into named exports.
+  theme.js               — TONES (light/dark CSS vars) + C/F tokens + type helpers.
+  motion.js              — Shared motion re-exports and variants.
+  useLenis.js            — Smooth-scroll init (skipped under reduced motion).
+  format.js, useCursor.js, useIsMobile.js
+src/components/          — Section, Reveal, Marquee, ProductImage, Header, Footer, Btn, Badge.
+src/sections/            — Home page sections: Hero, CycleRow, QueueSection, ContactSection.
+src/screens/             — HomeScreen, ProductScreen, CartScreen, CheckoutScreen, ResultScreen.
+scripts/cutout.py        — One-off: extracts transparent product cutouts from photos.
 ```
 
 ---
 
-## Screens
+## Pages
 
-- **DROP** (`?s=drop`) — Active batches available now.
-- **PRODUCT** (`?s=product`) — Detail view for a single batch: specs, sizing, price, origin.
-- **SETS** (`?s=sets`) — Permanent cycle sets (tee + hoodie bundles).
-- **QUEUE** (`?s=queue`) — Next batch preview with notification register.
-- **CART** / **CHECKOUT** / **SUCCESS** / **CANCEL** — Order flow via PayFast.
-- **CONTACT** (`?s=contact`) — Contact form via EmailJS.
+- **Home** (`?s=drop`) — one long editorial scroll: hero → red marquee band → the cycle's drops → the record set (with inline add-to-cart) → next-cycle queue signup → contact form. Legacy URLs `?s=queue`, `?s=contact`, `?s=sets` land on the matching home section.
+- **PRODUCT** (`?s=product`) — detail view for a single batch: specs, sizing, price, origin.
+- **CART** / **CHECKOUT** / **SUCCESS** / **CANCEL** — order flow via PayFast.
 
 ---
 
 ## Products
 
-Products live in `src/lib/products.js` as two plain arrays, `BATCHES` and `SETS`. To add, edit, or remove a product (or swap an image), edit that file directly and redeploy.
+Products live in `src/lib/products.js` as two plain arrays, `BATCHES` and `SETS`. To add, edit, or remove a product (or swap an image), edit that file directly and redeploy. The optional `cutout` field points at a transparent WebP in `public/images/cutouts/` — regenerate with `python3 scripts/cutout.py` after replacing source photos.
 
 ---
 
@@ -98,11 +106,13 @@ The site deploys automatically to GitHub Pages on every push to `main` via `.git
 
 `VITE_PAYFAST_URL` defaults to the PayFast **sandbox** endpoint. Switching to the production PayFast URL is a deliberate manual step, not something a routine deploy should change.
 
+> **Note:** `og:image` still points at `https://redbatch.store/images/og-image.jpg`, which is not in this repo — social link previews will show the old dark design until a new image is generated and hosted.
+
 ---
 
-## Responsive
+## Responsive & Accessibility
 
-Mobile layout activates at `≤ 768px`. The custom cursor is disabled on touch devices.
+Mobile layout activates at `≤ 768px`. The custom cursor is disabled on touch devices. Smooth scrolling and entrance animations are disabled under `prefers-reduced-motion`. Text colors meet WCAG AA (≥ 4.5:1) on both tones.
 
 ---
 
