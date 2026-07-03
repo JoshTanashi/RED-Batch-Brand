@@ -32,6 +32,7 @@ export const BATCHES = [
     type: 'Hoodie',
     desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, single kangaroo pocket, ribbed cuffs and hem. Batch identifier woven into back neck label. 50 units. No restock.',
     images: ['./images/rb-002-a.webp', './images/rb-002-b.webp'],
+    cutout: './images/cutouts/rb-002-a.webp',
   },
   {
     id: 'RB-007',
@@ -64,6 +65,7 @@ export const BATCHES = [
     type: 'Hoodie',
     desc: 'Heavyweight 500gsm fleece. Double-layered structured hood, kangaroo pocket, ribbed cuffs and hem. Fourth colourway. Batch identifier woven into back neck label. 40 units. No restock.',
     images: ['./images/rb-004-a.webp', './images/rb-004-b.webp'],
+    cutout: './images/cutouts/rb-004-a.webp',
   },
   {
     id: 'RB-003',
@@ -96,6 +98,7 @@ export const BATCHES = [
     type: 'Hoodie',
     desc: 'Second colourway drop. 500gsm fleece. Same silhouette as RB-002. New CYCLE-01 graphic on back. 40 units. No restock.',
     images: ['./images/rb-004-a.webp', './images/rb-004-b.webp'],
+    cutout: './images/cutouts/rb-004-b.webp',
   },
   {
     id: 'RB-005',
