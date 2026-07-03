@@ -93,11 +93,11 @@ export const ProductScreen = ({ onNav, batchId, addToCart, onSelectBatch, batche
               </div>
             </div>
 
-            {batch.images && batch.images.length > 1 && (
+            {batch.images && batch.images.filter(img => !failedImgs.has(img)).length > 1 && (
               <div style={{ display: 'flex', gap: 8, marginTop: 8, overflowX: isMobile ? 'auto' : 'visible' }}>
-                {batch.images.map((img, idx) => (
+                {batch.images.map((img, idx) => failedImgs.has(img) ? null : (
                   <div key={idx} onClick={() => setActiveImg(idx)} data-hover style={{ width: 60, height: 75, background: C.bg2, flexShrink: 0, border: `1px solid ${activeImg === idx ? C.red : C.line}`, cursor: 'pointer', overflow: 'hidden' }}>
-                    <img src={img} alt={`thumb ${idx + 1}`} loading="lazy" onError={e => { e.target.style.display = 'none'; }} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <img src={img} alt={`thumb ${idx + 1}`} loading="lazy" onError={() => setFailedImgs(prev => new Set(prev).add(img))} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                   </div>
                 ))}
               </div>
