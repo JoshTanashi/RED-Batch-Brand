@@ -21,7 +21,7 @@ const SCREENS = ['drop', 'product', 'cart', 'checkout', 'success', 'cancel'];
 const ALIASES = {
   queue:   { screen: 'drop', anchor: 'queue' },
   contact: { screen: 'drop', anchor: 'contact' },
-  sets:    { screen: 'drop', anchor: 'record' },
+  sets:    { screen: 'drop' },
 };
 
 const resolve = (target) => {

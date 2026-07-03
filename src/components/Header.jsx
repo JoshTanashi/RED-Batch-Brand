@@ -11,7 +11,6 @@ export const Header = ({ screen, onNav, cart }) => {
   const navItems = [
     { id: 'drop',         label: 'DROP' },
     { id: 'drop#cycle',   label: 'THE CYCLE' },
-    { id: 'drop#record',  label: 'THE RECORD' },
     { id: 'drop#queue',   label: 'NEXT CYCLE' },
   ];
 

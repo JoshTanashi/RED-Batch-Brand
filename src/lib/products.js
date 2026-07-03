@@ -158,7 +158,8 @@ export const SETS = [
     items: ['RB-001', 'RB-002', 'RB-003', 'RB-004', 'RB-005'],
     price: 'R 3 299',
     units: 10,
-    status: 'ACTIVE',
+    /* Shelved for now — flip back to 'ACTIVE' to restore the record row on home. */
+    status: 'ARCHIVED',
     date: '2026.04.23',
     desc: 'The complete CYCLE-01 record. Every tee from the cycle plus the best-seller hoodie. One colourway. Issued together as a single verified unit. This is the full collection in one record — once it closes it exists permanently in the archive. 10 sets only. No restock. Ever.',
     includes: [
