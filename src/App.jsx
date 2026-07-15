@@ -35,7 +35,7 @@ const url = (screen, anchor) => '?s=' + screen + (anchor ? '#' + anchor : '');
 
 export const App = () => {
   const [screen, setScreen] = useState('drop');
-  const [selectedBatchId, setSelectedBatchId] = useState('RB-001');
+  const [selectedBatchId, setSelectedBatchId] = useState('RB-002');
   const [cart, setCart] = useState([]);
   const [orderRef, setOrderRef] = useState('');
   const [introDone, setIntroDone] = useState(() => !!sessionStorage.getItem('rb-intro'));

@@ -25,6 +25,7 @@ export const ProductScreen = ({ onNav, batchId, addToCart, onSelectBatch, batche
   const minSwipeDistance = 50;
   const topRef = useRef(null);
   const isClosed = batch.units === 0;
+  const isReleased = batch.status === 'ACTIVE';
   const hasActiveImg = batch.images && batch.images[activeImg] && !failedImgs.has(batch.images[activeImg]);
 
   useEffect(() => { setActiveImg(0); setSize(null); setQty(1); setFailedImgs(new Set()); }, [batchId]);
@@ -34,7 +35,7 @@ export const ProductScreen = ({ onNav, batchId, addToCart, onSelectBatch, batche
   }, [batchId]);
 
   const handleAddToCart = () => {
-    if (!size || isClosed) return;
+    if (!size || isClosed || !isReleased) return;
     addToCart({ id: batch.id, name: batch.name, price: parsePrice(batch.price), size, quantity: qty });
     setAdded(true);
     setQty(1);
@@ -124,7 +125,7 @@ export const ProductScreen = ({ onNav, batchId, addToCart, onSelectBatch, batche
             <h1 style={{ ...display(72) }}>{batch.name.toLowerCase()}<span style={{ color: C.red }}>.</span></h1>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, marginTop: 18 }}>
               <span style={{ fontFamily: F.m, fontWeight: 700, fontSize: 22, color: C.ink }}>{batch.price}</span>
-              <span style={{ ...mono(9, C.dim) }}>{isClosed ? '0 units remaining.' : `${batch.units} units remaining.`}</span>
+              <span style={{ ...mono(9, C.dim) }}>{!isReleased ? 'Not yet released.' : isClosed ? '0 units remaining.' : `${batch.units} units remaining.`}</span>
             </div>
           </Reveal>
 
@@ -132,6 +133,18 @@ export const ProductScreen = ({ onNav, batchId, addToCart, onSelectBatch, batche
           <div style={{ ...grotesk(14, 300, C.dim), lineHeight: 1.8 }}>{batch.desc}</div>
           <Rule />
 
+          {!isReleased && (
+            <div style={{ border: `1px solid ${C.line}`, padding: '18px 20px', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: -1, right: -1, width: 8, height: 8, background: C.red }} />
+              <Badge v="neutral">INCOMING</Badge>
+              <div style={{ ...mono(9, C.dim), lineHeight: 1.9, marginTop: 12 }}>
+                This unit has not been released. Imaging in progress — dropping soon.<br />
+                Register in the next-cycle queue to be notified when the record opens.
+              </div>
+            </div>
+          )}
+
+          {isReleased && (<>
           <div>
             <div style={{ ...mono(9), marginBottom: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
               <span>Select size {size && <span style={{ color: C.red }}>— {size}</span>}</span>
@@ -180,6 +193,7 @@ export const ProductScreen = ({ onNav, batchId, addToCart, onSelectBatch, batche
             {isClosed ? 'Batch closed.' : added ? 'Unit Added.' : 'Add to Cart'}
           </Btn>
           {added && <div style={{ ...mono(10, C.red) }}>Unit added to cart.</div>}
+          </>)}
 
           <div style={{ border: `1px solid ${C.line}`, background: C.bg2, padding: '14px 16px', position: 'relative' }}>
             <div style={{ position: 'absolute', top: -1, right: -1, width: 6, height: 6, background: C.red }} />
